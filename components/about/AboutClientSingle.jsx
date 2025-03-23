@@ -6,7 +6,6 @@ function AboutClientSingle({ title, image }) {
 			<Image
 				src={image}
 				alt={title}
-				layout="responsive"
 				width={100}
 				height={50}
 			/>

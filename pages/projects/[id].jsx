@@ -40,7 +40,6 @@ function ProjectSingle(props) {
 								className="rounded-xl cursor-pointer shadow-lg sm:shadow-none"
 								alt={project.title}
 								key={project.id}
-								layout="responsive"
 								width={100}
 								height={90}
 							/>
