@@ -5,8 +5,8 @@ import { projectsData } from '../../data/projectsData';
 import ProjectsFilter from './ProjectsFilter';
 
 function ProjectsGrid() {
-	const [searchProject, setSearchProject] = useState();
-	const [selectProject, setSelectProject] = useState();
+	const [searchProject, setSearchProject] = useState('');
+	const [selectProject, setSelectProject] = useState('all');
 
 	// @todo - To be fixed
 	// const searchProjectsByTitle = projectsData.filter((item) => {
@@ -23,7 +23,7 @@ function ProjectsGrid() {
 	const selectProjectsByCategory = projectsData.filter((item) => {
 		let category =
 			item.category.charAt(0).toUpperCase() + item.category.slice(1);
-		return category.includes(selectProject);
+		return selectProject === 'all' || category === selectProject;
 	});
 
 	return (
@@ -83,7 +83,7 @@ function ProjectsGrid() {
                                 sm:px-4
                                 py-2
                                 border 
-                            border-gray-200
+                            	border-gray-200
                                 dark:border-secondary-dark
                                 rounded-lg
                                 text-sm
@@ -107,13 +107,9 @@ function ProjectsGrid() {
 			</div>
 
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 sm:gap-5">
-				{selectProject
-					? selectProjectsByCategory.map((project, index) => {
-							return <ProjectSingle key={index} {...project} />;
-					  })
-					: projectsData.map((project, index) => (
-							<ProjectSingle key={index} {...project} />
-					  ))}
+				{selectProjectsByCategory.map((project, index) => (
+					<ProjectSingle key={index} {...project} />
+				))}
 			</div>
 		</section>
 	);
