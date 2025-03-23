@@ -27,7 +27,7 @@ function ProjectsFilter({ setSelectProject }) {
                 dark:text-ternary-light
             "
 		>
-			<option value={setSelectProject} className="text-sm sm:text-md">
+			<option value="all" className="text-sm sm:text-md">
 				All Projects
 			</option>
 
