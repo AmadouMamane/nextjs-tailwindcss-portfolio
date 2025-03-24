@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { FiSun, FiMoon, FiX, FiMenu } from 'react-icons/fi';
 import HireMeModal from '../HireMeModal';
 import logoLight from '../../public/images/logo-light.svg';
-import logoDark from '../../public/images/logo-dark.svg';
+import logoDark from '../../public/images/logo-dark.png';
 import useThemeSwitcher from '../../hooks/useThemeSwitcher';
 
 function AppHeader() {
@@ -51,18 +51,18 @@ function AppHeader() {
 							{activeTheme === 'dark' ? (
 								<Image
 									src={logoDark}
-									className="w-36 cursor-pointer"
+									className="w-[145px] h-auto cursor-pointer"
 									alt="Dark Logo"
-									width={150}
-									height={120}
+									width={1500}
+									height={1400}
 								/>
 							) : (
 								<Image
 									src={logoLight}
 									className="w-36 cursor-pointer"
 									alt="Dark Logo"
-									width={150}
-									height={120}
+									width={1000}
+									height={1000}
 								/>
 							)}
 						</Link>
