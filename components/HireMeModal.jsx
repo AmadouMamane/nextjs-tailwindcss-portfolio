@@ -36,12 +36,11 @@ function HireMeModal({ onClose, onRequest }) {
 							</button>
 						</div>
 						<div className="modal-body p-5 w-full h-full">
-							<form
-								onSubmit={(e) => {
-									e.preventDefault();
-								}}
-								className="max-w-xl m-4 text-left"
-							>
+								<form
+									action="https://formspree.io/f/mldjbkwy" 
+									method="POST"
+									className="max-w-xl m-4 text-left"
+								>
 								<div className="">
 									<input
 										className="w-full px-5 py-2 border dark:border-secondary-dark rounded-md text-md bg-secondary-light dark:bg-ternary-dark text-primary-dark dark:text-ternary-light"
@@ -97,22 +96,13 @@ function HireMeModal({ onClose, onRequest }) {
 								</div>
 
 								<div className="mt-6 pb-4 sm:pb-1">
-									<span
-										onClick={onRequest}
+									<button
 										type="submit"
-										className="px-4
-											sm:px-6
-											py-2
-											sm:py-2.5
-											text-white
-											bg-indigo-500
-											hover:bg-indigo-600
-											rounded-md
-											focus:ring-1 focus:ring-indigo-900 duration-500"
+										className="px-4 sm:px-6 py-2 sm:py-2.5 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md focus:ring-1 focus:ring-indigo-900 duration-500"
 										aria-label="Submit Request"
 									>
-										<Button title="Send Request" />
-									</span>
+									<Button title="Send Request" />
+									</button>
 								</div>
 							</form>
 						</div>
