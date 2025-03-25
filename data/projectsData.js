@@ -10,19 +10,19 @@ import {
 export const projectsData = [
 	{
 		id: 1,
-		title: 'Google Health Platform',
+		title: 'Skin Cancer Detection',
 		url: 'google-health-platform',
-		category: 'Web Application',
+		category: 'Data science',
 		img: '/images/web-project-2.jpg',
 		ProjectHeader: {
-			title: 'Google Health Platform',
-			publishDate: 'Jul 26, 2021',
-			tags: 'UI / Frontend',
+			title: 'Skin Cancer Detection',
+			publishDate: 'March 24, 2025',
+			tags: 'Data science',
 		},
 		ProjectImages: [
 			{
 				id: uuidv4(),
-				title: 'Google Health Platform',
+				title: 'Skin Cancer Detection',
 				img: '/images/ui-project-1.jpg',
 			},
 			{
