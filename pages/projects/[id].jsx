@@ -3,188 +3,162 @@ import { FiClock, FiTag } from 'react-icons/fi';
 import PagesMetaHead from '../../components/PagesMetaHead';
 import { projectsData } from '../../data/projectsData';
 import RelatedProjects from '../../components/projects/RelatedProjects';
+import { useState } from 'react';
 
 function ProjectSingle(props) {
-	return (
-		<div className="container mx-auto">
-			<PagesMetaHead title={props.project.title} />
+  const [activeTab, setActiveTab] = useState('Overview');
 
-			{/* Header */}
-			<div>
-				<p className="font-general-medium text-left text-3xl sm:text-4xl font-bold text-primary-dark dark:text-primary-light mt-14 sm:mt-20 mb-7">
-					{props.project.ProjectHeader.title}
-				</p>
-				<div className="flex">
-					<div className="flex items-center mr-10">
-						<FiClock className="text-xl text-ternary-dark dark:text-ternary-light" />
-						<span className="font-general-regular ml-2 leading-none text-primary-dark dark:text-primary-light">
-							{props.project.ProjectHeader.publishDate}
-						</span>
-					</div>
-					<div className="flex items-center">
-						<FiTag className="w-4 h-4 text-ternary-dark dark:text-ternary-light" />
-						<span className="font-general-regular ml-2 leading-none text-primary-dark dark:text-primary-light">
-							{props.project.ProjectHeader.tags}
-						</span>
-					</div>
-				</div>
-			</div>
+  return (
+    <div className="container mx-auto">
+      <PagesMetaHead title={props.project.title} />
 
-			{/* Gallery */}
-			<div className="grid grid-cols-1 sm:grid-cols-3 sm:gap-10 mt-12">
-				{props.project.ProjectImages.map((project) => {
-					return (
-						<div className="mb-10 sm:mb-0" key={project.id}>
-							<Image
-								src={project.img}
-								className="rounded-xl cursor-pointer shadow-lg sm:shadow-none"
-								alt={project.title}
-								key={project.id}
-								width={100}
-								height={90}
-							/>
-						</div>
-					);
-				})}
-			</div>
+      {/* Header */}
+      <div>
+        <p className="font-general-medium text-left text-3xl sm:text-4xl font-bold text-primary-dark dark:text-primary-light mt-14 sm:mt-20 mb-7">
+          {props.project.ProjectHeader.title}
+        </p>
+        <div className="flex">
+          <div className="flex items-center mr-10">
+            <FiClock className="text-xl text-ternary-dark dark:text-ternary-light" />
+            <span className="font-general-regular ml-2 leading-none text-primary-dark dark:text-primary-light">
+              {props.project.ProjectHeader.publishDate}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <FiTag className="w-4 h-4 text-ternary-dark dark:text-ternary-light" />
+            <span className="font-general-regular ml-2 leading-none text-primary-dark dark:text-primary-light">
+              {props.project.ProjectHeader.tags}
+            </span>
+          </div>
+        </div>
+      </div>
 
-			{/* Info */}
-			<div className="block sm:flex gap-0 sm:gap-10 mt-14">
-				<div className="w-full sm:w-1/3 text-left">
-					
-					{/* Single project overview */}
-					<div className="mb-7">
-						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
-							{props.project.ProjectInfo.OverviewHeading}
-						</p>
-						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
-							{props.project.ProjectInfo.OverviewDetails}
-						</p>
-					</div>
+      {/* Tabs Navigation */}
+      <div className="mt-10 border-b border-gray-300 dark:border-gray-700">
+        <div className="flex flex-wrap gap-2">
+          {['Overview', 'Key Impact', 'Challenge Highlights', 'Goal', 'Tools & Technologies', 'Implementation'].map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-1 font-medium rounded-t-lg transition ${
+                activeTab === tab
+                  ? 'bg-indigo-500 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+      </div>
 
-					{/* Single project objectives */}
-					<div className="mb-7">
-						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
-							{props.project.ProjectInfo.KeyImpactHeading}
-						</p>
-						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
-							{props.project.ProjectInfo.KeyImpactDetails}
-						</p>
-					</div>
+      {/* Tabs Content */}
+      <div className="mt-6">
+        {activeTab === 'Overview' && (
+          <div>
+            <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+              {props.project.ProjectInfo.OverviewHeading}
+            </p>
+            <p className="text-ternary-dark dark:text-ternary-light">
+              {props.project.ProjectInfo.OverviewDetails}
+            </p>
+          </div>
+        )}
 
-					{/* Single project challenge highlights details */}
-					<div className="mb-7">
-						<p className="font-general-regular text-2xl font-semibold text-secondary-dark dark:text-secondary-light mb-2">
-							{props.project.ProjectInfo.ChallengeHighlightsHeading}
-						</p>
-						<ul className="leading-loose">
-							{props.project.ProjectInfo.ChallengeHighlightsInfo.map(
-								(info) => {
-									return (
-										<li
-											className="font-general-regular text-ternary-dark dark:text-ternary-light"
-											key={info.id}
-										>
-											<span>{info.title}: </span>
-											<a
-												href="https://stoman.me"
-												className={
-													info.title === 'Website' ||
-													info.title === 'Phone'
-														? 'hover:underline hover:text-indigo-500 dark:hover:text-indigo-400 cursor-pointer duration-300'
-														: ''
-												}
-												aria-label="Project Website and Phone"
-											>
-												{info.details}
-											</a>
-										</li>
-									);
-								}
-							)}
-						</ul>
-					</div>
+        {activeTab === 'Key Impact' && (
+          <div>
+            <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+              {props.project.ProjectInfo.KeyImpactHeading}
+            </p>
+            <p className="text-ternary-dark dark:text-ternary-light">
+              {props.project.ProjectInfo.KeyImpactDetails}
+            </p>
+          </div>
+        )}
 
-					{/* Single project goal */}
-					<div className="mb-7">
-						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
-							{props.project.ProjectInfo.GoalHeading}
-						</p>
-						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
-							{props.project.ProjectInfo.GoalDetails}
-						</p>
-					</div>
+        {activeTab === 'Challenge Highlights' && (
+          <div>
+            <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+              {props.project.ProjectInfo.ChallengeHighlightsHeading}
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-ternary-dark dark:text-ternary-light">
+              {props.project.ProjectInfo.ChallengeHighlightsInfo.map((item) => (
+                <li key={item.id}>
+                  <strong>{item.title}</strong>: {item.details}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-					{/* Single project technologies */}
-					<div className="mb-7">
-						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
-							{props.project.ProjectInfo.Technologies[0].title}
-						</p>
-						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
-							{props.project.ProjectInfo.Technologies[0].techs.join(
-								', '
-							)}
-						</p>
-					</div>
+        {activeTab === 'Goal' && (
+          <div>
+            <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+              {props.project.ProjectInfo.GoalHeading}
+            </p>
+            <p className="text-ternary-dark dark:text-ternary-light">
+              {props.project.ProjectInfo.GoalDetails}
+            </p>
+          </div>
+        )}
 
-					{/* Single project social sharing */}
-					<div>
-						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
-							{props.project.ProjectInfo.SocialSharingHeading}
-						</p>
-						{/* <div className="flex items-center gap-3 mt-5">
-							{props.project.ProjectInfo.SocialSharing.map(
-								(social, index) => {
-									<Link
-										key={index}
-										href={social.url}
-										target="__blank"
-										passHref={true}
-										aria-label="Share Project"
-										className="bg-ternary-light dark:bg-ternary-dark text-gray-400 hover:text-primary-dark dark:hover:text-primary-light p-2 rounded-lg shadow-sm duration-500"
-									>
-										<span className="text-lg lg:text-2xl">
-											{social.icon}
-										</span>
-									</Link>;
-								}
-							)}
-						</div> */}
-					</div>
-				</div>
+        {activeTab === 'Tools & Technologies' && (
+          <div>
+            <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+              {props.project.ProjectInfo.Technologies[0].title}
+            </p>
+            <p className="text-ternary-dark dark:text-ternary-light">
+              {props.project.ProjectInfo.Technologies[0].techs.join(', ')}
+            </p>
+          </div>
+        )}
 
-				{/*  Single project right section details */}
-				<div className="w-full sm:w-2/3 text-left mt-10 sm:mt-0">
-					<p className="text-primary-dark dark:text-primary-light text-2xl font-bold mb-7">
-						{props.project.ProjectInfo.ProjectDetailsHeading}
-					</p>
-					{props.project.ProjectInfo.ProjectDetails.map((details) => {
-						return (
-							<p
-								key={details.id}
-								className="font-general-regular mb-5 text-lg text-ternary-dark dark:text-ternary-light"
-							>
-								{details.details}
-							</p>
-						);
-					})}
-				</div>
-			</div>
+        {activeTab === 'Implementation' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+                📓 Notebook: Skin Cancer Detection
+              </p>
+              <iframe
+                src="https://nbviewer.org/url/raw.githubusercontent.com/AmadouMamane/skin_cancer_detection/main/notebooks/isic-2024_kaggle.ipynb"
+                title="ISIC 2024 Notebook"
+                width="100%"
+                height="1200"
+                frameBorder="0"
+                className="rounded-xl shadow-lg"
+                sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                loading="lazy"
+              ></iframe>
+            </div>
+            <div className="lg:col-span-1">
+              <p className="text-xl font-semibold text-primary-dark dark:text-primary-light mb-4">
+                Table of Contents
+              </p>
+              <ul className="space-y-2 text-base text-ternary-dark dark:text-ternary-light">
+                <li>1. Introduction</li>
+                <li>2. Data Preparation</li>
+                <li>3. Model Architecture</li>
+                <li>4. Training Loop</li>
+                <li>5. Evaluation</li>
+                <li>6. Results</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
 
-			<RelatedProjects />
-		</div>
-	);
+      <RelatedProjects />
+    </div>
+  );
 }
 
 export async function getServerSideProps({ query }) {
-	const { id } = query;
-	return {
-		props: {
-			project: projectsData.filter(
-				(project) => project.id === parseInt(id)
-			)[0],
-		},
-	};
+  const { id } = query;
+  return {
+    props: {
+      project: projectsData.filter((project) => project.id === parseInt(id))[0],
+    },
+  };
 }
 
 export default ProjectSingle;

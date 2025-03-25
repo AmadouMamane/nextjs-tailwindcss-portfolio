@@ -27,7 +27,7 @@ const ProjectSingle = (props) => {
 							src={props.img}
 							className="rounded-t-xl w-full h-auto border-none"
 							alt="Single Project"
-							width={450}
+							width={800}
 							height={0}
 						/>
 					</div>
