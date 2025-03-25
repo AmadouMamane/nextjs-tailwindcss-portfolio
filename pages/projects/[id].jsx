@@ -51,13 +51,34 @@ function ProjectSingle(props) {
 			{/* Info */}
 			<div className="block sm:flex gap-0 sm:gap-10 mt-14">
 				<div className="w-full sm:w-1/3 text-left">
-					{/* Single project client details */}
+					
+					{/* Single project overview */}
+					<div className="mb-7">
+						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
+							{props.project.ProjectInfo.OverviewHeading}
+						</p>
+						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
+							{props.project.ProjectInfo.OverviewDetails}
+						</p>
+					</div>
+
+					{/* Single project objectives */}
+					<div className="mb-7">
+						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
+							{props.project.ProjectInfo.KeyImpactHeading}
+						</p>
+						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
+							{props.project.ProjectInfo.KeyImpactDetails}
+						</p>
+					</div>
+
+					{/* Single project challenge highlights details */}
 					<div className="mb-7">
 						<p className="font-general-regular text-2xl font-semibold text-secondary-dark dark:text-secondary-light mb-2">
-							{props.project.ProjectInfo.ClientHeading}
+							{props.project.ProjectInfo.ChallengeHighlightsHeading}
 						</p>
 						<ul className="leading-loose">
-							{props.project.ProjectInfo.CompanyInfo.map(
+							{props.project.ProjectInfo.ChallengeHighlightsInfo.map(
 								(info) => {
 									return (
 										<li
@@ -84,13 +105,13 @@ function ProjectSingle(props) {
 						</ul>
 					</div>
 
-					{/* Single project objectives */}
+					{/* Single project goal */}
 					<div className="mb-7">
 						<p className="font-general-regular text-2xl font-semibold text-ternary-dark dark:text-ternary-light mb-2">
-							{props.project.ProjectInfo.ObjectivesHeading}
+							{props.project.ProjectInfo.GoalHeading}
 						</p>
 						<p className="font-general-regular text-primary-dark dark:text-ternary-light">
-							{props.project.ProjectInfo.ObjectivesDetails}
+							{props.project.ProjectInfo.GoalDetails}
 						</p>
 					</div>
 

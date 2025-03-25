@@ -10,12 +10,12 @@ import {
 export const projectsData = [
 	{
 		id: 1,
-		title: 'Skin Cancer Detection',
+		title: '🧬 AI Skin Cancer Detection',
 		url: 'google-health-platform',
 		category: 'Data science',
 		img: '/images/web-project-2.jpg',
 		ProjectHeader: {
-			title: 'Skin Cancer Detection',
+			title: '🧬 AI Skin Cancer Detection Challenge (ISIC 2024)',
 			publishDate: 'March 24, 2025',
 			tags: 'Data science',
 		},
@@ -27,56 +27,67 @@ export const projectsData = [
 			},
 			{
 				id: uuidv4(),
-				title: 'Google Health Platform',
+				title: 'Skin Cancer Detection',
 				img: '/images/web-project-2.jpg',
 			},
 			{
 				id: uuidv4(),
-				title: 'Google Health Platform',
+				title: 'Skin Cancer Detection',
 				img: '/images/mobile-project-2.jpg',
 			},
 		],
 		ProjectInfo: {
-			ClientHeading: 'About Client',
-			CompanyInfo: [
+			OverviewHeading: 'Overview',
+			OverviewDetails : "In this competition, I developed a deep learning model to detect histologically confirmed skin cancer from smartphone-quality lesion images captured from 3D total body photography. The goal was to create a binary classification system capable of identifying malignant vs. benign lesions, even in low-resource or non-clinical settings where specialized dermatologic care is unavailable.",
+			ChallengeHighlightsHeading: 'Challenge Highlights',
+			ChallengeHighlightsInfo: [
 				{
 					id: uuidv4(),
-					title: 'Name',
-					details: 'Company Ltd',
+					title: '📅 Duration',
+					details: 'Jun 27 – Sep 7, 2024',
 				},
 				{
 					id: uuidv4(),
-					title: 'Services',
-					details: 'Web Development',
+					title: '🌍 Dataset',
+					details: '3D total body photos from thousands of patients across 3 continents',
 				},
 				{
 					id: uuidv4(),
-					title: 'Website',
-					details: 'https://company.com',
+					title: '🧠 Task',
+					details: 'Binary classification of malignant vs. benign skin lesions',
 				},
 				{
 					id: uuidv4(),
-					title: 'Phone',
-					details: '555 8888 888',
+					title: '🛠️ Images',
+					details: 'Resemble close-up smartphone photos, simulating telehealth scenarios',
+				},
+				{
+					id: uuidv4(),
+					title: '📈 Metric',
+					details: 'Partial AUC (pAUC) above 80% TPR, prioritizing high-sensitivity performance for early diagnosis',
 				},
 			],
-			ObjectivesHeading: 'Objective',
-			ObjectivesDetails:
-				'Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio, natus! Quibusdam enim quod in esse, mollitia molestias incidunt quas ipsa accusamus veniam.',
+			KeyImpactHeading: 'Key Impact',
+			KeyImpactDetails:
+				'The model supports early detection and triage for skin cancer, with potential real-world use in primary care and underserved communities. By working with realistic, lower-resolution images, the system is designed to extend AI-driven diagnostic support beyond traditional clinical environments.',
+			GoalHeading: 'Goal',
+			GoalDetails:
+				'Improve early detection of skin cancers like melanoma, basal cell carcinoma, and squamous cell carcinoma through AI—especially in settings lacking access to dermatologists or dermatoscopic equipment.',
+			
 			Technologies: [
 				{
 					title: 'Tools & Technologies',
 					techs: [
-						'HTML',
-						'CSS',
-						'JavaScript',
-						'Vue.js',
-						'TailwindCSS',
-						'AdobeXD',
+						'TensorFlow',
+						'Pandas',
+						'Python',
+						'Matplotlib',
+						'GPU',
+						'TPU',
 					],
 				},
 			],
-			ProjectDetailsHeading: 'Challenge',
+			ProjectDetailsHeading: 'Implementation',
 			ProjectDetails: [
 				{
 					id: uuidv4(),
