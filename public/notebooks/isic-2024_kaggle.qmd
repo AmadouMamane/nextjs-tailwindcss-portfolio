@@ -1,0 +1,3752 @@
+---
+format:
+  html:
+    title: ''
+    toc: true
+    toc-title: "<strong>Table of contents</strong>"
+    toc-location: right
+    toc-depth: 5
+    toc-expand: true 
+    toc-float:
+      collapsed: true
+      smooth-scroll: true
+      width: 300px
+    theme: cosmo
+    code-fold: false
+    code-fold-show: true  
+    page-layout: full
+    number-sections: true
+    code-tools: false
+    code-line-numbers: false
+    code-summary: "Show Code"
+    code-block-bg: true
+    include-in-header: styles/toc-scrollbar-hide.html
+execute:
+  enabled: false
+---
+
+# Initialization
+
+```{python}
+#| trusted: true
+import time
+# Unique indentifier specific to this execution
+run_id = int(time.time())
+```
+
+## Installations
+
+```{python}
+#| trusted: true
+#! pip install tensorflow==2.15.0
+! pip install -q imblearn keras-tuner tensorflow-addons keras-cv memory_profiler
+```
+
+## Global variables
+
+```{python}
+#| trusted: true
+# Database configuration: Choose between 'dagshub_storage', 'google_drive', 'local'
+database = 'local'  # Current choice: local
+
+# Execution mode: Choose between 'CPU' or 'GPU'
+execution_mode = 'GPU'  # Current choice: GPU
+
+# Execution environment: Choose between 'colab', 'mac'
+execution_env = 'kaggle'  # Current choice: colab
+
+# Experimentation mode: Choose between 'test' or 'prod'
+experimentation_mode = 'prod'  # Current choice: test
+
+# Training and Inference settings
+train_all_models = False  # Train all models
+run_inference = True  # Run inference
+run_inference_use_all_models = True  # Run inference on all models
+model_type = 'pretrained_ensemble_model'  # Type of model to train, choose between 'single_model', 'pretrained_ensemble_model', 'compact_ensemble_model'
+inference_model_name = model_type  # Use the model_type as the inference model name
+
+# Dataset settings
+download_raw_datasets = False  # Do not download raw datasets
+download_refined_training_datasets = True if execution_env == 'colab' else False  # Download refined datasets if running on Colab
+dataset_size = 20000  # Set dataset size to 40,000 samples
+create_new_training_datasets = False  # Do not create new training datasets
+```
+
+## Execution strategy
+
+```{python}
+#| trusted: true
+import tensorflow as tf
+from tensorflow.keras import mixed_precision
+import warnings
+
+def limit_memory_growth():
+    gpu_devices = tf.config.experimental.list_physical_devices('GPU')
+    try:
+        for gpu in gpu_devices:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    except Exception as e:
+        print('Can not set memory growth', e)
+
+def disable_eager_execution():
+    tf.compat.v1.disable_eager_execution()
+
+def enable_xla():
+    tf.config.optimizer.set_jit(True)
+
+def disable_gpu():
+    tf.config.set_visible_devices([], 'GPU')
+    visible_devices = tf.config.get_visible_devices()
+    for device in visible_devices:
+        assert device.device_type != 'GPU'
+
+def enable_mixed_precision():
+    policy = mixed_precision.Policy('mixed_float16')
+    mixed_precision.set_global_policy(policy)
+    print("Mixed precision enabled: ", mixed_precision.global_policy())
+
+# Suppress all warnings in the notebook
+warnings.filterwarnings('ignore')
+
+limit_memory_growth()
+#enable_mixed_precision()
+#tf.debugging.set_log_device_placement(True)
+#tf.config.set_visible_devices([], 'GPU')
+enable_xla()
+tf.config.optimizer.set_experimental_options({
+    "memory_optimization": True
+})
+```
+
+```{python}
+#| trusted: true
+def check_tpu_initialized():
+    """Check if TPU is already initialized."""
+    tpu_devices = tf.config.list_logical_devices('TPU')
+    if len(tpu_devices) > 0:
+        print(f"TPU is already initialized with {len(tpu_devices)} logical devices.")
+        return True
+    else:
+        print("TPU is not initialized.")
+        return False
+
+def set_tpu_strategy(force=False):
+    """Set the TPU strategy if TPU is initialized."""
+    if check_tpu_initialized() and not force:
+        try:
+            resolver = tf.distribute.cluster_resolver.TPUClusterResolver()   # TPU detection
+            strategy = tf.distribute.TPUStrategy(resolver)
+
+            print("Using TPU strategy.")
+            return strategy
+        except Exception as e:
+            print(f"Error while setting TPU strategy: {e}")
+            return None
+    else:
+        try:
+            print("Trying to initialize TPU.")
+            resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+            tf.config.experimental_connect_to_cluster(resolver)
+            tf.tpu.experimental.initialize_tpu_system(resolver)
+            strategy = tf.distribute.TPUStrategy(resolver)
+            print("TPU initialized and TPU strategy set.")
+            return strategy
+        except ValueError:
+            print("No TPU devices found.")
+            return None
+
+strategy = set_tpu_strategy(force = execution_env == 'colab')
+running_on_tpu = strategy is not None
+
+if strategy is None:
+    # For GPUs or CPU
+    if tf.config.list_physical_devices('GPU') and execution_mode == 'GPU':
+      limit_memory_growth()
+      strategy = tf.distribute.MirroredStrategy()
+      enable_mixed_precision() # Enable mixed precision policy
+      print("Running on GPU")
+
+    else:
+      strategy = tf.distribute.get_strategy()
+      print("Running on CPU")
+```
+
+## Librairies import
+
+```{python}
+#| trusted: true
+# Core Libraries
+import os
+import gc
+import re
+import h5py
+import time
+import random
+import copy
+import psutil
+import hashlib
+import traceback
+import numpy as np
+import pandas as pd
+from glob import glob
+from collections import defaultdict
+from multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor
+
+# TensorFlow and Keras Imports
+import tensorflow.keras.backend as K
+from tensorflow.keras import layers, Model, Input, regularizers, optimizers, callbacks
+from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
+from tensorflow.keras.layers.experimental import preprocessing
+from tensorflow.keras.utils import register_keras_serializable
+
+# TensorFlow Add-ons
+import tensorflow_addons as tfa
+
+# Keras Tuner for Hyperparameter Optimization
+import keras_tuner as kt
+from keras_tuner import HyperModel
+from keras_tuner.tuners import RandomSearch
+
+# TensorFlow Pretrained Models
+from tensorflow.keras.applications import (
+    EfficientNetB0, EfficientNetB4, EfficientNetB7,
+    DenseNet121, DenseNet169, DenseNet201,
+    InceptionV3, InceptionResNetV2,
+    ResNet50, ResNet101, ResNet152V2,
+    VGG16, VGG19, Xception
+)
+
+# Data Oversampling
+from imblearn.over_sampling import SMOTE
+
+# Scikit-Learn Utilities
+from sklearn.metrics import (
+    roc_curve, roc_auc_score, auc,
+    accuracy_score, classification_report, confusion_matrix
+)
+from sklearn.model_selection import StratifiedShuffleSplit
+
+# Memory Profiling
+from memory_profiler import memory_usage
+
+# Visualization Libraries
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
+```
+
+## Database setting
+
+```{python}
+#| trusted: true
+if download_refined_training_datasets:
+    if database == 'local':
+      %pip install -q dagshub
+      import dagshub.colab
+      DAGSHUB_REPO = dagshub.colab.login()
+    elif database == 'google_drive':
+      from google.colab import drive
+      drive.mount('/content/drive')
+      ROOT_DB_DIR='/content/drive/MyDrive/documents_travail'
+    else:
+      %pip install -q dagshub
+      import dagshub.colab
+      DAGSHUB_REPO = dagshub.colab.login()
+      mount_path = dagshub.storage.mount(DAGSHUB_REPO, cache=True)
+      print(f'Mount path: {mount_path}')
+      ROOT_DB_DIR=f'/content/{mount_path}'
+```
+
+## Training variables
+
+```{python}
+#| trusted: true
+# Define root directories based on the execution environment
+if execution_env == 'mac': 
+    ROOT_DB_DIR = '/Users/amadou/local/datalab'
+elif execution_env == 'kaggle': 
+    ROOT_DB_DIR = '/kaggle/'
+else:
+    ROOT_DB_DIR = '/content'
+    
+input_dir = f'{ROOT_DB_DIR}/input'
+output_dir = f'{ROOT_DB_DIR}/working'
+cache_dir = f'{output_dir}/tf_cache'  # Temporary cache directory for TensorFlow
+project_dir = f"{output_dir}/isic_2024"  # Project-specific directory
+tmp_dir = f'{output_dir}/tmp'  # Temporary files directory
+models_dir = f'{output_dir}/models'  # Directory to save model files
+pretrained_models_dir = f'{input_dir}/pretrained/tensorflow2/default/1/'
+
+# Define dataset directories
+datasets_dir = f'{input_dir}/datasets'  # Root dataset directory
+training_dir = f'{datasets_dir}/training'  # Training data directory
+training_metadata_dir = f'{training_dir}/metadata'  # Metadata for training data
+
+# Define directories for training data (positives and negatives)
+train_dir = f'{datasets_dir}/training/train'
+train_dir_pos = f'{train_dir}/positives'  # Positive training samples
+train_dir_negs = f'{train_dir}/negatives'  # Negative training samples
+
+# Define validation and evaluation data directories (positives and negatives)
+val_dir = f'{datasets_dir}/training/val'
+val_dir_pos = f'{val_dir}/positives'  # Positive validation samples
+val_dir_negs = f'{val_dir}/negatives'  # Negative validation samples
+
+eval_dir = f'{datasets_dir}/training/eval'
+eval_dir_pos = f'{eval_dir}/positives'  # Positive evaluation samples
+eval_dir_negs = f'{eval_dir}/negatives'  # Negative evaluation samples
+
+# Define paths for inference
+inference_dir = f'{project_dir}/inference'  # Inference-related directory
+inference_model_path = os.path.join(models_dir, 'inference_model.h5')  # Model for inference
+inference_images_dir = f'{inference_dir}/images/hdf5'  # Directory to source inference images
+inference_images_path = f'{inference_images_dir}/test-image.hdf5'  # HDF5 file with test images
+inference_metadata_dir = f'{inference_dir}/metadata'  # Directory for inference metadata
+inference_tabular_data_path = os.path.join(inference_metadata_dir, 'test-metadata.csv')  # Test metadata for tabular data
+preprocessor_path = f'{inference_dir}/preprocessor_{run_id}.pkl'  # Preprocessor for inference
+
+# Define TFRecord directories
+tf_records_dir = f'{input_dir}/tf_records/{dataset_size}' if experimentation_mode == 'test' else f'{input_dir}/sample-20k/sample_20k_kaggle'
+
+tf_records_train_val_dir = f'{tf_records_dir}/train'  # TFRecords for training
+tf_records_val_dir = f'{tf_records_dir}/validation'  # TFRecords for validation
+tf_records_eval_dir = f'{tf_records_dir}/evaluation'  # TFRecords for evaluation
+oversample_persisted_data = False  # Oversample persisted data when creating tf_records
+
+# Image and model settings
+img_height = 148  # Height of the input images
+img_width = 148  # Width of the input images
+img_channels = 3  # Number of color channels
+img_shape = (img_height, img_width, img_channels)  # Shape of the input images (H x W x C)
+image_size = img_height  # Image size, set to height for consistency
+
+# Training and evaluation settings
+use_cross_validation = False  # Whether to use cross-validation
+augment_train_data = True  # Augment training data
+use_tabular_data = False  # Whether to include tabular data in the model
+force_cache = True  # Force caching of data
+cache_in_memory = True if execution_env == 'colab' else False  # Cache in memory only for Colab
+do_fine_tuning = True  # Whether to fine-tune the model
+oversample_minority_class = True  # Oversample the minority class in imbalanced datasets
+initial_epochs = 1 if experimentation_mode == 'test' else 5  # Initial epochs for training
+fine_tune_epochs = 1 if experimentation_mode == 'test' else 80  # Epochs for fine-tuning
+freeze_base_model = False  # Whether to freeze the base model during training
+
+# Dataset buffering and shuffling
+buffer_size = 1000 if execution_env == 'colab' else 700  # Buffer size for data shuffling
+shuffle_train_val_at_each_call = True  # Shuffle training/validation data at each call
+train_file_pattern = f'{tf_records_train_val_dir}/*.tfrecord'  # Pattern to match TFRecord files
+
+# Model and training configurations
+model_name = 'res_net_50'  # Name of the model to be used (ResNet50)
+train_individuals = False  # Whether to train individual models of the pretrained ensemble
+run_evaluations = False
+
+# Batch size settings depending on environment and mode
+if experimentation_mode == 'test':
+    batch_size = 16 if execution_env == 'colab' else 16
+    val_batch_size = 16 if execution_env == 'colab' else 32
+    eval_batch_size = 4 if execution_env == 'colab' else 32
+else:
+    batch_size = 128 if execution_env == 'colab' else 128  # Batch size varies between Colab and local
+    val_batch_size = 128 if execution_env == 'colab' else 128  # Validation batch size
+    eval_batch_size = 128 if execution_env == 'colab' else 128  # Evaluation batch size
+
+# Model creation settings
+dropout_rate = 0.5
+l2_lambda = 0.02
+num_tabular_features = 14
+kernel_initializer = 'he_normal'
+activation = 'swish'
+```
+
+```{python}
+#| trusted: true
+if create_new_training_datasets:
+    !rm -rf {tf_records_dir}
+    
+!mkdir -p {tmp_dir}
+!mkdir -p {sample_dir}
+!mkdir -p {models_dir}
+!mkdir -p {tf_records_train_val_dir}
+!mkdir -p {tf_records_val_dir}
+!mkdir -p {tf_records_eval_dir}
+!mkdir -p {inference_dir}
+!mkdir -p {inference_images_dir}
+!mkdir -p {inference_metadata_dir}
+```
+
+# Data preparation
+
+## Preparation utils
+
+### Formatting utils
+
+```{python}
+#| trusted: true
+# Format all the metadatas to have the same structure
+def format_tabular_data(tabular_data_paths):
+    tabular_dfs = []
+    for path in tabular_data_paths:
+        file_name = os.path.basename(path)
+        if file_name == 'train_metadata_2024.csv' or file_name == 'test-metadata.csv':
+            metadata_2024 = pd.read_csv(path, low_memory=False)
+            metadata_2024.fillna({'age_approx': metadata_2024.age_approx.median(), 'sex': 'unknown', 'anatom_site_general': 'unknown'}, inplace=True)
+            tabular_dfs.append(metadata_2024[common_columns])
+        elif file_name == 'train_metadata_2020.csv':
+            metadata_2020 = pd.read_csv(path, low_memory=False).rename(columns=dict(zip(selected_2019_2020_columns, common_columns)))
+            metadata_2020.fillna({'age_approx': metadata_2020.age_approx.median(), 'sex': 'unknown', 'anatom_site_general': 'unknown'}, inplace=True)
+            tabular_dfs.append(metadata_2020[common_columns])
+        elif file_name == 'train_metadata_2019.csv':
+            metadata_2019 = pd.read_csv(path, low_memory=False).rename(columns=dict(zip(selected_2019_2020_columns, common_columns)))
+            metadata_2019.fillna({'age_approx': metadata_2019.age_approx.median(), 'anatom_site_general': 'unknown'}, inplace=True)
+            tabular_dfs.append(metadata_2019[common_columns])
+    return tabular_dfs
+
+
+# Format and encode tabular data
+def format_and_encode_tabular_data(tabular_data_paths, train_images, preprocessor=None):
+    tf.print('Formatting and encoding tabular data...')
+    tabular_data = pd.concat(format_tabular_data(tabular_data_paths), axis=0)
+
+    # Reindex tabular data to align with image IDs
+    train_tabular = tabular_data.set_index('isic_id').reindex(train_images).reset_index(drop=True)
+
+    if preprocessor is None:
+        # Create the preprocessor if not provided (for training)
+        print('Creating a new preprocessor to encode tabular data')
+        preprocessor = fit_tabular_encoder(train_tabular)
+        save_preprocessor(preprocessor, preprocessor_path)
+        encoded_tabular_data = encode_tabular_data(train_tabular, preprocessor)
+    else:
+        print('Using provided preprocessor to encode tabular data')
+        encoded_tabular_data = encode_tabular_data(train_tabular, preprocessor)
+
+    return encoded_tabular_data
+```
+
+### Encoding utils
+
+```{python}
+#| trusted: true
+# Fit the encoder for tabular data using dense format
+def fit_tabular_encoder(tabular_data):
+    num_cols = ['age_approx']
+    one_hot_cols = ['anatom_site_general', 'sex']
+
+    # Using dense format for OneHotEncoder
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', StandardScaler(), num_cols),
+            ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), one_hot_cols)  # Dense output
+        ]
+    )
+    preprocessor.fit(tabular_data)
+    return preprocessor
+
+# Encode tabular data with dense format, called only after fit_tabular_encoder
+# or directely for val and eval data
+def encode_tabular_data(tabular_data, preprocessor):
+    # Use the preprocessor to transform the tabular data into dense format
+    return preprocessor.transform(tabular_data)
+
+# Save and load preprocessor for reuse between training and inference
+def save_preprocessor(preprocessor, file_path):
+    with open(file_path, 'wb') as f:
+        pickle.dump(preprocessor, f)
+    print('Saved preprocessor at', file_path)
+
+def load_preprocessor(file_path):
+    with open(file_path, 'rb') as f:
+        preprocessor = pickle.load(f)
+    print('Loaded preprocessor from', file_path)
+    return preprocessor
+```
+
+### Oversampling utils
+
+```{python}
+#| trusted: true
+# Optionally apply smote on the whole dataset to balance minority and majority
+def smote_oversampling(image_paths, labels, tabular_data):
+    """Apply SMOTE to the labels and tabular data, with synchronized image resampling."""
+    tf.print("Applying SMOTE")
+
+    # Separate image paths, labels, and tabular data by class
+    class_0_indices = [i for i, label in enumerate(labels) if label == 0]
+    class_1_indices = [i for i, label in enumerate(labels) if label == 1]
+
+    class_0_image_paths = [image_paths[i] for i in class_0_indices]
+    class_1_image_paths = [image_paths[i] for i in class_1_indices]
+
+    if tabular_data is not None:
+        class_0_tabular = tabular_data.iloc[class_0_indices].reset_index(drop=True)
+        class_1_tabular = tabular_data.iloc[class_1_indices].reset_index(drop=True)
+    else:
+        class_0_tabular = class_1_tabular = None
+
+    # Apply SMOTE to the labels and tabular data
+    smote = SMOTE(sampling_strategy='minority')
+
+    if tabular_data is not None:
+        oversampled_tabular_data, oversampled_labels = smote.fit_resample(tabular_data, labels)
+    else:
+        dummy_data = np.zeros((len(labels), 1))
+        _, oversampled_labels = smote.fit_resample(dummy_data, labels)
+        oversampled_tabular_data = None
+
+    # Prepare for synchronized resampling of image paths and tabular data
+    synthetic_image_paths = []
+    synthetic_tabular_data = []
+
+    class_0_count = len(class_0_image_paths)
+    class_1_count = len(class_1_image_paths)
+
+    for idx, label in enumerate(oversampled_labels):
+        if label == 0:
+            synthetic_image_paths.append(class_0_image_paths[idx % class_0_count])
+            if tabular_data is not None:
+                synthetic_tabular_data.append(class_0_tabular.iloc[idx % class_0_count].values)
+        else:
+            synthetic_image_paths.append(class_1_image_paths[idx % class_1_count])
+            if tabular_data is not None:
+                synthetic_tabular_data.append(class_1_tabular.iloc[idx % class_1_count].values)
+
+    # Ensure coherence by converting synthetic_tabular_data to DataFrame if needed
+    if tabular_data is not None:
+        synthetic_tabular_data = pd.DataFrame(synthetic_tabular_data, columns=tabular_data.columns)
+    else:
+        synthetic_tabular_data = None
+
+    # Return synchronized image paths, labels, and tabular data
+    return synthetic_image_paths, oversampled_labels, synthetic_tabular_data
+```
+
+### Subset sampling utils
+
+```{python}
+#| trusted: true
+def sample_data(image_paths, labels, tabular_data, sampling_fraction):
+    """Sample a subset of data for test purposes."""
+    tf.print("Sampling data...")
+    sampled_indices = np.random.choice(len(image_paths), int(len(image_paths) * sampling_fraction), replace=False)
+    image_paths = [image_paths[i] for i in sampled_indices]
+    labels = [labels[i] for i in sampled_indices]
+    if tabular_data is not None:
+        tabular_data = tabular_data[sampled_indices]
+    return image_paths, labels, tabular_data
+```
+
+### Serialization utils
+
+```{python}
+#| trusted: true
+# Data writing to tf_records for later reuse if working in cloud
+def write_dataset_to_tfrecords(image_paths, labels, tabular_data, output_prefix, num_workers, data_type='train'):
+    tf.print(f"\nStart writting {data_type} tfrecords...")
+    chunk_size = len(image_paths) // num_workers
+    tf.print(f"Number of workers: {num_workers}")
+    tf.print(f"Dataset size: {len(image_paths)}, chunk size: {chunk_size}")
+
+    args = [
+        (
+            image_paths[i:i + chunk_size],
+            labels[i:i + chunk_size],
+            tabular_data[i:i + chunk_size] if tabular_data is not None else None,
+            f'{output_prefix}_{i}.tfrecord'
+        )
+        for i in range(0, len(image_paths), chunk_size)
+    ]
+
+    with ThreadPoolExecutor(max_workers=num_workers) as executor:
+        executor.map(write_tfrecord_single_batch, args)
+
+def write_tfrecord_single_batch(args):
+    """
+    Write a batch of data to a TFRecord file. This function processes images and optional tabular data,
+    serializes them into a TFRecord format, and saves the result to a file.
+
+    Args:
+        args: A tuple or list containing the following:
+            - image_paths: List of file paths to the images (batch).
+            - labels: List of corresponding labels for the images (batch).
+            - tabular_data: Optional tabular data associated with the images (batch) (could be None).
+            - output_file: Path to the output TFRecord file.
+    """
+    try:
+        image_paths, labels, tabular_data, output_file = args
+        # Print which file is being written
+        tf.print(f"Writing TFRecords to: {output_file}")
+
+        # Specify compression options for the TFRecord (GZIP in this case)
+        options = tf.io.TFRecordOptions(compression_type="GZIP")
+
+        # Open a TFRecordWriter for writing data to the specified output file
+        with tf.io.TFRecordWriter(output_file, options=options) as writer:
+            # Loop through each image and label in the batch
+            for i, (img_path, label) in enumerate(zip(image_paths, labels)):
+                img_bytes = process_image(img_path)
+
+                # Convert the raw image into a feature that can be stored in the TFRecord
+                img_feature = tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_bytes]))
+
+                # Convert the label into a feature (using int64 since it's a categorical label)
+                label_feature = tf.train.Feature(int64_list=tf.train.Int64List(value=[label]))
+
+                # Create a dictionary to store the image and label as features
+                features = {'image': img_feature, 'label': label_feature}
+
+                # If tabular data is used and provided, add it to the features dictionary
+                if tabular_data is not None:
+                    # Convert the tabular data to a float list feature for this specific sample
+                    tab_feature = tf.train.Feature(float_list=tf.train.FloatList(value=tabular_data[i]))
+                    features['tabular_data'] = tab_feature
+
+                # Create a TFRecord example from the features dictionary
+                example = tf.train.Example(features=tf.train.Features(feature=features))
+
+                # Serialize the example to a string and write it to the TFRecord file
+                writer.write(example.SerializeToString())
+    except Exception as e:
+        print(f"Error in write_tfrecord: {e}")
+        traceback.print_exc()
+
+def process_image(img_path):
+    """Helper function to read and process a single image."""
+    try:
+        img_bytes = tf.io.read_file(img_path)
+        return img_bytes.numpy()  # Return the image bytes
+    except Exception as e:
+        raise Exception(f"Error reading image {img_path}: {e}")
+```
+
+### Data download utils
+
+```{python}
+#| trusted: true
+def download_folder_from_dagshub(boto_client, bucket_name, remote_folder, local_folder):
+    """
+    Downloads all files from a specified remote folder in DagsHub to a local folder.
+
+    Args:
+        boto_client: The boto client used to interact with DagsHub (S3-compatible).
+        bucket_name: Name of the DagsHub repository (S3 bucket).
+        remote_folder: The path to the folder in DagsHub (e.g., "kaggle/isic-2024/datasets/tf_records/sample_1k/validation/").
+        local_folder: The path to the local folder where files will be downloaded.
+    """
+
+    # Ensure local folder exists
+    os.makedirs(local_folder, exist_ok=True)
+
+    # List all files in the remote folder
+    response = boto_client.list_objects_v2(Bucket=bucket_name, Prefix=remote_folder)
+
+    # Check if there are contents in the folder
+    if 'Contents' in response:
+        for obj in response['Contents']:
+            remote_file_path = obj['Key']
+            local_file_path = os.path.join(local_folder, os.path.basename(remote_file_path))
+
+            # Download each file
+            print(f"Downloading {remote_file_path} to {local_file_path}...")
+            boto_client.download_file(
+                Bucket=bucket_name,
+                Key=remote_file_path,
+                Filename=local_file_path
+            )
+        print("Download completed!")
+    else:
+        print(f"No files found in the folder: {remote_folder}")
+
+def resolve_remote_folder(local_folder):
+    return local_folder.replace(f'{ROOT_DB_DIR}/', '')
+```
+
+### Preparation pipeline
+
+```{python}
+#| trusted: true
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler, StandardScaler, OrdinalEncoder
+import pickle
+from scipy.sparse import vstack, csr_matrix
+
+
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+common_columns = ['isic_id', 'age_approx', 'sex', 'anatom_site_general']
+selected_2019_2020_columns = ['image_name', 'age_approx', 'sex', 'anatom_site_general_challenge']
+
+# Preparing data directories using dense tabular data format
+def prepare_data_directories(train_dir, tabular_data_paths, sampling_fraction=1.0, use_oversampling=False, data_type='train'):
+    """Load image paths, labels, and optionally tabular data"""
+
+    tf.print(f"\nStart {data_type} data preparation...")
+
+    train_image_paths = glob(os.path.join(train_dir, '**', '*.jpg'), recursive=True)
+    train_labels = [1 if os.path.dirname(path).endswith('positives') else 0 for path in train_image_paths]
+    train_images = [os.path.basename(path).split('.')[0] for path in train_image_paths]
+
+    data_type = data_type.capitalize()
+    tf.print(f"{data_type} labels length before preparing data", len(train_labels))
+
+    if use_tabular_data:
+        # Load the preprocessor for validation or fit it for training data
+        preprocessor = None if data_type == 'Train' else load_preprocessor(preprocessor_path)
+
+        train_tabular = format_and_encode_tabular_data(tabular_data_paths, train_images, preprocessor=preprocessor)
+    else:
+        train_tabular = None
+
+    # oversample only train data
+    if use_oversampling:
+        train_image_paths, train_labels, train_tabular = smote_oversampling(
+            train_image_paths, train_labels, train_tabular
+        )
+        tf.print(f"{data_type} data size after oversampling:", len(train_labels))
+
+    # sample all the datasets if sampling is needed
+    if sampling_fraction < 1.0:
+        train_image_paths, train_labels, train_tabular = sample_data(
+            train_image_paths, train_labels, train_tabular, sampling_fraction
+        )
+        tf.print(f"{data_type} data size after subsampling:", len(train_labels))
+
+    if train_tabular is not None:
+        tabular_data_length = train_tabular.shape[0]
+
+        print(f"Image data size: {len(train_image_paths)}")
+        print(f"Tabular data size: {tabular_data_length}")
+
+        # Ensure that the number of tabular rows matches the number of image paths
+        assert len(train_image_paths) == tabular_data_length, "Image paths and tabular data do not match"
+    return (train_image_paths, train_labels, train_tabular)
+```
+
+## Run
+
+### Download raw datasets
+
+```{python}
+#| trusted: true
+if download_raw_datasets:
+    boto_client = get_repo_bucket_client("AmadouMamane/dagshub-drive", flavor="boto")
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(eval_dir_pos), eval_dir_pos)
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(eval_dir_negs), eval_dir_negs)
+
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(val_dir_pos), val_dir_pos)
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(val_dir_negs), val_dir_negs)
+
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(train_dir_pos), train_dir_pos)
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(train_dir_negs), train_dir_negs)
+```
+
+### Download refined datasets
+
+```{python}
+#| trusted: true
+if download_refined_training_datasets:
+    boto_client = get_repo_bucket_client("AmadouMamane/dagshub-drive", flavor="boto")
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(tf_records_eval_dir), tf_records_eval_dir)
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(tf_records_val_dir), tf_records_val_dir)
+    download_folder_from_dagshub(boto_client, "dagshub-drive", resolve_remote_folder(tf_records_train_val_dir), tf_records_train_val_dir)
+```
+
+### Data preparation
+
+```{python}
+#| trusted: true
+# Prepare and process data
+num_workers = 10
+#total_samples = #49403 + 12100 + 4389 =65892
+
+if create_new_training_datasets:
+    sampling_fraction = dataset_size / 65892
+    metadata_2024_path = os.path.join(f'{training_metadata_dir}', 'train_metadata_2024.csv')
+    metadata_2020_path = os.path.join(f'{training_metadata_dir}', 'train_metadata_2020.csv')
+    metadata_2019_path = os.path.join(f'{training_metadata_dir}', 'train_metadata_2019.csv')
+    tabular_data_paths = [metadata_2024_path, metadata_2020_path, metadata_2019_path]
+
+    (train_image_paths, train_labels, train_tabular) = prepare_data_directories(train_dir, tabular_data_paths, sampling_fraction=sampling_fraction, use_oversampling=oversample_persisted_data, data_type='train')
+    (eval_image_paths, eval_labels, eval_tabular) = prepare_data_directories(eval_dir, tabular_data_paths, sampling_fraction=sampling_fraction, use_oversampling=oversample_persisted_data, data_type='eval')
+    (val_image_paths, val_labels, val_tabular) = prepare_data_directories(val_dir, tabular_data_paths, sampling_fraction=sampling_fraction, use_oversampling=oversample_persisted_data, data_type='Val')
+```
+
+### Data serialization
+
+```{python}
+#| trusted: true
+if create_new_training_datasets:
+    write_dataset_to_tfrecords(eval_image_paths, eval_labels, eval_tabular, f'{tf_records_eval_dir}/eval', num_workers=num_workers, data_type='train')
+    write_dataset_to_tfrecords(val_image_paths, val_labels, val_tabular, f'{tf_records_val_dir}/val', num_workers=num_workers, data_type='eval')
+    write_dataset_to_tfrecords(train_image_paths, train_labels, train_tabular, f'{tf_records_train_val_dir}/train', num_workers=num_workers, data_type='Val')
+    print('Number of train and val positives class samples', train_labels.count(1))
+    print('Number of val positives class samples', val_labels.count(1))
+    print('Number of eval positives class samples', eval_labels.count(1))
+```
+
+## Data augmentation
+
+#### Random hue saturation
+
+```{python}
+#| trusted: true
+sat_max_delta_hs=0.0005
+hue_max_delta_hs=0.0005
+val_max_delta_hs=0.0005
+@tf.function
+def random_hue_saturation(image, hue_max_delta=hue_max_delta_hs, sat_max_delta=sat_max_delta_hs, val_max_delta=val_max_delta_hs, probability=0.5, seed=None):
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    def apply_hue_sat_val(img):
+        img = tf.image.random_hue(img, max_delta=hue_max_delta)
+        img = tf.image.random_saturation(img, lower=1 - sat_max_delta, upper=1 + sat_max_delta)
+        img = tf.image.random_brightness(img, max_delta=val_max_delta)
+        img = tf.clip_by_value(img, 0.0, 1.0)
+        return img
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_hue_sat_val(image),
+        lambda: image
+    )
+```
+
+#### Random shift scale rotate
+
+```{python}
+#| trusted: true
+@tf.function
+def random_shift_scale_rotate(image, shift_limit=0.05, scale_limit=0.05, rotate_limit=5, threshold=0.5, image_size=image_size, seed=None):
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    def apply_shift_scale_rotate(img, seed):
+
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=4)
+        angle_seed = seeds[0]
+        scale_seed = seeds[1]
+        dx_seed = seeds[3]
+        dy_seed = seeds[4]
+
+        # Random rotation
+        angle = tf.random.stateless_uniform([], -rotate_limit, rotate_limit, seed=angle_seed) * 3.14159265 / 180
+        img = tf.image.rot90(img, k=tf.cast(angle / (3.14159265 / 2), tf.int32))
+
+        # Random scaling
+        scale = tf.random.stateless_uniform([], 1 - scale_limit, 1 + scale_limit, seed=scale_seed)
+        new_size = tf.cast(tf.cast(tf.shape(img)[0:2], tf.float32) * scale, tf.int32)
+        img = tf.image.resize(img, new_size)
+
+        # Random shifting
+        max_dx = tf.cast(shift_limit * tf.cast(tf.shape(img)[1], tf.float32), tf.int32)
+        max_dy = tf.cast(shift_limit * tf.cast(tf.shape(img)[0], tf.float32), tf.int32)
+
+
+        dx = tf.random.stateless_uniform([], -max_dx, max_dx, dtype=tf.int32, seed=dx_seed)
+        dy = tf.random.stateless_uniform([], -max_dy, max_dy, dtype=tf.int32, seed=dy_seed)
+
+        target_height = tf.minimum(image_size, new_size[0] - tf.abs(dy))
+        target_width = tf.minimum(image_size, new_size[1] - tf.abs(dx))
+
+        img = tf.image.crop_to_bounding_box(
+            img,
+            offset_height=tf.maximum(0, dy),
+            offset_width=tf.maximum(0, dx),
+            target_height=target_height,
+            target_width=target_width
+        )
+
+        # Resize back to original size
+        img = tf.image.resize_with_crop_or_pad(img, target_height=image_size, target_width=image_size)
+        return img
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), threshold),
+        lambda: apply_shift_scale_rotate(image, seed),
+        lambda: image
+    )
+```
+
+#### Random crop
+
+```{python}
+#| trusted: true
+@tf.function
+def random_crop(image, min_crop_size_ratio=0.7, max_crop_size_ratio=1.0, probability=0.5, seed=None):
+    def apply_random_crop_per_image(img):
+        img_shape = tf.shape(img)
+        height = img_shape[0]
+        width = img_shape[1]
+
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=4)
+        crop_seed = seeds[0]
+        size_seed = seeds[1]
+        y_seed = seeds[2]
+        x_seed = seeds[3]
+
+        # Randomly determine the crop size ratio within the given range using the seed
+        crop_size_ratio = tf.random.stateless_uniform([], minval=min_crop_size_ratio, maxval=max_crop_size_ratio, seed=size_seed)
+
+        # Calculate the crop size based on the randomly chosen ratio
+        crop_height = tf.cast(crop_size_ratio * tf.cast(height, tf.float32), tf.int32)
+        crop_width = tf.cast(crop_size_ratio * tf.cast(width, tf.float32), tf.int32)
+
+        y_maxval = tf.maximum(height - crop_height, 1)  # Ensure maxval is > min_val
+        x_maxval = tf.maximum(width - crop_width, 1)
+
+        # Randomly select the top-left corner of the crop using the seed
+        y1 = tf.random.stateless_uniform([], minval=0, maxval=x_maxval, dtype=tf.int32, seed=y_seed)
+        x1 = tf.random.stateless_uniform([], minval=0, maxval=y_maxval, dtype=tf.int32, seed=x_seed)
+
+        # Define the bottom-right corner of the crop
+        y2 = y1 + crop_height
+        x2 = x1 + crop_width
+
+        # Crop the image
+        cropped_img = img[y1:y2, x1:x2, :]
+
+        # Set a static shape for cropped image if necessary before resizing (adjust as needed)
+        cropped_img.set_shape([None, None, img.shape[-1]])
+
+        # Resize the cropped image back to the original size
+        cropped_img = tf.image.resize(cropped_img, [height, width], method='bilinear')
+
+        return cropped_img
+
+              # Use stateless random to generate a seed if none is provided
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    # Apply random crop with the specified probability
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_random_crop_per_image(image),
+        lambda: image
+    )
+```
+
+### Random cutout
+
+```{python}
+#| trusted: true
+@tf.function
+def random_cutout(image, max_cutout_size_ratio=0.3, probability=0.5, seed=None):
+    def apply_cutout(img):
+        img_shape = tf.shape(img)
+        height = img_shape[-3]
+        width = img_shape[-2]
+
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=3)
+        cutout_seed = seeds[0]
+        x_center_seed = seeds[1]
+        y_center_seed = seeds[2]
+
+        # Generate the cutout size using a stateless random function with a seed
+        cutout_size = tf.random.stateless_uniform([], minval=0, maxval=max_cutout_size_ratio, dtype=tf.float32, seed=cutout_seed) * tf.cast(tf.minimum(height, width), tf.float32)
+        cutout_size = tf.cast(cutout_size, tf.int32)
+
+       # Randomly select the center position of the cutout using the seed
+        x_center = tf.random.stateless_uniform([], minval=0, maxval=width, dtype=tf.int32, seed=x_center_seed)
+        y_center = tf.random.stateless_uniform([], minval=0, maxval=height, dtype=tf.int32, seed=y_center_seed)
+
+        # Define the top-left and bottom-right corners of the cutout
+        x1 = tf.clip_by_value(x_center - cutout_size // 2, 0, width)
+        y1 = tf.clip_by_value(y_center - cutout_size // 2, 0, height)
+        x2 = tf.clip_by_value(x_center + cutout_size // 2, 0, width)
+        y2 = tf.clip_by_value(y_center + cutout_size // 2, 0, height)
+
+        # Create the cutout mask
+        mask = tf.ones_like(img)
+        x_range = tf.range(x1, x2)
+        y_range = tf.range(y1, y2)
+
+        # Generate all the coordinates to update in the mask
+        y_grid, x_grid = tf.meshgrid(y_range, x_range)
+        coords = tf.stack([y_grid, x_grid], axis=-1)
+        coords = tf.reshape(coords, [-1, 2])
+
+        # Update the mask with zeros at the selected coordinates
+        mask = tf.tensor_scatter_nd_update(mask, coords, tf.zeros([tf.shape(coords)[0], img_shape[-1]], dtype=img.dtype))
+
+        # Apply the mask to the image
+        img = img * mask
+
+        return img
+
+    # Use stateless random to generate a seed if none is provided
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+    # Apply cutout with the specified probability
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_cutout(image),
+        lambda: image
+      )
+```
+
+### Distorsions
+
+#### Random elastic transform
+
+```{python}
+#| trusted: true
+@tf.function
+def random_elastic_transform(image, alpha_range=(1, 3), sigma_range=(0.8, 2), padding_size_range=(5, 15),  probability=0.5, seed=None):
+    # Use stateless random to generate a seed if none is provided
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    # Generate random values for alpha, sigma, and padding_size from their respective ranges
+    alpha = tf.random.stateless_uniform([], minval=alpha_range[0], maxval=alpha_range[1], seed=seed)
+    sigma = tf.random.stateless_uniform([], minval=sigma_range[0], maxval=sigma_range[1], seed=seed)
+    padding_size = tf.random.stateless_uniform([], minval=padding_size_range[0], maxval=padding_size_range[1], seed=seed, dtype=tf.int32)
+
+    def apply_elastic_transform(img):
+        img = tf.cast(img, tf.float32)
+        height, width, channels = tf.shape(img)[0], tf.shape(img)[1], tf.shape(img)[2]
+
+        # Pad the image to reduce boundary artifacts
+        img_padded = tf.pad(img, [[padding_size, padding_size], [padding_size, padding_size], [0, 0]], mode='REFLECT')
+
+        # Update dimensions after padding
+        padded_height, padded_width = tf.shape(img_padded)[0], tf.shape(img_padded)[1]
+
+        # Split seed for reproducibility
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+        seeds = tf.random.experimental.stateless_split(seed, num=2)
+        dx_seed = seeds[0]
+        dy_seed = seeds[1]
+
+        # Generate random displacement fields
+        dx = tf.random.stateless_normal([padded_height, padded_width], mean=0.0, stddev=sigma, seed=dx_seed)
+        dy = tf.random.stateless_normal([padded_height, padded_width], mean=0.0, stddev=sigma, seed=dy_seed)
+
+        # Smooth the displacement fields
+        kernel_size = 13
+        kernel = tf.ones((kernel_size, kernel_size, 1, 1)) / (kernel_size * kernel_size)
+        dx = tf.nn.depthwise_conv2d(tf.expand_dims(tf.expand_dims(dx, axis=-1), axis=0), kernel, strides=[1, 1, 1, 1], padding="SAME")[0, ..., 0]
+        dy = tf.nn.depthwise_conv2d(tf.expand_dims(tf.expand_dims(dy, axis=-1), axis=0), kernel, strides=[1, 1, 1, 1], padding="SAME")[0, ..., 0]
+
+        # Scale the displacement fields
+        dx *= alpha
+        dy *= alpha
+
+        # Generate meshgrid and add the displacements
+        xs, ys = tf.meshgrid(tf.range(padded_width), tf.range(padded_height))
+        xs = tf.cast(xs, tf.float32) + dx
+        ys = tf.cast(ys, tf.float32) + dy
+
+        # Clip the values to be within image dimensions
+        xs = tf.clip_by_value(xs, 0.0, tf.cast(padded_width - 1, tf.float32))
+        ys = tf.clip_by_value(ys, 0.0, tf.cast(padded_height - 1, tf.float32))
+
+        # Resample using the distorted coordinates
+        distorted_indices = tf.stack([ys, xs], axis=-1)
+        distorted_image_padded = tf.gather_nd(img_padded, tf.cast(distorted_indices, tf.int32))
+
+        # Remove padding by cropping back to the original image size
+        distorted_image = distorted_image_padded[padding_size:padding_size + height, padding_size:padding_size + width, :]
+
+        return distorted_image
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_elastic_transform(image),
+        lambda: image
+    )
+```
+
+#### Random grid distortion
+
+```{python}
+#| trusted: true
+@tf.function
+def random_grid_distortion(image, num_steps=10, distort_limit=0.05, probability=0.5, seed=None):
+             # Use stateless random to generate a seed if none is provided
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    def apply_grid_distortion(img):
+        img_shape = tf.shape(img)
+        height = tf.cast(img_shape[0], tf.float32)
+        width = tf.cast(img_shape[1], tf.float32)
+
+        # Define grid step size
+        x_step = tf.cast(width // num_steps, tf.float32)
+        y_step = tf.cast(height // num_steps, tf.float32)
+
+
+        # Verification for tf.random.stateless_uniform so that min_val and mx_val != 0
+        x_step = tf.cond(x_step > 0, lambda: x_step, lambda: tf.constant(1e-7))
+        y_step = tf.cond(y_step > 0, lambda: y_step, lambda: tf.constant(1e-7))
+
+
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=2)
+        x_offsets_seed = seeds[0]
+        y_offsets_seed = seeds[1]
+
+        # Generate random offsets
+        x_offsets = tf.random.stateless_uniform(
+            shape=[num_steps + 1, num_steps + 1],
+            minval=-distort_limit * x_step,
+            maxval=distort_limit * x_step,
+            dtype=tf.float32,
+            seed=x_offsets_seed
+        )
+        y_offsets = tf.random.stateless_uniform(
+            shape=[num_steps + 1, num_steps + 1],
+            minval=-distort_limit * y_step,
+            maxval=distort_limit * y_step,
+            dtype=tf.float32,
+            seed=y_offsets_seed
+        )
+
+        # Create grid of coordinates
+        x = tf.linspace(0.0, width, num_steps + 1)
+        y = tf.linspace(0.0, height, num_steps + 1)
+        x_t, y_t = tf.meshgrid(x, y)
+
+        # Apply offsets
+        x_t = x_t + x_offsets
+        y_t = y_t + y_offsets
+
+        # Interpolate to get dense flow field
+        x_interp = tf.image.resize(x_t[..., tf.newaxis], [height, width], method='bilinear')
+        y_interp = tf.image.resize(y_t[..., tf.newaxis], [height, width], method='bilinear')
+
+        # Stack and subtract identity grid
+        flow = tf.stack([y_interp[..., 0] - tf.range(height)[:, None],
+                         x_interp[..., 0] - tf.range(width)[None, :]], axis=-1)
+
+        # Apply flow to image
+        distorted_image = tfa.image.dense_image_warp(img[tf.newaxis, ...], flow[tf.newaxis, ...])[0]
+
+        return distorted_image
+
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_grid_distortion(image),
+        lambda: image
+    )
+```
+
+#### Random optical distortion
+
+```{python}
+#| trusted: true
+# Define distortion parameters
+distort_limit_do = 0.0005
+shift_limit_do = 0.0005
+
+# Define augmentation layers outside the tf.function
+random_rotation = preprocessing.RandomRotation(factor=distort_limit_do)
+random_translation = preprocessing.RandomTranslation(height_factor=shift_limit_do,
+                                                     width_factor=shift_limit_do)
+random_zoom = preprocessing.RandomZoom(height_factor=(-distort_limit_do, distort_limit_do),
+                                       width_factor=(-distort_limit_do, distort_limit_do))
+
+@tf.function
+def random_optical_distortion(image, probability=0.5, seed=None):
+    def apply_optical_distortion(img):
+        # Apply the augmentations
+        img = random_rotation(img, training=True)
+        img = random_translation(img, training=True)
+        img = random_zoom(img, training=True)
+        return img
+
+    # If seed is provided, split it for reproducible randomness
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_optical_distortion(image),
+        lambda: image
+    )
+```
+
+#### Random one of distorsion
+
+```{python}
+#| trusted: true
+distort_limit_do =0.0005 # defined oon function definition also
+shift_limit_do = 0.0005
+
+num_steps_dg=10
+distort_limit_dg=0.05
+
+alpha_range_de = (0.5,1.5)
+sigma_range_de =(0.5,1.0)
+padding_size_range_de = (5,10)
+
+@tf.function
+def random_one_of_distortion(image, probability=0.7, seed=None):
+    # Generate seed if not provided
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    def apply_random_transform(img, seed):
+
+        # Generate a random choice for distortion transformation
+        choice = tf.random.stateless_uniform([], minval=0, maxval=2, dtype=tf.int32, seed=seed)
+        # Apply random distortions based on the choice
+        #img = tf.cond(choice == 0, lambda: random_optical_distortion(img, probability=1.0, seed=None), lambda: img)
+        img = tf.cond(choice == 0, lambda: random_grid_distortion(img, num_steps=num_steps_dg, distort_limit=distort_limit_dg, probability=1.0, seed=None), lambda: img)
+        img = tf.cond(choice == 1, lambda: random_elastic_transform(img, alpha_range=alpha_range_de, sigma_range=sigma_range_de, padding_size_range=padding_size_range_de, probability=1.0, seed=None), lambda: img)
+        return img
+
+    # Apply transformation based on the probability
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_random_transform(image, seed),
+        lambda: image
+    )
+```
+
+### Blurings
+
+```{python}
+#| trusted: true
+var_limit_gn=(0.0, 0.0001)
+sigma_range_gb=(0.0, 0.7)
+kernel_size_range_gb=(3, 4)
+angle_range_gm=(0, 30)
+kernel_size_range_gm=(1, 4)
+```
+
+#### Random gaussian blur
+
+```{python}
+#| trusted: true
+@tf.function
+def random_gaussian_blur(image, kernel_size_range=(3, 7), sigma_range=(0.1, 2.0), probability=0.5, seed=None):
+    def gaussian_kernel(size: int, mean: float, std: float):
+        """Creates a 2D Gaussian Kernel for convolution."""
+        coords = tf.range(-(size // 2), size // 2 + 1, dtype=tf.float32)
+        g = tf.exp(-tf.pow(coords - mean, 2.0) / (2.0 * tf.pow(std, 2.0)))
+        g /= tf.reduce_sum(g)
+        gauss_kernel = tf.tensordot(g, g, axes=0)
+        return gauss_kernel / tf.reduce_sum(gauss_kernel)
+
+    def apply_blur(img):
+        # Generate a seed if none is provided for consistent randomness
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=2)
+        kernel_size_seed = seeds[0]
+        sigma_seed = seeds[1]
+
+
+        # Randomize the kernel size and sigma within the given ranges
+        random_kernel_size = tf.random.stateless_uniform([], minval=kernel_size_range[0], maxval=kernel_size_range[1], dtype=tf.int32, seed=kernel_size_seed)
+        random_kernel_size = tf.where(random_kernel_size % 2 == 0, random_kernel_size + 1, random_kernel_size)  # Ensure kernel size is odd
+        random_sigma = tf.random.stateless_uniform([], minval=sigma_range[0], maxval=sigma_range[1], seed=sigma_seed)
+
+        # Create the Gaussian kernel
+        kernel = gaussian_kernel(random_kernel_size, 0., random_sigma)
+        kernel = kernel[:, :, tf.newaxis, tf.newaxis]
+        kernel = tf.tile(kernel, [1, 1, 3, 1])  # Match kernel to the RGB channels
+
+        # Ensure image is 4D (batch size, height, width, channels)
+        img = tf.cond(tf.equal(tf.rank(img), 3),  # Check if the image is rank 3 (without batch dimension)
+                      lambda: tf.expand_dims(img, axis=0),  # Add batch dimension
+                      lambda: img)  # If already 4D, pass as-is
+
+        # Apply depthwise convolution (motion blur)
+        img = tf.nn.depthwise_conv2d(img, kernel, [1, 1, 1, 1], padding='SAME')[0]
+
+        return img
+
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_blur(image),
+        lambda: image
+    )
+```
+
+#### Random motion blur
+
+```{python}
+#| trusted: true
+@tf.function
+def random_motion_blur(image, kernel_size_range=(3, 7), angle_range=(0, 360), probability=0.5, seed=None):
+    def motion_blur_kernel(img, kernel_size, angle):
+        center = tf.cast(kernel_size // 2, tf.float32)
+
+        # Calculate the angle in radians
+        angle_rad = angle * (3.14159265359 / 180.0)
+        cos_a = tf.cos(angle_rad)
+        sin_a = tf.sin(angle_rad)
+
+        # Create meshgrid for indices
+        x = tf.cast(tf.range(kernel_size), tf.float32) - center
+        y = tf.cast(tf.range(kernel_size), tf.float32) - center
+        xx, yy = tf.meshgrid(x, y)
+
+        # Compute the distance to simulate motion blur in the specified direction
+        distance = xx * cos_a + yy * sin_a
+        kernel = tf.cast(tf.abs(distance) < 0.5, tf.float32)
+
+        # Normalize the kernel
+        kernel = kernel / tf.reduce_sum(kernel)
+
+        # Expand dimensions to 4D for depthwise convolution
+        kernel = kernel[:, :, tf.newaxis, tf.newaxis]
+        kernel = tf.tile(kernel, [1, 1, tf.shape(img)[-1], 1])  # Match the number of channels
+
+        return kernel
+
+    def apply_motion_blur(img, seed):
+         # Generate a seed if none is provided for consistent randomness
+        if seed is None:
+            seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=2)
+        kernel_size_seed = seeds[0]
+        angle_seed = seeds[1]
+        # Randomly choose a kernel size and angle within the specified range
+        kernel_size = tf.random.stateless_uniform([], minval=kernel_size_range[0], maxval=kernel_size_range[1], dtype=tf.int32, seed=kernel_size_seed)
+        angle = tf.random.stateless_uniform([], minval=angle_range[0], maxval=angle_range[1], dtype=tf.float32, seed=angle_seed)
+
+        # Create the motion blur kernel
+        kernel = motion_blur_kernel(img, kernel_size, angle)
+
+        # Ensure image is 4D (batch size, height, width, channels)
+        img = tf.cond(tf.equal(tf.rank(img), 3),  # Check if the image is rank 3 (without batch dimension)
+                      lambda: tf.expand_dims(img, axis=0),  # Add batch dimension
+                      lambda: img)  # If already 4D, pass as-is
+
+        # Apply depthwise convolution (motion blur)
+        img = tf.nn.depthwise_conv2d(img, kernel, [1, 1, 1, 1], padding='SAME')[0]
+
+        return img
+
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    # Apply motion blur with a certain probability
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+                   lambda: apply_motion_blur(image, seed=None),
+                   lambda: image)
+```
+
+#### Random median blur
+
+```{python}
+#| trusted: true
+@tf.function
+def random_median_blur(image, kernel_size=5, probability=0.5, seed=None):
+    def apply_median_blur(img, seed):
+            # If no seed is provided, generate one
+        if seed is None:
+            seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+        # Convert image to uint8 for applying the median filter
+        img = tf.cast(img * 255.0, tf.uint8)
+        img = tf.image.rgb_to_grayscale(img)
+        # Apply median blur
+        img = tf.image.median_filter2d(img, filter_shape=[kernel_size, kernel_size])
+        img = tf.image.grayscale_to_rgb(img)
+        # Convert back to float32 after blurring
+        return tf.cast(img, tf.float32) / 255.0
+
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    # Apply the blur based on the given probability
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_median_blur(image, seed=None),
+        lambda: image
+    )
+```
+
+#### Radom gaussian noise
+
+```{python}
+#| trusted: true
+@tf.function
+def random_gaussian_noise(image, var_limit=(0.01, 0.1), probability=0.5, seed=None):
+    def apply_noise(img, seed):
+          # Create a seed if none is provided to ensure consistent randomness
+        if seed is None:
+            seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        seeds = tf.random.experimental.stateless_split(seed, num=2)
+        stddev_seed = seeds[0]
+        noise_seed = seeds[1]
+        # Generate random standard deviation for the noise within the given limits
+        stddev = tf.random.stateless_uniform([], minval=var_limit[0], maxval=var_limit[1], seed=stddev_seed)
+
+        # Generate random Gaussian noise
+        noise = tf.random.stateless_normal(shape=tf.shape(img), mean=0.0, stddev=stddev, dtype=tf.float32, seed=noise_seed)
+
+        # Add noise to the image and clip values to ensure valid pixel values [0, 1]
+        return tf.clip_by_value(img + noise, 0.0, 1.0)
+
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+    # Apply noise with a certain probability
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_noise(image, seed=None),
+        lambda: image
+    )
+```
+
+#### Random one of blur
+
+```{python}
+#| trusted: true
+@tf.function
+def random_one_of_blur(image, probability=0.7, seed=None):
+    def apply_random_transform(img, seed):
+        # If no seed is provided, generate one
+        if seed is None:
+            seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+        # Generate a random choice using stateless randomness for reproducibility
+        choice = tf.random.stateless_uniform([], minval=0, maxval=3, dtype=tf.int32, seed=seed)
+
+        # Apply different blur/noise transformations based on random choice
+        img = tf.cond(choice == 0,
+                      lambda: random_motion_blur(img, kernel_size_range=kernel_size_range_gm, angle_range=angle_range_gm, probability=1.0, seed=None),
+                      lambda: img)
+
+        img = tf.cond(choice == 1,
+                      lambda: random_gaussian_blur(img, kernel_size_range=kernel_size_range_gb, sigma_range=sigma_range_gb, probability=1.0, seed=None),
+                      lambda: img)
+
+        img = tf.cond(choice == 2,
+                      lambda: random_gaussian_noise(img, var_limit=var_limit_gn, probability=1.0, seed=None),
+                      lambda: img)
+        return img
+
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+    # Use the main condition to determine whether to apply a transformation or not
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), probability),
+        lambda: apply_random_transform(image, seed=None),
+        lambda: image
+    )
+```
+
+```{python}
+#| trusted: true
+@tf.function
+def random_transpose(image, threshold=0.5, seed=None):
+    # Ensure stateless randomness for reproducibility
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), threshold),
+        lambda: tf.image.transpose(image),
+        lambda: image
+    )
+
+
+@tf.function
+def random_vertical_flip(image, threshold=0.5, seed=None):
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), threshold),
+        lambda: tf.image.flip_up_down(image),
+        lambda: image
+    )
+
+@tf.function
+def random_horizontal_flip(image, threshold=0.5, seed=None):
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), threshold),
+        lambda: tf.image.flip_left_right(image),
+        lambda: image
+    )
+
+@tf.function
+def random_brightness(image, max_delta=0.05, threshold=0.5, seed=None):
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), threshold),
+        lambda: tf.image.random_brightness(image, max_delta=max_delta),
+        lambda: image
+    )
+
+@tf.function
+def random_contrast(image, lower=0.9, upper=1.1, threshold=0.5, seed=None):
+    if seed is None:
+        seed = tf.random.uniform([2], maxval=2**31 - 1, dtype=tf.int32)
+
+    return tf.cond(
+        tf.less(tf.random.stateless_uniform([], minval=0, maxval=1, seed=seed), threshold),
+        lambda: tf.image.random_contrast(image, lower=lower, upper=upper),
+        lambda: image
+    )
+```
+
+### Apply augmentations
+
+```{python}
+#| trusted: true
+threshold_low=0.4
+threshold_medium=0.5
+threshold_high=0.7
+threshold_very_high=0.6
+```
+
+```{python}
+#| trusted: true
+threshold_low=0.4
+threshold_medium=0.65
+threshold_high=0.7
+threshold_very_high=0.65
+
+@tf.function
+def augment_minority(image, threshold=threshold_very_high, seed=None):
+    # Apply a series of augmentations with appropriate thresholds
+    image = random_transpose(image, threshold_high, seed=seed)
+    image = random_vertical_flip(image, threshold=threshold_high, seed=seed)
+    image = random_horizontal_flip(image, threshold=threshold_high, seed=seed)
+    image = random_brightness(image,  threshold=threshold, seed=seed)
+    image = random_contrast(image, threshold=threshold, seed=seed)
+
+    image = random_one_of_blur(image, probability=threshold_medium, seed=seed)
+    image = random_one_of_distortion(image, probability=threshold_medium, seed=seed)
+    image = random_hue_saturation(image, probability=threshold_medium, seed=seed)
+    image = random_crop(image, probability=threshold_medium, seed=seed)
+    image = random_cutout(image, probability=threshold_medium, seed=seed)
+    image = tf.clip_by_value(image, 0.0, 1.0)
+    return image
+
+@tf.function
+def augment_majority(image, threshold=threshold_low, seed=None):
+    # Apply augmentations with lower thresholds for majority class
+    image = random_transpose(image,  threshold=threshold, seed=seed)
+    image = random_vertical_flip(image,  threshold=threshold, seed=seed)
+    image = random_horizontal_flip(image,  threshold=threshold, seed=seed)
+    image = random_brightness(image, threshold=threshold, seed=seed)
+    image = random_contrast(image, threshold=threshold, seed=seed)
+
+    image = random_one_of_blur(image, probability=threshold, seed=seed)
+    image = random_one_of_distortion(image, probability=threshold, seed=seed)
+    image = random_hue_saturation(image, probability=threshold, seed=seed)
+    image = random_crop(image, probability=threshold, seed=seed)
+    image = random_cutout(image, probability=threshold, seed=seed)
+    image = tf.clip_by_value(image, 0.0, 1.0)
+    return image
+
+@tf.function
+def augment_image_batch_old(images, labels):
+    """
+    This function applies augmentations to batches of images based on the label using vectorized operations.
+    It applies augment_minority if label == 1, otherwise augment_majority.
+    """
+    # Define how to augment each image based on the label
+    def augment_single(image, label):
+        if label == 1:
+            return augment_minority(image)
+        else:
+            return augment_majority(image)
+
+    # Apply augmentations to the batch using tf.map_fn
+    augmented_images = tf.map_fn(lambda x: augment_single(x[0], x[1]), (images, labels), fn_output_signature=tf.float32)
+    # Assuming augment_single takes image and label as input and returns augmented image
+    return augmented_images
+
+@tf.function
+def augment_image_batch(images, labels):
+    """
+    Apply augmentations based on the label (minority or majority) using tf.where.
+    Labels of 1 apply minority augmentations, labels of 0 apply majority augmentations.
+    """
+    # Create a mask where label == 1 (for minority)
+    mask = tf.equal(labels, 1)
+
+    # Apply augmentations conditionally based on the mask
+    augmented_images = tf.where(mask[:, None, None, None],
+                                #augment_minority(images),
+                                #augment_majority(images)
+                                tf.map_fn(lambda x: augment_minority(x), images, fn_output_signature=tf.float32),
+                                tf.map_fn(lambda x: augment_majority(x), images, fn_output_signature=tf.float32)
+                               )
+    return augmented_images
+
+@tf.function
+def apply_augmentations(dataset, use_tabular_data=use_tabular_data):
+    tf.print("Started data augmentation...")
+    if use_tabular_data:
+        # Map using (image, tabular_data, label)
+        return dataset.map(lambda img, tab, lbl: (augment_image_batch(img, lbl), tab, lbl),
+                           num_parallel_calls=tf.data.AUTOTUNE)
+    else:
+        # Map using only (image, label)
+        return dataset.map(lambda img, lbl: (augment_image_batch(img, lbl), lbl),
+                           num_parallel_calls=tf.data.AUTOTUNE)
+```
+
+## Data processing
+
+### Caching utils
+
+```{python}
+#| trusted: true
+def get_file_modification_time(file_path):
+    """Get the last modification time of a file."""
+    return os.path.getmtime(file_path)
+
+def get_file_checksum(file_path):
+    """Generate a checksum for a file's contents."""
+    md5_hash = hashlib.md5()
+    with tf.io.gfile.GFile(file_path, 'rb') as f:
+        while chunk := f.read(8192):
+            md5_hash.update(chunk)
+    return md5_hash.hexdigest()
+
+def get_dataset_checksum(file_pattern, check_modification_time=False):
+    """Generate a checksum for the dataset based on file contents or modification times."""
+    files = tf.io.gfile.glob(file_pattern)
+    if not files:
+        raise FileNotFoundError(f"No files match the pattern: {file_pattern}")
+
+    combined_checksum = hashlib.md5()
+
+    for file in files:
+        if check_modification_time:
+            # Include file modification times
+            file_mod_time = str(get_file_modification_time(file))
+            combined_checksum.update(file_mod_time.encode('utf-8'))
+        else:
+            # Include file contents checksum
+            file_checksum = get_file_checksum(file)
+            combined_checksum.update(file_checksum.encode('utf-8'))
+
+    return combined_checksum.hexdigest()
+
+def generate_cache_name(file_pattern, checksum, prefix="dataset_cache", run_id=None):
+    """Generate a unique cache name based on the file pattern and dataset checksum."""
+    if file_pattern:
+        file_pattern_hash = hashlib.md5(file_pattern.encode('utf-8')).hexdigest()
+    else:
+        file_pattern_hash = "not_provided"
+
+    cache_name = f"{prefix}_{file_pattern_hash}_checksum_{checksum}"
+
+    if run_id:
+        cache_name += f"_run_{run_id}"
+
+    return cache_name
+
+def remove_lockfile_if_exists(cache_path):
+    """Remove a lockfile if it exists."""
+    lockfile_path = f"{cache_path}.lockfile"
+    if os.path.exists(lockfile_path):
+        print(f"Removing stale lockfile: {lockfile_path}")
+        os.remove(lockfile_path)
+
+def check_cache_exists(cache_dir, cache_name):
+    """Check if the cache exists by looking for any cache files with the given prefix."""
+    cache_pattern = os.path.join(cache_dir, cache_name + "*")
+    return len(glob(cache_pattern)) > 0
+
+# Force full caching of the dataset by fully consuming it
+def fully_cache_dataset(dataset, train_val_dataset_steps):
+    """Fully cache the dataset by iterating over all elements."""
+    print("Triggering full dataset caching...")
+    for _ in dataset:
+        pass  # Consume all elements to force caching
+    print("Caching complete.")
+    return dataset
+
+def persist_dataset(dataset, file_pattern, dataset_steps, cache_in_memory, cache_dir=cache_dir,
+                    prefix="dataset_cache", run_id=None, check_modification_time=False, force_cache=True):
+    """
+    Efficiently caches a TensorFlow dataset to memory or disk.
+
+    Args:
+        dataset (tf.data.Dataset): The TensorFlow dataset to cache.
+        file_pattern (str): Pattern for the dataset files.
+        dataset_steps (int): Number of steps in the dataset.
+        cache_in_memory (bool): Whether to cache the dataset in memory.
+        cache_dir (str): Directory for storing the cached dataset (if not in memory).
+        prefix (str): Prefix for cache file names.
+        run_id (str): Optional identifier to distinguish cache versions.
+        check_modification_time (bool): Consider file modification times for caching.
+        force_cache (bool): If True, forces cache re-generation.
+
+    Returns:
+        tf.data.Dataset: The cached dataset.
+    """
+    # Generate the cache name and path
+    if file_pattern:
+        dataset_checksum = get_dataset_checksum(file_pattern, check_modification_time)
+    else:
+        dataset_checksum = 'not_provided'
+
+    cache_name = generate_cache_name(file_pattern, dataset_checksum, prefix, run_id)
+    cache_path = os.path.join(cache_dir, cache_name)
+
+    # If forcing cache or no cache exists, optionally clean the previous cache
+    if force_cache:
+        clean_cache_path(cache_path)
+        gc.collect()
+
+    # Use existing cache if available and not forced to recache
+    if not force_cache and check_cache_exists(cache_dir, cache_name):
+        print(f"Using cached dataset at {cache_path}")
+        #return dataset if cache_in_memory else dataset.cache(cache_path)
+        return dataset
+
+    # Create cache directory only if caching to disk
+    if not cache_in_memory:
+        os.makedirs(cache_dir, exist_ok=True)
+        print(f"Caching dataset to disk at {cache_path}")
+    else:
+        print("Caching dataset to memory")
+
+    # Cache in memory or disk and ensure dataset is fully cached
+    dataset = dataset.cache() if cache_in_memory else dataset.cache(cache_path)
+    fully_cache_dataset(dataset, dataset_steps)
+
+    return dataset
+
+def clean_cache_path(cache_path, cache_dir=cache_dir):
+    """
+    Removes all lockfiles from the cache directory to clean up stale caches.
+    Args:
+        cache_dir (str): The directory where the cache is stored.
+    """
+    try:
+        # List all files in the cache directory
+        for root, dirs, files in os.walk(cache_dir):
+            for file in files:
+                # Check if the file is a lockfile
+                if file.startswith(cache_path):
+                    lockfile_path = os.path.join(root, file)
+                    print(f"Removing lockfile: {lockfile_path}")
+                    os.remove(lockfile_path)
+        print(f"Cache {cache_path} cleanup completed")
+    except Exception as e:
+        print(f"An error occurred while cleaning the cache path {cache_path}: {str(e)}")
+```
+
+### Data processing utils
+
+```{python}
+#| trusted: true
+def calculate_samples_per_class(labels):
+    unique, counts = np.unique(labels, return_counts=True)
+    return dict(zip(unique, counts))
+
+def calculate_class_weights(samples_per_class):
+    total_samples = sum(samples_per_class.values())
+    return {cls: total_samples / (len(samples_per_class) * count) for cls, count in samples_per_class.items()}
+
+def calculate_steps_per_epoch(total_samples, batch_size=batch_size, strategy=strategy):
+    steps = total_samples // (batch_size * strategy.num_replicas_in_sync)
+    if steps == 0:
+        raise Exception(f"Calculated steps is 0 because the provided batch_size {batch_size} is too big !\n Total samples is {total_samples}")
+    return steps
+
+def stratified_split_indices(labels, n_splits=5, shuffle=True, random_state=42):
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=shuffle, random_state=random_state)
+    return list(skf.split(np.zeros(len(labels)), labels))
+
+def count_samples_in_tfrecord(file_pattern):
+    """Count the total number of samples in the TFRecord files."""
+    print("Calculating tfrecords dataset size...")
+    dataset = tf.data.Dataset.list_files(file_pattern)
+    total_count = 0
+    for file in dataset:
+        count = sum(1 for _ in tf.data.TFRecordDataset(file, compression_type="GZIP"))
+        total_count += count
+    return total_count
+
+def split_dataset(dataset, indices):
+    tf.print('Splitting the dataset')
+    indices = tf.convert_to_tensor(indices, dtype=tf.int64)
+    indices_dataset = tf.data.Dataset.from_tensor_slices(indices)
+
+    # Use enumerate to pair each element with its index, then filter
+    filtered_dataset = dataset.enumerate().filter(
+        lambda idx, _: tf.reduce_any(tf.equal(idx, indices))
+    ).map(lambda idx, data: data)  # Discard the index after filtering
+
+    #if use_tabular_data:
+        #return filtered_dataset.map(lambda img, tab, lbl: ((img, tab), lbl))
+    #else:
+        #return filtered_dataset.map(lambda img, lbl: (img, lbl))
+    return filtered_dataset
+
+def count_samples_in_training_dataset(dataset, batch_size=None, strategy=None):
+    """
+    Count the number of samples in a dataset, taking into account batched datasets.
+
+    Args:
+    dataset: A `tf.data.Dataset` object, possibly batched.
+    batch_size: If the dataset is batched, specify the batch size to correctly count samples.
+
+    Returns:
+    Integer count of the number of samples in the dataset.
+    """
+    print("Calculating the dataset size...")
+
+    # If the dataset is batched, multiply by batch size, or use the actual number of samples in each batch
+    if batch_size:
+        # Count the number of batches
+        batch_count = dataset.reduce(0, lambda x, _: x + 1).numpy()
+        # Multiply by batch size to get the total number of samples
+        total_samples = batch_count * batch_size * strategy.num_replicas_in_sync
+        print(f"Total samples: {total_samples} and number of batches: {batch_count}")
+        return total_samples
+    else:
+        # Unbatched case: Simply count the samples
+        total_samples = dataset.reduce(0, lambda x, _: x + 1).numpy()
+        print(f"Total samples: {total_samples}")
+        return total_samples
+
+def format_input_dataset(dataset, use_tabular_data=use_tabular_data):
+    if use_tabular_data:
+          return dataset.map(lambda img, tab, lbl: ((img, tab), lbl))
+    else:
+          return dataset.map(lambda img, lbl: (img, lbl))
+
+def preprocess_image(image, label):
+    image = tf.image.resize(image, [img_height, img_width])
+    return image, label
+
+def cast_labels(dataset, use_tabular_data=use_tabular_data):
+    if use_tabular_data:
+          return dataset.map(lambda img, tab, lbl: (img, tab, tf.cast(lbl, dtype=tf.float32)))
+    else:
+          return dataset.map(lambda img, lbl: (img, tf.cast(lbl, dtype=tf.float32)))
+
+# Helper to optimize dataset caching and prefetching
+def optimize_dataset(dataset, steps, batch_size=batch_size, file_pattern=None, shuffle=True, buffer_size=buffer_size,
+                     drop_remainder=True,  prefix='train', force_cache=False, cache_in_memory=False, run_id=run_id,
+                     cache_dir=cache_dir, check_modification_time=False):
+    """Optimize dataset with caching, batching, shuffling, and prefetching."""
+    #dataset = persist_dataset(dataset, file_pattern=file_pattern, dataset_steps=steps, cache_in_memory=cache_in_memory,
+                              #force_cache=force_cache, prefix=prefix, run_id=run_id,
+                             #cache_dir=cache_dir, check_modification_time=check_modification_time)
+    if prefix == 'train':
+        print(f"Repeating, shuffling and batching {prefix} dataset")
+    else:
+        print(f"Repeating {prefix} dataset")
+    dataset = dataset.repeat()
+    dataset = dataset.shuffle(buffer_size=buffer_size) if shuffle else dataset
+    if prefix == 'train':
+        dataset = dataset.batch(batch_size * strategy.num_replicas_in_sync, drop_remainder=drop_remainder)
+    dataset = dataset.prefetch(tf.data.AUTOTUNE)
+    return dataset
+
+def clean_session():
+    # Reset the session and clear the graph before each fold
+    tf.keras.backend.clear_session()
+    tf.compat.v1.reset_default_graph()
+    gc.collect()
+
+def deletes_old_datasets():
+    try:
+        del train_dataset
+        del val_dataset
+    except:
+        pass
+    clean_session()
+```
+
+### Oversampling utils
+
+```{python}
+#| trusted: true
+def oversample_minority_class_random(dataset, batch_size=batch_size, strategy=strategy, use_tabular_data=use_tabular_data):
+    """
+    Randomly oversample the minority class by duplicating its samples within the dataset.
+    """
+    tf.print("\nRandom oversampling the minority class...")
+    # Separate the dataset into majority and minority classes
+    minority_class = 1
+    majority_class = 0
+
+    if use_tabular_data:
+        # For datasets with both image and tabular data
+        minority_dataset = dataset.filter(lambda image, tab, label: tf.equal(label, minority_class))
+        majority_dataset = dataset.filter(lambda image, tab, label: tf.equal(label, majority_class))
+    else:
+        # For datasets with only image data
+        minority_dataset = dataset.filter(lambda image, label: tf.equal(label, minority_class))
+        majority_dataset = dataset.filter(lambda image, label: tf.equal(label, majority_class))
+
+    # Count the number of samples in each class
+    minority_count = count_samples_in_training_dataset(minority_dataset, batch_size=None)
+    majority_count = count_samples_in_training_dataset(majority_dataset, batch_size=None)
+
+    sample_per_class_input_ds = dict(majority_class=majority_count, minority_class=minority_count)
+
+    # Calculate how many samples need to be added to the minority class
+    additional_samples_needed = majority_count - minority_count
+
+    # Randomly sample from the minority dataset to add more samples
+    minority_dataset_repeated = minority_dataset.repeat()
+    minority_dataset_sampled = minority_dataset_repeated.shuffle(buffer_size=buffer_size).take(additional_samples_needed)
+
+    # Combine the sampled dataset with the original minority dataset
+    oversampled_minority_dataset = minority_dataset.concatenate(minority_dataset_sampled)
+
+    # Combine the oversampled minority class with the majority class
+    oversampled_dataset = majority_dataset.concatenate(oversampled_minority_dataset)
+
+    # Shuffle the combined dataset
+    oversampled_dataset = oversampled_dataset.shuffle(buffer_size=buffer_size)
+
+    # Recalculate steps per epoch after oversampling
+    oversampled_sample_count = majority_count + additional_samples_needed
+    training_steps = calculate_steps_per_epoch(oversampled_sample_count, batch_size)
+
+    sample_per_class_oversampled_ds = dict(majority_class=majority_count, minority_class=majority_count)
+
+    return oversampled_dataset, training_steps, oversampled_sample_count, sample_per_class_input_ds, sample_per_class_oversampled_ds
+
+
+def oversample_minority_with_tabular_smote_images_random(dataset, batch_size=batch_size, strategy=strategy, use_tabular_data=use_tabular_data):
+    """
+    Randomly oversample the minority class by duplicating its samples within the dataset for images.
+    Apply SMOTE for tabular data to oversample synthetic features. The function handles both cases: with and without tabular data.
+    """
+    # Separate the dataset into majority and minority classes
+    minority_class = 1
+    majority_class = 0
+
+    if use_tabular_data:
+        # If using tabular data, the dataset contains (image, tabular_data, label)
+        tabular_data = []
+        images = []
+        labels = []
+
+        for image, tabular, label in dataset:
+            images.append(image.numpy())
+            tabular_data.append(tabular.numpy())
+            labels.append(label.numpy())
+
+        # Convert to numpy arrays
+        tabular_data = np.array(tabular_data)
+        labels = np.array(labels)
+        images = np.array(images)
+
+        # Separate majority and minority classes
+        minority_images = images[labels == minority_class]
+        minority_tabular_data = tabular_data[labels == minority_class]
+        majority_images = images[labels == majority_class]
+        majority_tabular_data = tabular_data[labels == majority_class]
+
+        # Apply SMOTE on the tabular data
+        smote = SMOTE(sampling_strategy='auto')
+        tabular_data_resampled, labels_resampled = smote.fit_resample(tabular_data, labels)
+
+        # Find how many new samples were generated by SMOTE for the minority class
+        new_minority_count = np.sum(labels_resampled == minority_class) - len(minority_tabular_data)
+
+        # For each new synthetic tabular data point, randomly pick a corresponding minority image
+        random_indices = np.random.randint(0, len(minority_images), new_minority_count)
+        minority_images_resampled = minority_images[random_indices]
+        #minority_images_resampled = np.tile(minority_images, (new_minority_count // len(minority_images) + 1, 1, 1, 1))[:new_minority_count]
+
+
+        # Combine the original majority data with the resampled minority data
+        combined_images = np.concatenate([majority_images, minority_images, minority_images_resampled])
+        combined_tabular_data = np.concatenate([majority_tabular_data, minority_tabular_data, tabular_data_resampled[len(minority_tabular_data):]])
+        combined_labels = np.concatenate([np.full(len(majority_images), majority_class), np.full(len(minority_images), minority_class), np.full(len(minority_images_resampled), minority_class)])
+
+        assert len(combined_images) == len(combined_tabular_data) == len(combined_labels), "Mismatch in dataset length!"
+
+        # Convert the combined data back to TensorFlow tensors
+        combined_images = tf.convert_to_tensor(combined_images, dtype=tf.float32)
+        combined_tabular_data = tf.convert_to_tensor(combined_tabular_data, dtype=tf.float32)
+        combined_labels = tf.convert_to_tensor(combined_labels, dtype=tf.int64)
+
+        # Combine the resampled data into a dataset
+        oversampled_dataset = tf.data.Dataset.from_tensor_slices((combined_images, combined_tabular_data, combined_labels))
+
+    else:
+        # If not using tabular data, the dataset contains (image, label)
+        minority_dataset = dataset.filter(lambda image, label: tf.equal(label, minority_class))
+        majority_dataset = dataset.filter(lambda image, label: tf.equal(label, majority_class))
+
+        # Apply random oversampling for images only
+        minority_dataset_repeated = minority_dataset.repeat()
+        minority_dataset_sampled = minority_dataset_repeated.shuffle(buffer_size=buffer_size).take(majority_dataset.reduce(0, lambda x, _: x + 1).numpy())
+
+        oversampled_minority_dataset = minority_dataset.concatenate(minority_dataset_sampled)
+
+        # Combine the oversampled minority class with the majority class
+        oversampled_dataset = majority_dataset.concatenate(oversampled_minority_dataset)
+
+    # Shuffle the combined dataset (optional)
+    oversampled_dataset = oversampled_dataset.shuffle(buffer_size=buffer_size)
+
+    # Recalculate steps per epoch after oversampling
+    oversampled_sample_count = len(combined_labels) if use_tabular_data else count_samples_in_training_dataset(oversampled_dataset)
+    training_steps = calculate_steps_per_epoch(oversampled_sample_count, batch_size)
+
+    return oversampled_dataset, training_steps, oversampled_sample_count
+```
+
+### Data loading utils
+
+```{python}
+#| trusted: true
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_auc_score
+import numpy as np
+import math
+
+def parse_tfrecord_fn(example_proto):
+    """Parse a TFRecord into image and optional tabular data."""
+    feature_description = {'image': tf.io.FixedLenFeature([], tf.string), 'label': tf.io.FixedLenFeature([], tf.int64)}
+    if use_tabular_data:
+        feature_description['tabular_data'] = tf.io.FixedLenFeature([14], tf.float32)
+
+    example = tf.io.parse_single_example(example_proto, feature_description)
+    image = tf.image.decode_jpeg(example['image'], channels=3)
+    image = tf.image.resize(image, [img_height, img_width])
+    image = image / 255.0
+
+    #label = tf.cast(example['label'], tf.float32)
+    if use_tabular_data:
+        print('Parsing data including tabular metadata')
+        print(example['label'])
+        return image, example['tabular_data'], example['label']
+    else:
+        return image, example['label']
+
+# Wrap parsing function with error handling
+def safe_parse_fn(example):
+    try:
+        return parse_tfrecord_fn(example)
+    except Exception as e:
+        tf.print(f"Error parsing example: {e}")
+        return None
+
+def load_tfrecord_dataset(file_pattern,
+                          use_tabular_data=False,
+                          cache_in_memory=False,
+                          is_training=False,
+                          batch_size=batch_size,
+                          num_parallel_reads=tf.data.AUTOTUNE,
+                          data_type='Train'):
+    """Load TFRecord dataset with optional data augmentation and tabular data handling."""
+    tf.print(f"\nLoading {data_type} TFRecords...")
+
+    # Create a dataset of file paths
+    files = tf.data.Dataset.list_files(file_pattern, shuffle=is_training)
+    tf.print(f"Number of files: {files.cardinality().numpy()}")
+
+    # Interleave the files to read them in parallel
+    dataset = files.interleave(
+        lambda x: tf.data.TFRecordDataset(x, compression_type="GZIP"),
+        cycle_length=num_parallel_reads,
+        num_parallel_calls=tf.data.AUTOTUNE
+    )
+
+    # Parse the TFRecord files
+    dataset = dataset.map(parse_tfrecord_fn, num_parallel_calls=tf.data.AUTOTUNE)
+
+    dataset = dataset.cache()
+
+    #dataset = persist_dataset(dataset, file_pattern, cache_in_memory, '/tmp/tf_cache_2', prefix=data_type, run_id=run_id, check_modification_time=False)
+
+    if is_training:
+        dataset = dataset.prefetch(tf.data.AUTOTUNE)
+    else:
+        dataset = dataset.batch(batch_size * strategy.num_replicas_in_sync, drop_remainder=True)
+        dataset = dataset.prefetch(tf.data.AUTOTUNE)
+        print("Batched the dataset using batch size:", batch_size * strategy.num_replicas_in_sync)
+
+    rows_count = count_samples_in_tfrecord(file_pattern)
+    print(f"Loaded dataset at {file_pattern}, number of rows: {rows_count}")
+    if rows_count == 0:
+        raise Exception("The provided dataset is empty")
+
+    steps_per_epoch = calculate_steps_per_epoch(rows_count, batch_size)
+
+    print(f"Dataset number of batches: {steps_per_epoch}")
+
+    return dataset, steps_per_epoch
+```
+
+# Modelling
+
+## Models utils
+
+### Base model
+
+```{python}
+#| trusted: true
+# Helper function to apply dense block
+def apply_dense_block(x, units, activation='swish', l2_lambda=None, dropout_rate=None, kernel_initializer='glorot_uniform'):
+    #print(f"Applying dense bloc with: kernel_initializer {kernel_initializer}, dropout_rate {dropout_rate}, activation {activation}, l2_lambda {l2_lambda}")
+    print("Applying dense bloc with kernel_initializer: {}, dropout_rate: {}, activation: {}, l2_lambda: {}".
+          format(kernel_initializer, dropout_rate, activation, l2_lambda))
+    kernel_reg = regularizers.l2(l2_lambda) if l2_lambda else None
+    x = layers.Dense(units, kernel_regularizer=kernel_reg, kernel_initializer=kernel_initializer, activation=activation)(x)
+    #x = layers.BatchNormalization()(x)
+    if dropout_rate:
+        x = layers.Dropout(dropout_rate)(x)
+    return x
+
+# Base model class for all models
+class BaseModel:
+    def __init__(self, model_name, dropout_rate=None, l2_lambda=None, freeze_base_model=False, img_shape=img_shape,
+                 num_tabular_features=14, use_tabular_data=False, kernel_initializer='glorot_uniform', run_id=run_id, **kwargs):
+        """
+            Base model constructor. Supports flexible parameter passing through **kwargs.
+
+            Parameters:
+            - model_name: Name of the model to build (e.g., 'resnet50').
+            - dropout_rate: Dropout rate for dense layers.
+            - l2_lambda: L2 regularization.
+            - freeze_base_model: Whether to freeze the base model layers.
+            - img_shape: Shape of the input images.
+            - num_tabular_features: Number of tabular features (for hybrid models).
+            - use_tabular_data: Whether to include tabular data as input.
+            - kernel_initializer: Initializer for the kernel weights matrix.
+            - run_id: Unique identifier for the model run (useful for saving/loading).
+            - **kwargs: Additional parameters to pass through the model pipeline.
+        """
+        def get_param(value, default, kwargs, key):
+            if value is not None:
+                return value
+            return kwargs.get(key, default)
+        self.model_name = get_param(model_name, None, kwargs, 'model_name')
+        self.dropout_rate = get_param(dropout_rate, None, kwargs, 'dropout_rate')
+        self.l2_lambda = get_param(l2_lambda, None, kwargs, 'l2_lambda')
+        self.freeze_base_model = get_param(freeze_base_model, False, kwargs, 'freeze_base_model')
+        self.img_shape = get_param(img_shape, (224, 224, 3), kwargs, 'img_shape')
+        self.num_tabular_features = get_param(num_tabular_features, None, kwargs, 'num_tabular_features')
+        self.use_tabular_data = get_param(use_tabular_data, False, kwargs, 'use_tabular_data')
+        self.kernel_initializer = get_param(kernel_initializer, 'glorot_uniform', kwargs, 'kernel_initializer')
+        self.activation = get_param(activation, 'swish', kwargs, 'activation')
+        self.run_id = get_param(run_id, None, kwargs, 'run_id')
+        self.kwargs = kwargs
+
+    def _set_model_inputs_(self):
+        """Set input layers for the model, with optional tabular data."""
+        image_input = tf.keras.Input(shape=self.img_shape, name='image_input')
+        if self.use_tabular_data:
+            tabular_input = tf.keras.Input(shape=(self.num_tabular_features,), name='tabular_input')
+            return [image_input, tabular_input]
+        return image_input
+
+    def _set_model_inputs(self, image_input):
+        """Set input layers for the model, with optional tabular data."""
+        if self.use_tabular_data:
+            tabular_input = tf.keras.Input(shape=(self.num_tabular_features,), name='tabular_input')
+            return [image_input, tabular_input]
+        return image_input
+
+    def _get_base_model(self, model_name=None):
+        """Dynamically load the base model using the model name."""
+        if model_name is None:
+            model_name = self.model_name
+        try:
+            parts = model_name.split('_')
+            # Trick to get the class name from the provided string 
+            # Example res_net_50 -> ResNet50, vgg_19 -> VGG19
+            if len(parts) > 2:
+                model_class_name = ''.join([part.capitalize() for part in parts])
+            else:
+                model_class_name = ''.join([part.upper() for part in parts])
+                
+            base_model_cls = getattr(tf.keras.applications, model_class_name, None)
+            
+            if base_model_cls is None:
+                raise ValueError(f"Unknown model name: {model_name}")
+            return base_model_cls(weights=None, include_top=False, input_shape=self.img_shape)
+        except Exception as e:
+            raise ValueError(f"Error loading model {model_name}: {str(e)}")
+
+    def _process_base_model(self, base_model):
+        """Freeze/unfreeze base model and apply global pooling."""
+        base_model.trainable = not self.freeze_base_model
+        return layers.GlobalAveragePooling2D()(base_model.output)
+
+    def _combine_image_and_tabular_features(self, image_features, inputs):
+        """Combine image features with tabular features, if applicable."""
+        if self.use_tabular_data:
+            tabular_input = inputs[1]
+            tabular_features = apply_dense_block(tabular_input, 1024, l2_lambda=self.l2_lambda, dropout_rate=self.dropout_rate,
+                                                 kernel_initializer=self.kernel_initializer, activation=self.activation)
+            tabular_features = apply_dense_block(tabular_features, 812, l2_lambda=self.l2_lambda, dropout_rate=self.dropout_rate,
+                                                 kernel_initializer=self.kernel_initializer, activation=self.activation)
+            return layers.Concatenate()([image_features, tabular_features])
+        return image_features
+
+    def set_model_architecture(self, model_name=None):
+        """Set the full model architecture."""
+        print(f'Setting model {model_name} architecture')
+        base_model = self._get_base_model(model_name)
+        image_input = base_model.input
+        inputs = self._set_model_inputs(image_input)
+        #inputs = self._set_model_inputs()
+        image_features = self._process_base_model(base_model)
+        combined_features = self._combine_image_and_tabular_features(image_features, inputs)
+
+        # Add Dense and BatchNorm layers
+        combined_features = apply_dense_block(combined_features, 512, l2_lambda=self.l2_lambda, dropout_rate=self.dropout_rate,
+                                              kernel_initializer=self.kernel_initializer, activation=self.activation)
+        #combined_features = apply_dense_block(combined_features, 256, l2_lambda=self.l2_lambda, dropout_rate=self.dropout_rate,
+                                              #kernel_initializer=self.kernel_initializer, activation=self.activation)
+
+        # Dropout Models (Multiple Dropouts for Ensembling)
+        combineds = [layers.Dropout(0.2)(combined_features) for _ in range(2)]
+
+        # Apply a Dense layer after each dropout
+        outputs = [layers.Dense(1, activation='sigmoid')(combined) for combined in combineds]
+
+        # Average the outputs for ensembling
+        final_output = layers.Average()(outputs)
+
+        model = tf.keras.Model(inputs=inputs, outputs=final_output)
+
+        model.base_model = base_model  # Keep a reference to the base model for flexibility
+        return model
+
+    def create_model(self, model_name=None):
+        """
+        Create a base model using the architecture specified by model_name.
+        If model_name is None, use the instance's model_name.
+        """
+        if model_name is None:
+            model_name = self.model_name
+        print(f"Creating model {model_name}")
+        model = self.set_model_architecture(model_name)
+        model.model_name = model_name
+        return model
+```
+
+### Ensemble model
+
+```{python}
+#| trusted: true
+# EnsembleModel class inherits from BaseModel
+class EnsembleModel(BaseModel):
+    def __init__(self, model_name, model_names, mode='weighted', run_id=run_id, num_ensemble=2, weights=None, **kwargs):
+        super().__init__(model_name=model_name, **kwargs)
+        self.model_name = model_name
+        self.model_names = model_names
+        self.mode = mode
+        self.num_ensemble = num_ensemble
+        self.weights = weights if weights else [1.0] * len(model_names)
+        self.run_id = run_id
+
+    def _load_pretrained_model(self, model_name):
+        """Load a pretrained model and return it."""
+        model = self.set_model_architecture(model_name)
+        
+        def resolve_prm_name(model_name):
+            return ''.join(model_name.split('_'))
+        
+        try:
+            model.load_weights(os.path.join(pretrained_models_dir, f'{resolve_prm_name(model_name)}_weights.h5'))
+        except Exception as e:
+            raise ValueError(f"Error loading weights for model {model_name}: {str(e)}")
+            
+        return model
+
+    def create_ensemble(self, pretrained):
+        """
+        Create an ensemble model with the selected strategy (average, max, or weighted).
+        Can load pretrained models or create new ones based on the `pretrained` flag.
+        """
+        # Collect outputs from each model in the ensemble
+        inputs = self._set_model_inputs_()  # Get the input layers
+        model_outputs = []
+
+        for model_name in self.model_names:
+
+            if pretrained:
+                ## Creates a pretrained model by loading the loads of the pretrained ensemble models
+                model = self._load_pretrained_model(model_name)
+            else:
+                ## Only set the architecture of the ensemble model from the individuals
+                model = self.create_model(model_name=model_name)  # Create a new model from the architecture
+
+            model_outputs.append(model(inputs))
+
+        # Apply the selected ensembling strategy to combine the model outputs
+        ensemble_output = self._apply_ensemble_strategy(model_outputs)
+
+        # Create and return the ensemble model
+        ensemble_model = tf.keras.Model(inputs=inputs, outputs=ensemble_output)
+
+        ensemble_model.model_name = self.model_name # For later reuse in the training pipeline
+
+        return ensemble_model
+
+    def _apply_ensemble_strategy(self, outputs):
+        """Apply different ensemble strategies."""
+        if self.mode == 'average':
+            return layers.Average()(outputs)
+        elif self.mode == 'max':
+            return layers.Maximum()(outputs)
+        elif self.mode == 'weighted' and self.weights:
+            self.weights = [w / sum(self.weights) for w in self.weights]
+            return layers.Add()([output * weight for output, weight in zip(outputs, self.weights)])
+        elif self.mode == 'weighted_layer' and self.weights:
+            self.weights = [w / sum(self.weights) for w in self.weights]
+            weighted_outputs = [layers.Lambda(lambda x, w=weight: x * w)(output) for output, weight in zip(outputs, self.weights)]
+            return layers.Add()(weighted_outputs)
+        else:
+            raise ValueError(f"Unknown ensemble mode: {self.mode}")
+```
+
+### Single model
+
+```{python}
+#| trusted: true
+class SingleModel(BaseModel):
+    def __init__(self, model_name, **kwargs):
+        super().__init__(model_name=model_name, **kwargs)
+```
+
+### Factory utils
+
+```{python}
+#| trusted: true
+class ModelFactory:
+    @staticmethod
+    def create_model(model_type, model_names, pretrained=False, **kwargs):
+        """Factory method to create models based on type."""
+
+        strategy = kwargs.get('strategy')
+
+        with strategy.scope():
+            if model_type == 'ensemble':
+                weights = kwargs.get('weights')
+                ensemble_model_name = '_'.join(['_'.join((model_name, str(weight))) for (model_name, weight) in zip(model_names, weights)])
+                ensemble_model_name =  f"pretrained_ensemble_{ensemble_model_name}" if pretrained else f"compact_ensemble_{ensemble_model_name}"
+                return EnsembleModel(model_name=ensemble_model_name, model_names=model_names, **kwargs).create_ensemble(pretrained=pretrained)
+
+            elif model_type == 'single':
+                return SingleModel(model_name=model_names[0], **kwargs).create_model()
+            else:
+                raise ValueError(f"Unknown model type: {model_type}")
+```
+
+### Loss functions
+
+```{python}
+#| trusted: true
+@register_keras_serializable()
+@tf.function
+def focal_loss(y_true, y_pred, gamma=2.0, alpha=0.25):
+    """
+    Focal Loss for binary classification.
+
+    Args:
+    - y_true: Ground truth labels, shape = (batch_size, 1)
+    - y_pred: Predicted labels, shape = (batch_size, 1)
+    - gamma: Focusing parameter (default is 2.0)
+    - alpha: Balancing factor (default is 0.25)
+
+    Returns:
+    - Loss value
+    """
+    # Clip predictions to prevent log(0) and ensure stability
+    y_pred = tf.clip_by_value(y_pred, K.epsilon(), 1. - K.epsilon())
+
+    # Calculate cross-entropy loss
+    bce_loss = - (y_true * K.log(y_pred) + (1 - y_true) * K.log(1 - y_pred))
+
+    # Calculate p_t and modulating factor
+    p_t = y_true * y_pred + (1 - y_true) * (1 - y_pred)
+    modulating_factor = (1 - p_t) ** gamma
+
+    # Apply alpha balancing factor
+    alpha_factor = y_true * alpha + (1 - y_true) * (1 - alpha)
+
+    # Compute focal loss
+    loss = alpha_factor * modulating_factor * bce_loss
+
+    return tf.reduce_mean(loss)
+
+@register_keras_serializable()
+@tf.function
+def class_balanced_loss(y_true, y_pred, beta=0.99, samples_per_cls=None):
+    """
+    Class-Balanced Loss function for binary classification.
+
+    Parameters:
+    - y_true: Ground truth labels, shape = (batch_size,)
+    - y_pred: Predicted labels, shape = (batch_size,)
+    - samples_per_cls: List or array containing the number of samples for each class (class 0 and class 1).
+    - beta: Hyperparameter to adjust class balancing (default is 0.99)
+
+    Returns:
+    - Loss value
+    """
+    # Calculate the effective number of samples
+    effective_num = 1.0 - tf.pow(beta, samples_per_cls)
+    weights = (1.0 - beta) / tf.maximum(effective_num, tf.keras.backend.epsilon())
+    weights = weights / tf.reduce_sum(weights)  # Normalize weights
+
+    # Extract the class weights for class 0 and class 1
+    weight_for_0 = weights[0]
+    weight_for_1 = weights[1]
+
+    # Apply weights to the true labels (binary classification)
+    weights_per_sample = y_true * weight_for_1 + (1.0 - y_true) * weight_for_0
+
+    # Compute the binary crossentropy loss
+    loss = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+
+    # Apply class-balanced weights to the loss
+    loss = weights_per_sample * loss
+    return tf.reduce_mean(loss)
+
+@register_keras_serializable()
+def combined_loss(samples_per_cls, beta=0.99, gamma=2.0, alpha=0.8, focal_loss_percent=0.5):
+    """
+    Combined Class-Balanced Loss and Focal Loss.
+
+    Parameters:
+    - y_true: Ground truth labels, shape = (batch_size, num_classes)
+    - y_pred: Predicted labels, shape = (batch_size, num_classes)
+
+    Returns:
+    - Combined loss value
+    """
+    @tf.function
+    def loss(y_true, y_pred):
+      y_true = tf.cast(y_true, tf.float32)
+      y_true = tf.reshape(y_true, [-1, 1])
+      y_pred = tf.reshape(y_pred, [-1, 1])
+
+      cb_loss = class_balanced_loss(y_true, y_pred, beta=beta, samples_per_cls=samples_per_cls)
+      fl_loss = focal_loss(y_true, y_pred, gamma=gamma, alpha=alpha)
+      return ((1 - focal_loss_percent) * cb_loss) + (focal_loss_percent * fl_loss)
+    return loss
+
+##Binary class balance loss
+@register_keras_serializable()
+def get_class_balanced_weights(beta, samples_per_cls):
+    effective_num = 1.0 - np.power(beta, samples_per_cls)
+    effective_num = np.where(effective_num == 0, 1e-8, effective_num)  # Avoid division by zero
+    weights = (1.0 - beta) / effective_num
+    weights = weights / np.sum(weights) * len(samples_per_cls)
+    return weights
+
+@tf.function
+@register_keras_serializable()
+def class_balanced_binary_cross_entropy(beta, samples_per_cls):
+    weights = get_class_balanced_weights(beta, samples_per_cls)
+    weight_for_0 = weights[0]
+    weight_for_1 = weights[1]
+
+    def loss(y_true, y_pred):
+        y_true = tf.cast(y_true, tf.float32)
+        bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+        weights_per_sample = y_true * weight_for_1 + (1 - y_true) * weight_for_0
+        weighted_bce = weights_per_sample * bce
+        return tf.reduce_mean(weighted_bce)
+
+    return loss
+
+@register_keras_serializable()
+@tf.function
+def focal_loss_keras_bce(y_true, y_pred, gamma, alpha):
+    """
+    Focal Loss function.
+    Parameters:
+    - y_true: Ground truth labels, shape = (batch_size, num_classes)
+    - y_pred: Predicted labels, shape = (batch_size, num_classes)
+    - gamma: Focusing parameter (default is 2.0)
+    - alpha: Balancing factor (default is 0.25)
+
+    Returns:
+    - Loss value
+    """
+    #y_true = tf.cast(y_true, tf.float32)
+    # Compute cross entropy
+    bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+
+    # Compute focal loss
+    p_t = y_true * y_pred + (1 - y_true) * (1 - y_pred)
+    alpha_factor = y_true * alpha + (1 - y_true) * (1 - alpha)
+    modulating_factor = tf.pow(1.0 - p_t, gamma)
+
+    loss = alpha_factor * modulating_factor * bce
+    return tf.reduce_mean(loss)
+
+@tf.function
+def weighted_binary_crossentropy(y_true, y_pred):
+    class_weight_0 = 0.1  # Weight for class 0 (negative)
+    class_weight_1 = 0.9  # Weight for class 1 (positive)
+
+    weights = tf.where(tf.equal(y_true, 1), class_weight_1, class_weight_0)
+    bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+    weighted_bce = bce * weights
+    return tf.reduce_mean(weighted_bce)
+
+
+@register_keras_serializable()
+def class_balanced_loss_vect(y_true, y_pred, samples_per_cls, beta):
+    """
+    Class-Balanced Loss function with samples_per_cls parameter.
+
+    Parameters:
+    - y_true: Ground truth labels, shape = (batch_size, num_classes)
+    - y_pred: Predicted labels, shape = (batch_size, num_classes)
+    - samples_per_cls: List or array containing the number of samples for each class.
+    - beta: Hyperparameter to adjust class balancing (usually close to 1.0, default is 0.9999)
+
+    Returns:
+    - Loss value
+    """
+    #y_true = tf.cast(y_true, tf.float32)
+    # Calculate the effective number of samples
+    effective_num = 1.0 - tf.pow(beta, samples_per_cls)
+    weights = (1.0 - beta) / tf.maximum(effective_num, tf.keras.backend.epsilon())
+    weights = weights / tf.reduce_sum(weights)  # Normalize weights
+
+    # Apply weights to the true labels
+    weights = tf.reduce_sum(weights * y_true, axis=-1)
+
+    # Compute the binary crossentropy loss
+    loss = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+
+    # Apply class-balanced weights to the loss
+    loss = weights * loss
+    return tf.reduce_mean(loss)
+
+@tf.function
+def weighted_binary_crossentropy(y_true, y_pred):
+    # Define class weights
+    class_weight_0 = 0.1  # Weight for class 0 (negative)
+    class_weight_1 = 0.9  # Weight for class 1 (positive)
+
+    # Create a tensor of weights based on the true labels
+    weights = tf.where(tf.equal(y_true, 1), class_weight_1, class_weight_0)
+
+    # Calculate binary crossentropy
+    bce = tf.keras.losses.binary_crossentropy(y_true, y_pred)
+
+    # Apply the weights to the loss
+    weighted_bce = bce * weights
+
+    # Return the mean loss
+    return tf.reduce_mean(weighted_bce)
+
+def focal_loss_fix(gamma=2., alpha=0.25):
+    def focal_loss_fixed(y_true, y_pred):
+        epsilon = K.epsilon()
+        y_pred = K.clip(y_pred, epsilon, 1. - epsilon)
+        y_true = K.cast(y_true, K.floatx())
+
+        alpha_t = y_true * alpha + (K.ones_like(y_true) - y_true) * (1 - alpha)
+        p_t = y_true * y_pred + (K.ones_like(y_true) - y_true) * (1 - y_pred)
+        fl = - alpha_t * K.pow((K.ones_like(y_true) - p_t), gamma) * K.log(p_t)
+        return K.mean(fl)
+    return focal_loss_fixed
+
+def set_binary_crossentropy_weighted_loss(positive_weights=np.array([5.291666666666667]), negative_weights=np.array([0.5521739130434783]), epsilon=1e-7):
+    """
+    Note: Imported from the AI for Medicine Specialization course on Coursera: Assignment 1 Week 1.
+    Returns weighted binary cross entropy loss function given negative weights and positive weights.
+
+    Args:
+      positive_weights (np.array): array of positive weights for each class, size (num_classes)
+      negative_weights (np.array): array of negative weights for each class, size (num_classes)
+
+    Returns:
+      weighted_loss (function): weighted loss function
+    """
+    def binary_crossentropy_weighted_loss(y_true, y_pred):
+        """
+        Returns weighted binary cross entropy loss value.
+
+        Args:
+            y_true (Tensor): Tensor of true labels, size is (num_examples, num_classes)
+            y_pred (Tensor): Tensor of predicted labels, size is (num_examples, num_classes)
+
+        Returns:
+            loss (Tensor): overall scalar loss summed across all classes
+        """
+        y_true = tf.cast(y_true, tf.float32)
+        y_pred = tf.cast(y_pred, tf.float32)
+
+        # initialize loss to zero
+        loss = 0.0
+        #y_true = tf.cast(y_true, tf.float32)
+        for i in range(len(positive_weights)):
+            # for each class, add average weighted loss for that class
+            loss += -1 * K.mean((positive_weights[i] * y_true[:, i] * K.log(y_pred[:, i] + epsilon) +
+                                negative_weights[i] * (1 - y_true[:, i]) * K.log(1 - y_pred[:, i] + epsilon)))
+        return loss
+
+    return binary_crossentropy_weighted_loss
+```
+
+### Metrics
+
+```{python}
+#| trusted: true
+def score(y_true, y_pred, min_tpr: float = 0.80) -> float:
+    v_gt = abs(np.asarray(y_true) - 1)
+    v_pred = np.array([1.0 - x for x in y_pred])
+    max_fpr = abs(1 - min_tpr)
+    partial_auc_scaled = roc_auc_score(v_gt, v_pred, max_fpr=max_fpr)
+    partial_auc = 0.5 * max_fpr**2 + (max_fpr - 0.5 * max_fpr**2) / (1.0 - 0.5) * (partial_auc_scaled - 0.5)
+    return partial_auc
+
+@register_keras_serializable()
+class F1Score(tf.keras.metrics.Metric):
+    def __init__(self, name='f1_score', **kwargs):
+        super(F1Score, self).__init__(name=name, **kwargs)
+        self.precision = tf.keras.metrics.Precision()
+        self.recall = tf.keras.metrics.Recall()
+
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        self.precision.update_state(y_true, y_pred, sample_weight)
+        self.recall.update_state(y_true, y_pred, sample_weight)
+
+    def result(self):
+        precision = self.precision.result()
+        recall = self.recall.result()
+        return 2 * ((precision * recall) / (precision + recall + tf.keras.backend.epsilon()))
+
+    def reset_state(self):
+        self.precision.reset_state()
+        self.recall.reset_state()
+
+def get_labels_and_predictions(model, dataset, steps):
+    """Return true labels and predictions from the model."""
+    y_true, y_pred = [], []
+    for x_batch, y_batch in dataset.take(steps):
+        y_pred_batch = model.predict_on_batch(x_batch).ravel()
+        y_true.append(y_batch)
+        y_pred.append(y_pred_batch)
+    return tf.concat(y_true, axis=0), tf.concat(y_pred, axis=0)
+
+def evaluate_model(model, eval_dataset, evaluation_steps, dataset_name='eval_dataset'):
+    print('Evaluating', dataset_name, 'with', evaluation_steps, 'steps')
+    y_val, y_pred = get_labels_and_predictions(model, eval_dataset, evaluation_steps)
+    partial_auc = score(y_val, y_pred)
+    print(f"Partial AUC for {dataset_name}: {partial_auc}")
+
+def get_memory_usage():
+    # memory_usage returns a list, so we get the first item
+    mem = memory_usage(-1, interval=0.1, timeout=1)[0] # Return the first value from the list in MB
+    mem = f"{mem:.2f} MB"
+    return  mem
+
+def reset_session_and_get_memory():
+    """Cleans up the session and retrieves the initial memory usage."""
+    clean_session()
+    return get_memory_usage()
+
+def log_memory_usage(stage, memory_usage):
+    """Logs the memory usage with a specific stage identifier."""
+    print(f"{stage} memory usage: {memory_usage}")
+```
+
+### Callbacks
+
+```{python}
+#| trusted: true
+class PartialAUCCallback(tf.keras.callbacks.Callback):
+    def __init__(self, validation_data, validation_steps, monitor, train_data = None, steps_per_epoch=None, min_tpr=0.8):
+        super(PartialAUCCallback, self).__init__()
+        self.validation_data = validation_data
+        self.validation_steps = validation_steps
+        self.monitor = monitor
+        self.train_data = train_data
+        self.steps_per_epoch = steps_per_epoch
+        self.min_tpr = min_tpr
+        self.max_fpr = 1.0 - min_tpr
+        self.best_partial_auc = -float('inf')  # Initialize to a very low value
+        self.best_epoch = 0
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
+
+        # Compute Partial AUC on Training Data if available
+        if self.train_data:
+            train_labels, train_predictions = get_labels_and_predictions(self.model,
+                                                                         self.train_data,
+                                                                         self.steps_per_epoch)
+            train_partial_auc = self.compute_auc(train_labels, train_predictions)
+            self.log_partial_auc(logs, train_partial_auc, 'partial_auc', epoch)
+
+            PartialAUCCallback.log_classification_report(train_labels, train_predictions, epoch, 'Train')
+
+        #Validation computations
+        val_labels, val_predictions = get_labels_and_predictions(self.model,
+                                                                 self.validation_data,
+                                                                 self.validation_steps)
+        # Calculate the partial AUC
+        val_partial_auc = self.compute_auc(val_labels, val_predictions)
+        self.log_partial_auc(logs, val_partial_auc, 'val_partial_auc', epoch)
+        PartialAUCCallback.log_classification_report(val_labels, val_predictions, epoch)
+
+
+    def log_partial_auc(self, logs, partial_auc, pauc_metric_name, epoch):
+        logs[pauc_metric_name] = partial_auc
+        if self.monitor == pauc_metric_name:
+            # Store the best partial AUC
+            if partial_auc > self.best_partial_auc:
+                self.best_partial_auc = partial_auc
+                self.best_epoch = epoch
+
+         # Add the partial_auc to logs so it can be used in Keras Tuner
+        logs[pauc_metric_name] = partial_auc
+        tf.print(f'\nEpoch {epoch + 1}: Partial AUC = {partial_auc:.4f}')
+
+    @staticmethod
+    def log_classification_report(labels, predictions, epoch, name='Validation'):
+        # Convert probabilities to binary predictions
+        bin_preds = np.round(predictions).astype(int)
+        # Generate the classification report
+        report = classification_report(labels, bin_preds, labels= [1, 0],
+                                       target_names=['positives', 'negatives'])
+        # Print the report
+        tf.print(f"\n{name} classification report for epoch {epoch + 1}:\n{report}")
+
+    def compute_auc(self, y_true, y_pred, max_fpr=0.2):
+        v_gt = np.abs(y_true - 1)
+        v_pred = 1.0 - y_pred
+        partial_auc_scaled = roc_auc_score(v_gt, v_pred, max_fpr=max_fpr)
+        partial_auc = 0.5 * max_fpr**2 + (max_fpr - 0.5 * max_fpr**2) / (1.0 - 0.5) * (partial_auc_scaled - 0.5)
+        return partial_auc
+
+    def compute_auc_kaggle(self, y_true, y_pred):
+        y_true = tf.cast(y_true, tf.float32).numpy()
+        y_pred = tf.cast(y_pred, tf.float32).numpy()
+
+        # Invert classes as needed for minority focus
+        v_gt = 1 - y_true
+        v_pred = 1 - y_pred
+        fpr, tpr, _ = roc_curve(v_gt, v_pred)
+
+        # Find where FPR reaches max_fpr
+        stop = np.searchsorted(fpr, self.max_fpr, 'right')
+        if stop == 0:  # If max_fpr is very low and FPR doesn't reach it
+            return 0.0
+
+        x_interp = [fpr[stop - 1], fpr[stop]]
+        y_interp = [tpr[stop - 1], tpr[stop]]
+        tpr_interp = np.interp(self.max_fpr, x_interp, y_interp)
+
+        # Append this interpolated point and calculate AUC
+        tpr = np.append(tpr[:stop], tpr_interp)
+        fpr = np.append(fpr[:stop], self.max_fpr)
+        return auc(fpr, tpr)
+
+    def get_best_partial_auc(self):
+        return self.best_partial_auc
+
+    def get_best_epoch(self):
+        return self.best_epoch
+
+    def __deepcopy__(self, memo):
+        # Skip deep copying the validation data to avoid issues
+        return PartialAUCCallback(self.validation_data, self.validation_steps,
+                                  self.monitor, self.train_data,
+                                  self.steps_per_epoch, self.min_tpr)
+
+class LearningRatePrinterCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        # Access the learning rate from the optimizer
+        lr = self.model.optimizer.learning_rate
+        # If the learning rate is a learning rate schedule (like CyclicalLearningRate), evaluate it
+        if isinstance(lr, tf.keras.optimizers.schedules.LearningRateSchedule):
+            lr = lr(self.model.optimizer.iterations)
+        tf.print(f"\nLearning rate at the end of epoch {epoch + 1}: {tf.keras.backend.get_value(lr)}")
+
+
+# Custom Callback to monitor memory after each epoch
+class MemoryUsageCallback(tf.keras.callbacks.Callback):
+    def on_epoch_end(self, epoch, logs=None):
+        process = psutil.Process(os.getpid())
+        mem = process.memory_info().rss / (1024 * 1024)  # RSS memory in MB
+        print(f"Memory usage after epoch {epoch + 1}: {mem:.2f} MB")
+        #tf.keras.backend.clear_session()
+        #tf.compat.v1.reset_default_graph()
+        gc.collect()
+        #clean_session()
+```
+
+### Optimizers
+
+```{python}
+#| trusted: true
+def clean_metric_name(metric_name):
+    # Use regular expression to check if the string ends with _ followed by digits
+    if re.search(r'_\d+$', metric_name):
+        # Remove the _ and the digits at the end
+        return re.sub(r'_\d+$', '', metric_name)
+    return metric_name
+
+# Define a custom learning rate scheduler for cyclical learning rates
+class CyclicalLearningRate(tf.keras.optimizers.schedules.LearningRateSchedule):
+    def __init__(self, initial_learning_rate, maximal_learning_rate, step_size):
+        self.initial_learning_rate = tf.cast(initial_learning_rate, tf.float32)
+        self.maximal_learning_rate = tf.cast(maximal_learning_rate, tf.float32)
+        self.step_size = tf.cast(step_size, tf.float32)
+
+    def __call__(self, step):
+        step = tf.cast(step, tf.float32)
+        cycle = tf.floor(1 + step / (2 * self.step_size))
+        x = tf.abs(step / self.step_size - 2 * cycle + 1)
+        lr = self.initial_learning_rate + (self.maximal_learning_rate - self.initial_learning_rate) * tf.maximum(0.0, (1 - x))
+        return lr
+
+    def get_config(self):
+        return {
+            "initial_learning_rate": self.initial_learning_rate.numpy(),
+            "maximal_learning_rate": self.maximal_learning_rate.numpy(),
+            "step_size": self.step_size.numpy(),
+        }
+
+# Set the parameters for the CLR
+initial_learning_rate = 1e-6  # Minimum LR
+maximal_learning_rate = 1e-4  # Maximum LR
+step_size = 50  # Number of steps in half a cycle
+def set_optimizer(optimizer, learning_rate=1e-4, use_nesterov_sgd=False, use_amsgrad_adam=False,
+                  initial_learning_rate=1e-6,
+                  maximal_learning_rate=1e-4,
+                  step_size=50
+                  ):
+    if optimizer == "sgd":
+        optimizer = optimizers.SGD(
+            learning_rate=learning_rate,
+            momentum=0.9,
+            nesterov=use_nesterov_sgd
+        )
+
+    elif optimizer == "adam":
+        optimizer = optimizers.Adam(
+            learning_rate=learning_rate,
+            beta_1=0.9,
+            beta_2=0.999,
+            epsilon=0.1,
+            amsgrad=use_amsgrad_adam
+        )
+
+    elif optimizer == "nadam":
+        optimizer = optimizers.Nadam(
+            learning_rate=learning_rate,
+            beta_1=0.9,
+            beta_2=0.999,
+            epsilon=0.1
+        )
+    elif optimizer == "adamw":
+        optimizer = optimizers.AdamW(
+            learning_rate=learning_rate,
+            beta_1=0.9,
+            beta_2=0.999,
+            epsilon=0.1
+        )
+    elif optimizer == "adamax":
+        optimizer = optimizers.Adamax(
+            learning_rate=learning_rate,
+            beta_1=0.9,
+            beta_2=0.999,
+            epsilon=0.1
+        )
+    elif optimizer == "radam":
+        optimizer = tfa.optimizers.RectifiedAdam(
+            learning_rate=learning_rate,
+            beta_1=0.9,
+            beta_2=0.999,
+            epsilon=0.1
+        )
+    elif optimizer == "rmsprop":
+        optimizer = optimizers.RMSprop(
+            learning_rate=learning_rate,
+            rho=0.9,
+            momentum=0.0,
+            epsilon=0.1,
+            centered=False
+        )
+    elif optimizer == "nadam_cyclical":
+         optimizer =  optimizers.Nadam(
+             learning_rate=CyclicalLearningRate(
+                 initial_learning_rate=initial_learning_rate,
+                 maximal_learning_rate=maximal_learning_rate,
+                 step_size=step_size
+                 )
+           )
+    elif optimizer == "radam_cyclical":
+         optimizer = tfa.optimizers.RectifiedAdam(
+             learning_rate=CyclicalLearningRate(
+                 initial_learning_rate=initial_learning_rate,
+                 maximal_learning_rate=maximal_learning_rate,
+                 step_size=step_size
+                 )
+           )
+    elif optimizer == "adamw_cyclical":
+         optimizer =  optimizers.AdamW(
+             learning_rate=CyclicalLearningRate(
+                 initial_learning_rate=initial_learning_rate,
+                 maximal_learning_rate=maximal_learning_rate,
+                 step_size=step_size
+                 )
+           )
+    return optimizer
+
+class OneCycleScheduler(tf.keras.callbacks.Callback):
+    def __init__(self, max_lr, steps_per_epoch, epochs, start_lr=None, last_epoch_lr=None):
+        super(OneCycleScheduler, self).__init__()
+        self.max_lr = max_lr
+        self.steps_per_epoch = steps_per_epoch
+        self.epochs = epochs
+        self.total_steps = steps_per_epoch * epochs
+        self.current_step = 0
+
+        if start_lr is None:
+            self.start_lr = max_lr / 25  # A commonly used starting ratio
+        else:
+            self.start_lr = start_lr
+
+        if last_epoch_lr is None:
+            self.last_epoch_lr = self.start_lr / 1e4  # A small value to anneal towards
+        else:
+            self.last_epoch_lr = last_epoch_lr
+
+    def on_batch_begin(self, batch, logs=None):
+        # Update learning rate based on current step
+        self.current_step += 1
+        lr = self.calc_lr()
+        #tf.keras.backend.set_value(self.model.optimizer[0].lr, lr)
+        tf.keras.backend.set_value(self.model.optimizer.lr, lr)
+
+    def calc_lr(self):
+        # 1Cycle Learning Rate Schedule: Increases then decreases
+        step_ratio = self.current_step / self.total_steps
+        if step_ratio < 0.6:
+            # Increase learning rate for first half of training
+            lr = self.start_lr + (self.max_lr - self.start_lr) * (step_ratio * 2)
+        else:
+            # Decrease learning rate for the second half of training
+            lr = self.max_lr - (self.max_lr - self.last_epoch_lr) * ((step_ratio - 0.5) * 2)
+        return lr
+
+class SGDRScheduler(tf.keras.callbacks.Callback):
+    '''Cosine annealing learning rate scheduler with periodic restarts.'''
+    def __init__(self, min_lr, max_lr, steps_per_epoch, lr_decay=1, cycle_length=10, mult_factor=2):
+        super(SGDRScheduler, self).__init__()
+        self.min_lr = min_lr
+        self.max_lr = max_lr
+        self.lr_decay = lr_decay
+        self.steps_per_epoch = steps_per_epoch
+        self.batch_since_restart = 0
+        self.next_restart = cycle_length
+        self.cycle_length = cycle_length
+        self.mult_factor = mult_factor
+
+    def on_batch_begin(self, batch, logs=None):
+        '''Adjust the learning rate at the start of each batch.'''
+        fraction_to_restart = self.batch_since_restart / (self.steps_per_epoch * self.cycle_length)
+        lr = self.min_lr + 0.5 * (self.max_lr - self.min_lr) * (1 + np.cos(fraction_to_restart * np.pi))
+        tf.keras.backend.set_value(self.model.optimizer.lr, lr)
+        self.batch_since_restart += 1
+
+    def on_epoch_end(self, epoch, logs=None):
+        '''Check for end of current cycle, apply restarts when necessary.'''
+        if epoch + 1 == self.next_restart:
+            self.batch_since_restart = 0
+            self.next_restart += self.cycle_length
+            self.cycle_length = int(self.cycle_length * self.mult_factor)
+            self.max_lr *= self.lr_decay
+            self.min_lr *= self.lr_decay
+```
+
+## Training utils
+
+### Plotting metrics
+
+```{python}
+#| trusted: true
+def plot_training_history(history, model_name, metrics=['f1_score', 'precision', 'recall', 'loss', 'accuracy', 'partial_auc', 'auc']):
+    plt.figure(figsize=(16, 16))
+    for i, metric in enumerate(metrics):
+        plt.subplot(4, 2, i + 1)
+        plt.title(metric.capitalize())
+        if metric in history:
+            plt.plot(history[metric], label=metric)
+        if f'val_{metric}' in history:
+            plt.plot(history[f'val_{metric}'], label=f'val_{metric}')
+        plt.legend(loc='upper right')
+    plt.tight_layout()
+    plt.title(model_name, loc='center')
+    plt.savefig(f'{models_dir}/{model_name}_training_{run_id}')
+    plt.show()
+
+def normalize_history_keys(history):
+    """
+    Normalize the keys in the history dictionary using clean_metric_name.
+    """
+    return {clean_metric_name(key): value for key, value in history.items()}
+
+def print_infos(training_mode, fold_no, messages):
+    if training_mode == 'train-validation-split':
+        for message in messages:
+            print(message.capitalize())
+    else:
+        for message in messages:
+            print(f"Fold {fold_no + 1}", message)
+
+def merge_histories(history_initial, history_fine_tune):
+    # Merge histories
+    history = defaultdict(list)
+    if history_initial is not None:
+        # Normalize the keys in history_initial
+        history_initial_cleaned = normalize_history_keys(history_initial.history)
+        for key, value in history_initial_cleaned.items():
+            history[key] = value
+    else:
+        # Normalize the keys in history_fine_tune
+        history_fine_tune_cleaned = normalize_history_keys(history_fine_tune.history)
+        for key, value in history_fine_tune_cleaned.items():
+            history[key].extend(value)
+    history = dict(history)
+    return history
+```
+
+### Data loading
+
+```{python}
+#| trusted: true
+def load_train_val_dataset(file_pattern, shuffle_dataset_at_each_call=True, cache_dataset=True, cache_in_memory=False,
+                 cache_dir=cache_dir, prefix="train_val", run_id=run_id, check_modification_time=False,
+                 is_training=True, force_cache=True, use_tabular_data=use_tabular_data, batch_size=batch_size):
+    print("Reloading and shuffling dataset...")
+    try:
+        del dataset
+        gc.collect()
+    except:
+        pass
+        gc.collect()
+
+    print('batch_size', batch_size)
+    print('file_pattern', file_pattern)
+    print('is_training', is_training)
+
+    print('cache_in_memory', cache_in_memory)
+
+    # Load dataset once and cache
+    dataset, dataset_steps = load_tfrecord_dataset(file_pattern=file_pattern, is_training=is_training,
+                                                   batch_size=batch_size, cache_in_memory=cache_in_memory)
+
+    #dataset = cast_labels(dataset, use_tabular_data)
+
+
+    #dataset = persist_dataset(dataset, file_pattern=train_file_pattern, dataset_steps=dataset_steps, cache_in_memory=cache_in_memory,
+                    #cache_dir=cache_dir, prefix=prefix, run_id=run_id, check_modification_time=check_modification_time, force_cache=force_cache)
+
+    # Extract labels for stratified splitting
+    use_cross_validation = False
+    if use_cross_validation :
+        labels = []
+        for *_, lbl in dataset:
+            labels.append(lbl.numpy())
+
+        labels = np.array(labels)
+
+        seed = random.randint(0, 1e9) if shuffle_dataset_at_each_call else 42
+
+        if use_cross_validation:
+            # Generate stratified split indices for cross-validation
+            split_indices = stratified_split_indices(labels, n_splits=5, shuffle=True, random_state=seed)
+        else:
+            # Create a stratified 80/20 train-test split
+            sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=seed)
+            train_index, val_index = next(sss.split(np.zeros(len(labels)), labels))
+            split_indices = [(train_index, val_index)]  # Single split for train-test
+        return dataset, split_indices, dataset_steps
+    else:
+        return dataset, dataset_steps
+```
+
+### Training pipeline common
+
+```{python}
+#| trusted: true
+def training_pipeline(model_name, model_names=None, model=None, train_file_pattern=None, **kwargs):
+    run_id = kwargs.get('run_id', None)
+    strategy = kwargs.get('strategy', None)
+    batch_size = kwargs.get('batch_size', None)
+    val_batch_size = kwargs.get('val_batch_size', None)
+    cache_in_memory = kwargs.get('cache_in_memory', None)
+    freeze_base_model = kwargs.get('freeze_base_model', None)
+    loss = kwargs.get('loss', None)
+    shuffle_dataset_at_each_call = kwargs.get('shuffle_dataset_at_each_call', None)
+    do_fine_tuning = kwargs.get('do_fine_tuning', None)
+    initial_epochs = kwargs.get('initial_epochs', None)
+    fine_tune_epochs = kwargs.get('fine_tune_epochs', None)
+    oversample_minority_class = kwargs.get('oversample_minority_class', None)
+    augment_train_data = kwargs.get('augment_train_data', None)
+    use_cross_validation = kwargs.get('use_cross_validation', None)
+    use_tabular_data = kwargs.get('use_tabular_data', None)
+    execution_env = kwargs.get('execution_env', None)
+    total_epochs = initial_epochs + fine_tune_epochs  if freeze_base_model else fine_tune_epochs
+
+    # cleaning the session
+    deletes_old_datasets()
+
+    partial_aucs = []
+    training_mode = 'train-validation-split'
+    print("Kwargs from training_pipeline ", kwargs)
+
+    # Load train dataset once and cache
+    train_dataset, training_steps = load_tfrecord_dataset(file_pattern=train_file_pattern,
+                                                        batch_size=batch_size,
+                                                        is_training=True,
+                                                        cache_in_memory=cache_in_memory)
+    # Validation dataset
+    val_dataset, validation_steps = load_tfrecord_dataset(f'{tf_records_eval_dir}/*.tfrecord',
+                                                                batch_size=val_batch_size,
+                                                                is_training=False,
+                                                                cache_in_memory=cache_in_memory)
+
+    print_infos(training_mode, None, [f"start training model {model_name}...", 
+                                      f"training size: {training_steps * batch_size * strategy.num_replicas_in_sync}",
+                                      f"validation size: {validation_steps * val_batch_size * strategy.num_replicas_in_sync}"])
+
+    # Oversample the minority class within the fold
+    if oversample_minority_class:
+        (train_dataset, training_steps, training_total_samples, sample_per_class_input_ds,  
+        sample_per_class_oversampled_ds) = oversample_minority_class_random(train_dataset, batch_size, strategy)
+        print('Total samples in train dataset after oversampling', training_total_samples)
+
+    # Calculate class weights
+    class_weights_ovs = calculate_class_weights(sample_per_class_oversampled_ds)
+    class_weights_input_ds = calculate_class_weights(sample_per_class_input_ds)
+    print_infos(training_mode, None, [f"samples per class: {sample_per_class_input_ds}", f"class weights: {class_weights_input_ds}",
+                                            f"training steps: {training_steps}, evaluation steps: {validation_steps}"])
+
+    # Training data processing
+    train_dataset = optimize_dataset(train_dataset, file_pattern=None, steps=training_steps, cache_in_memory=cache_in_memory,
+                    cache_dir=cache_dir, prefix='train', run_id=run_id, check_modification_time=False, force_cache=True)
+
+    if augment_train_data:
+        train_dataset = apply_augmentations(train_dataset)
+    train_dataset = format_input_dataset(train_dataset, use_tabular_data)
+    train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)
+
+    # Validation data processing
+    val_dataset = format_input_dataset(val_dataset, use_tabular_data)
+    val_dataset = optimize_dataset(val_dataset, file_pattern=None, steps=validation_steps, cache_in_memory=cache_in_memory,
+                    cache_dir=cache_dir, prefix='val', run_id=run_id, check_modification_time=False,
+                    force_cache=True)
+
+    # Callbacks
+    memory_callback = MemoryUsageCallback()
+    early_stopping_callback = EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=True)
+    partial_auc_callback = PartialAUCCallback(validation_data=val_dataset, validation_steps=validation_steps,
+                                              monitor='val_partial_auc')
+    one_cycle_scheduler_callback = OneCycleScheduler(max_lr=1e-5, steps_per_epoch=training_steps, epochs=total_epochs,
+                                                     last_epoch_lr=1e-7, start_lr=1e-7)
+    model_checkpoint_callback =  ModelCheckpoint(filepath=f'{models_dir}/model_{model_name}_{run_id}_checkpoint.keras',
+                                                 monitor='val_partial_auc', save_best_only=True)
+    callbacks=[one_cycle_scheduler_callback, partial_auc_callback, early_stopping_callback, model_checkpoint_callback, memory_callback]
+
+
+    with strategy.scope():
+        precision = tf.keras.metrics.Precision()
+        recall = tf.keras.metrics.Recall()
+        f1_score = F1Score()
+        auc = tf.keras.metrics.AUC(name="auc")
+
+        optimizer = tf.keras.optimizers.Nadam() if execution_env == 'colab' else tf.keras.optimizers.Adamax()
+        loss = set_binary_crossentropy_weighted_loss(positive_weights=np.array([class_weights_input_ds['minority_class']]),
+                                                    negative_weights=np.array([class_weights_input_ds['majority_class']]),
+                                                    epsilon=1e-7)
+    history_initial = None
+    class_weights=dict(zip([0, 1], class_weights_input_ds.values()))
+    # Initial training
+    if freeze_base_model:
+        with strategy.scope():
+            model.compile(optimizer=optimizer, loss=loss, metrics=[precision, recall, f1_score])
+        print("Started fitting the model with base model freezed...")
+        history_initial = model.fit(train_dataset,epochs=initial_epochs,steps_per_epoch=training_steps, validation_data=val_dataset,
+                                    validation_steps=validation_steps, callbacks=callbacks, class_weight=class_weights, verbose=1)
+        
+    # Fine tuning
+    if do_fine_tuning:
+        initial_epoch = history_initial.epoch[-1] if freeze_base_model else 0
+
+        with strategy.scope():
+            model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy', precision, recall, f1_score, auc])
+
+        print("Started fine fitting the model with layers unfrozen...")
+        history_fine_tune = model.fit(train_dataset, epochs=total_epochs, initial_epoch=initial_epoch, steps_per_epoch=training_steps,
+                                      validation_data=val_dataset, validation_steps=validation_steps, class_weight=class_weights,
+                                      callbacks=callbacks, verbose=1)
+        # Merge histories
+        history = merge_histories(history_initial, history_fine_tune)
+    else:
+        history = history_initial.history
+
+    print("Computing the final validation score after training ended")
+    # Evaluate the model on the validation set
+    y_val, y_pred = get_labels_and_predictions(model, val_dataset, validation_steps)
+
+    # Calculate the Partial AUC
+    partial_auc = score(y_val, y_pred)
+    partial_aucs.append(partial_auc)
+
+    print("Plotting the training metrics...")
+    # Plot the training history
+    plot_training_history(history, model_name)
+
+    model.save_weights(os.path.join(models_dir, f'{model_name}_{run_id}_weights.h5'))
+    
+    print(f"Train-validation-split partial AUC: {partial_auc}")
+
+    print(f'Finished training model {model_name}')
+    return model
+```
+
+### Single model training pipeline
+
+```{python}
+#| trusted: true
+def train_single_model(model_name, **kwargs):
+    """Train a unique model from scratch."""
+
+    print(f"Training single model: {model_name}\n")
+
+    model = ModelFactory.create_model('single', pretrained=False, model_names=[model_name], **kwargs)
+    model = training_pipeline(model_name, model=model, **kwargs)
+
+    return model
+```
+
+## Training
+
+### Utils
+
+```{python}
+#| trusted: true
+class TrainConfig:
+    def __init__(self, strategy, run_id, batch_size, val_batch_size, cache_in_memory,
+                 freeze_base_model, shuffle_dataset_at_each_call, train_file_pattern,
+                 do_fine_tuning, oversample_minority_class, initial_epochs, fine_tune_epochs,
+                 img_shape, augment_train_data, use_cross_validation, dropout_rate, l2_lambda,
+                 num_tabular_features, use_tabular_data, kernel_initializer, activation,
+                 execution_env):
+        self.strategy = strategy
+        self.run_id = run_id
+        self.batch_size = batch_size
+        self.val_batch_size = val_batch_size
+        self.cache_in_memory = cache_in_memory
+        self.freeze_base_model = freeze_base_model
+        self.shuffle_dataset_at_each_call = shuffle_dataset_at_each_call
+        self.train_file_pattern = train_file_pattern
+        self.do_fine_tuning = do_fine_tuning
+        self.oversample_minority_class = oversample_minority_class
+        self.initial_epochs = initial_epochs
+        self.fine_tune_epochs = fine_tune_epochs
+        self.img_shape = img_shape
+        self.augment_train_data = augment_train_data
+        self.use_cross_validation = use_cross_validation
+        self.dropout_rate = dropout_rate
+        self.l2_lambda = l2_lambda
+        self.num_tabular_features = num_tabular_features
+        self.use_tabular_data = use_tabular_data
+        self.kernel_initializer = kernel_initializer
+        self.activation = activation
+        self.execution_env = execution_env
+
+
+def run_pipeline(pipeline_func, config: TrainConfig, **specific_params):
+    """General pipeline function for training models with a TrainConfig object."""
+
+    # Clean the session and retrieve initial memory
+    initial_memory_usage = reset_session_and_get_memory()
+    log_memory_usage("Initial", initial_memory_usage)
+
+    # Ensure strategy is initialized
+    if config.strategy is None:
+        raise ValueError("Strategy must be set in the configuration.")
+
+    # Train the model using the passed function with the TrainConfig object
+    #with config.strategy.scope():
+    model = pipeline_func(strategy=config.strategy, run_id=config.run_id, batch_size=config.batch_size,
+                           cache_in_memory=config.cache_in_memory, freeze_base_model=config.freeze_base_model,
+                           shuffle_dataset_at_each_call=config.shuffle_dataset_at_each_call,
+                           do_fine_tuning=config.do_fine_tuning, train_file_pattern=config.train_file_pattern,
+                           oversample_minority_class = config.oversample_minority_class,
+                           initial_epochs = config.initial_epochs, val_batch_size = config.val_batch_size,
+                           fine_tune_epochs = config.fine_tune_epochs,
+                           img_shape = config.img_shape,
+                           augment_train_data = config.augment_train_data,
+                           use_cross_validation = config.use_cross_validation,
+                           use_tabular_data = config.use_tabular_data,
+                           activation = config.activation,
+                           dropout_rate = config.dropout_rate,
+                           l2_lambda = config.l2_lambda,
+                           num_tabular_features = config.num_tabular_features,
+                           kernel_initializer = config.kernel_initializer,
+                           execution_env = config.execution_env,
+                           **specific_params)
+    # Retrieve final memory usage
+    final_memory_usage = get_memory_usage()
+    log_memory_usage("Final", final_memory_usage)
+
+    return model
+
+def run_model_evaluation(model):
+    evaluate_model(model, val_dataset_small_formatted, validation_steps_small, dataset_name='small validation dataset')
+    evaluate_model(model, val_dataset_big_formatted, validation_steps_big, dataset_name='big validation dataset')
+    evaluate_model(model, train_val_dataset_formatted, train_val_dataset_steps, dataset_name='train_val dataset')
+```
+
+### Initialization
+
+```{python}
+#| trusted: true
+# Instantiate TrainConfig with common parameters
+train_config = TrainConfig(
+    strategy=strategy,
+    run_id=run_id,
+    batch_size=batch_size,
+    val_batch_size=val_batch_size,
+    cache_in_memory=cache_in_memory,
+    freeze_base_model=freeze_base_model,
+    shuffle_dataset_at_each_call=True,
+    train_file_pattern=train_file_pattern,
+    do_fine_tuning = do_fine_tuning,
+    oversample_minority_class = oversample_minority_class,
+    initial_epochs = initial_epochs,
+    fine_tune_epochs = fine_tune_epochs,
+    img_shape = img_shape,
+    augment_train_data = augment_train_data,
+    use_cross_validation = use_cross_validation,
+    dropout_rate = dropout_rate,
+    l2_lambda = l2_lambda,
+    num_tabular_features = num_tabular_features,
+    use_tabular_data = use_tabular_data,
+    kernel_initializer = kernel_initializer,
+    activation = activation,
+    execution_env = execution_env
+)
+```
+
+### Data loading
+
+```{python}
+#| trusted: true
+# Load dataset once and cache
+if run_evaluations:
+    train_val_dataset, train_val_dataset_steps = load_tfrecord_dataset(
+            train_file_pattern,
+            batch_size=batch_size,
+            is_training=False,
+            cache_in_memory=False)
+    train_val_dataset_formatted = format_input_dataset(train_val_dataset)
+    # Verify cache
+    #!ls -al {cache_dir}
+    # Load big validation dataset
+    val_dataset_small, validation_steps_small = load_tfrecord_dataset(
+            f'{tf_records_eval_dir}/*.tfrecord',
+            batch_size=eval_batch_size,
+            is_training=False,
+            cache_in_memory=False)
+    val_dataset_small_formatted = format_input_dataset(val_dataset_small)
+
+    # Load big validation dataset
+    val_dataset_big, validation_steps_big = load_tfrecord_dataset(
+            f'{tf_records_val_dir}/*.tfrecord',
+            batch_size=eval_batch_size * 2,
+            is_training=False,
+            cache_in_memory=False)
+    val_dataset_big_formatted = format_input_dataset(val_dataset_big)
+```
+
+### Run
+
+```{python}
+#| scrolled: true
+#| trusted: true
+if model_type == 'single_model'  or train_all_models:
+    #strategy = tf.distribute.OneDeviceStrategy(device="/gpu:0")
+    #strategy = tf.distribute.get_strategy()
+    #with strategy.scope():
+    single_model = run_pipeline(
+            pipeline_func=train_single_model, # Function to train the model
+            config=train_config,  # Common configuration object
+            #model_name='res_net_50'
+            model_name=model_name
+        )
+    if inference_model_name == 'single_model':
+         inference_model = single_model
+```
+
+### Evaluate on unseen and train_val datasets
+
+```{python}
+#| trusted: true
+if model_type == 'single_model' or train_all_models:
+    print('Evaluating single model:', model_name)
+    run_model_evaluation(single_model)
+```
+
+# Ensembling models
+
+## Trained ensemble model
+
+#### Trained ensemble training pipeline
+
+```{python}
+#| trusted: true
+def train_compact_ensemble_model(model_names=['efficientnetb0', 'resnet50', 'vgg16'], **kwargs):
+    """Train a unique ensmeble model from scratch."""
+
+    print(f"Training compact ensemble model")
+
+    compact_ensemble_model = ModelFactory.create_model('ensemble', model_names, pretrained=False, **kwargs)
+
+    compact_ensemble_model = training_pipeline(compact_ensemble_model.model_name, model=compact_ensemble_model, **kwargs)
+    return compact_ensemble_model
+```
+
+#### Run
+
+```{python}
+#| trusted: true
+if model_type == 'compact_ensemble_model' and train_all_models:
+    compact_ensemble_model = run_pipeline(
+        pipeline_func=train_compact_ensemble_model, # Function to train ensemble model
+        config=train_config,  # Common configuration object
+        #model_names=['densenet201','resnet50', 'resnet152v2','vgg19'],
+        #weights=[0.41,  0.35, 0.14, 0.1],
+        #weights=[0.25,  0.25, 0.25, 0.25],
+        model_names=['res_net_152_v2', 'dense_net_201'],
+        weights=[0.55,  0.45]
+    )
+```
+
+#### Evaluation
+
+```{python}
+#| trusted: true
+if model_type == 'compact_ensemble_model' or train_all_models:
+    print('Evaluating compact ensemble model')
+    run_model_evaluation(compact_ensemble_model)
+
+    if inference_model_name == 'compact_ensemble_model':
+        inference_model = compact_ensemble_model
+```
+
+## Pretrained ensemble model
+
+### Pretrained ensemble pipeline
+
+```{python}
+#| trusted: true
+def train_pretrained_ensemble(model_names, train_individuals=True,  **kwargs):
+    """Train a unique model from scratch."""
+    print('Training pretrained ensemble model')
+
+    run_id = kwargs.get('run_id', None)
+
+    # Train individual models if needed
+    train_individual_models(model_names=model_names, train_individuals=train_individuals, **kwargs)
+
+    pretrained_ensemble = ModelFactory.create_model(model_type='ensemble', model_names=model_names, pretrained=True, **kwargs)
+
+    # Saving the weights as it is not trained via the commom pipeline
+    pretrained_ensemble.save_weights(os.path.join(models_dir, f'{pretrained_ensemble.model_name}_{run_id}_weights.h5'))
+
+    print('Finished creating the pretrained_ensemble', pretrained_ensemble.model_name)
+
+    return pretrained_ensemble
+
+def train_individual_models(model_names, train_individuals=True, **kwargs):
+    """Train individual models if their weights do not already exist."""
+    for model_name in model_names:
+        print('Training individual model', model_name)
+        weights_path = os.path.join('models_dir', f'{model_name}_{kwargs.get("run_id", "default")}_weights.h5')
+        if (not os.path.exists(weights_path)) and train_individuals:
+            print(f"Training {model_name} since weights are not found.")
+            train_single_model(model_name,  **kwargs)
+        else:
+            print(f"Weights for {model_name} already exist at {weights_path}, skipping training.")
+```
+
+### Training
+
+### Run
+
+```{python}
+#| trusted: true
+if model_type == 'pretrained_ensemble_model' or train_all_models:
+    pretrained_ensemble_model = run_pipeline(
+        pipeline_func=train_pretrained_ensemble, # Function to train ensemble model
+        config=train_config,  # Common configuration object
+        model_names=['dense_net_201','res_net_50', 'res_net_152_v2','vgg_19'],
+        weights=[0.41,  0.35, 0.14, 0.1],
+        train_individuals=train_individuals,
+        mode='weighted'
+    )
+    if inference_model_name == 'pretrained_ensemble_model':
+        inference_model = pretrained_ensemble_model
+```
+
+### Evaluation
+
+```{python}
+#| trusted: true
+if (model_type == 'pretrained_ensemble_model' or train_all_models) and run_evaluations:
+    print('Evaluating pretrained ensemble model')
+    run_model_evaluation(pretrained_ensemble_model)
+```
+
+# Inference
+
+### Data preparation
+
+```{python}
+#| trusted: true
+# Load and preprocess images using fused operations for I/O and preprocessing
+@tf.function
+def preprocess_image(image_bytes, img_height, img_width):
+    """Preprocess image loaded from HDF5."""
+    image = tf.io.decode_jpeg(image_bytes, channels=3)
+    image = tf.image.resize(image, [img_height, img_width])
+    image = image / 255.0  # Normalize to [0, 1]
+    return image
+
+def load_image_from_hdf5(key, h5_file):
+    """Function to load image bytes from HDF5 file."""
+    try:
+        image_bytes = h5_file[key][()]
+        if image_bytes is None or len(image_bytes) == 0:
+            raise ValueError(f"Empty image data for key: {key}")
+        return image_bytes
+    except Exception as e:
+        raise ValueError(f"Failed to load image for key {key}. Error: {str(e)}")
+
+def hdf5_image_generator(h5_file, keys):
+    """Python generator to load images from HDF5 file."""
+    for key in keys:
+        try:
+            image_bytes = load_image_from_hdf5(key, h5_file)
+            yield image_bytes
+        except Exception as e:
+            print(f"Error loading image for key {key}: {e}")
+            continue
+
+def prepare_inference_dataset(image_paths, data_source='hdf5', use_tabular_data = use_tabular_data, tabular_data_paths=None,
+                              batch_size=batch_size, cache_data=False, preprocessor_path=preprocessor_path, target_img_shape=None):
+    """
+    Prepare the dataset for inference, either loading images from a file path or from an .hdf5 file.
+
+    Args:
+        image_source: Path to the images or .hdf5 file containing the images.
+        tabular_data_paths: Path to the tabular data, if any.
+        preprocessor: Preprocessing function for tabular data.
+        batch_size: Batch size for the dataset.
+        cache_data: Whether to cache the dataset.
+        data_source: 'path' if loading from image paths, 'hdf5' if loading from an .hdf5 file.
+
+    Returns:
+        A tf.data.Dataset ready for inference.
+    """
+
+    # Loading images from file paths
+    if data_source == 'path':
+        # Fused operations for loading and preprocessing images from file paths
+        image_paths = glob(image_paths)
+        image_dataset = tf.data.Dataset.from_tensor_slices(image_paths)
+
+        # Load and preprocess the images
+        image_dataset = image_dataset.map(preprocess_image, num_parallel_calls=tf.data.AUTOTUNE)
+
+        keys = [os.path.basename(path).split('.')[0] for path in image_paths]
+
+    # Loading images from an .hdf5 file
+    elif data_source == 'hdf5':
+        # Open the .hdf5 file and load the image dataset
+        # Open the HDF5 file
+        h5_file = h5py.File(image_paths, 'r')
+        keys = list(h5_file.keys())
+
+        # Create a generator for loading images from the HDF5 file
+        def image_gen():
+            return hdf5_image_generator(h5_file, keys)
+
+        # Create a TensorFlow Dataset from the generator
+        image_dataset = tf.data.Dataset.from_generator(
+            image_gen,
+            output_signature=tf.TensorSpec(shape=(), dtype=tf.string)
+        )
+
+        # Map preprocessing function over the dataset
+        image_dataset = image_dataset.map(
+            lambda image_bytes: preprocess_image(image_bytes, img_height, img_width),
+            num_parallel_calls=tf.data.AUTOTUNE
+        )
+
+    # Raise an error if the data_source is not recognized
+    else:
+        raise ValueError("data_source must be either 'path' or 'hdf5'")
+
+    # If tabular data is provided, load and zip it with the image dataset
+    if use_tabular_data:
+        # Extract filenames without extensions
+        inference_images = keys
+        preprocessor = load_preprocessor(preprocessor_path)
+        tabular_data = format_and_encode_tabular_data([tabular_data_paths], inference_images, preprocessor)
+
+        tabular_data = tf.data.Dataset.from_tensor_slices(tabular_data)
+
+        # Combine image and tabular data efficiently
+        combined_dataset = tf.data.Dataset.zip((image_dataset, tabular_data))
+    else:
+        combined_dataset = image_dataset
+
+    # Batch the dataset and prefetch to load data asynchronously
+    dataset_for_inference = combined_dataset.batch(batch_size * strategy.num_replicas_in_sync,
+                                                   drop_remainder=False).prefetch(tf.data.AUTOTUNE)
+    if cache_data:
+        dataset_for_inference = dataset_for_inference.cache()
+
+    return dataset_for_inference, keys
+```
+
+### Pipeline
+
+```{python}
+#| trusted: true
+# Run inference using fused operations, mixed precision, and optimized parallel data loading
+def inference_pipeline(model, image_paths, use_tabular_data, tabular_data_paths=None, batch_size=batch_size,
+                  cache_data=False, use_mixed_precision=False, preprocessor_path=preprocessor_path,
+                 submission_file_path=None, target_img_shape=None):
+    use_mixed_precision=False
+    if use_mixed_precision:
+        enable_mixed_precision()
+
+    # Prepare the dataset
+    dataset_for_inference, images_ids= prepare_inference_dataset(image_paths=image_paths, use_tabular_data=use_tabular_data,
+                                                      cache_data=cache_data, tabular_data_paths=tabular_data_paths,
+                                                      batch_size=batch_size, preprocessor_path=preprocessor_path,
+                                                      target_img_shape=target_img_shape)
+    all_predictions = []
+    # Run inference and get predictions
+    for batch in dataset_for_inference:
+        if use_tabular_data:
+            image_batch, tabular_batch = batch
+            predictions = model.predict_on_batch([image_batch, tabular_batch]).ravel()
+        else:
+            image_batch = batch
+            predictions = model.predict_on_batch(image_batch).ravel()
+        all_predictions.append(predictions)
+
+    # Save predictions to CSV
+    predictions_df = pd.DataFrame(zip(images_ids, predictions), columns=['isic_id', 'target'])
+    predictions_df.to_csv(submission_file_path, index=False)
+
+    # Process predictions
+    return predictions_df, dataset_for_inference
+```
+
+## Initialization
+
+```{python}
+#| trusted: true
+preprocessor_path = preprocessor_path
+inference_model_path = inference_model_path
+project_dir = f'{input_dir}/isic-2024-challenge'
+inference_images_path = f'{project_dir}/test-image.hdf5'
+inference_tabular_data_path = f'{project_dir}/test-metadata.csv'
+use_tabular_data = use_tabular_data
+cache_data=True
+submission_file_path = f'{output_dir}/submission.csv'
+target_img_shape=img_shape
+run_inference_use_all_models = False
+```
+
+## Run
+
+```{python}
+#| trusted: true
+# Run inference with optimizations and mixed precision enabled
+if run_inference:
+    inference_models = [single_model, compact_ensemble_model, pretrained_ensemble_model] if run_inference_use_all_models else [inference_model]
+    predictions_dfs = []
+    for inf_model in inference_models:
+        print('Running inference for model...', inf_model.model_name)
+        predictions_df, dataset_for_inference = inference_pipeline(model=inf_model, image_paths=inference_images_path, use_tabular_data=use_tabular_data,
+                                      tabular_data_paths=inference_tabular_data_path, batch_size=batch_size,  cache_data=cache_data,
+                                      use_mixed_precision=False, preprocessor_path=preprocessor_path, submission_file_path=submission_file_path,
+                                      target_img_shape=target_img_shape)
+        predictions_dfs.append(predictions_df)
+        print('Finished running inference for model', inf_model.model_name)
+```
+
+```{python}
+#| trusted: true
+predictions_dfs[-1]
+```
+
+# Annexe
+
+```{python}
+#| trusted: true
+# Limit intra-op parallelism (operations within a single layer)
+#export OMP_NUM_THREADS=100
+# Limit inter-op parallelism (parallel operations across layers)
+#export TF_NUM_INTEROP_THREADS=100
+# Limit intra-op parallelism (for operations like matrix multiplications)
+#tf.config.threading.set_intra_op_parallelism_threads(100)
+# Limit inter-op parallelism (for parallel operations across layers)
+#tf.config.threading.set_inter_op_parallelism_threads(100)
+#import os
+#os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disables GPU by setting this environment variable
+#tf.config.list_physical_devices('GPU')
+```
+
+```{python}
+#| trusted: true
+visualization = False
+if visualization:
+    eval_dataset_mapped = eval_dataset.map(lambda x, y, z: ((x, y), z))
+    augmented_dataset = apply_augmentations(eval_dataset_mapped)
+    imgs = augmented_dataset.as_numpy_iterator()
+    imgs_t = imgs.next()[0][0]
+    plt.figure(figsize=(50, 50))
+    #imgs_t = imgs.next()[0]
+    for i in range(0, 63):
+        plt.subplot(12, 12, i+1)
+        plt.xticks([])
+        plt.yticks([])
+        plt.imshow(imgs_t[i])
+```
+
