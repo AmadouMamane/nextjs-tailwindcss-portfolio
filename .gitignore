@@ -33,3 +33,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+
+# quarto rendering files
+public/notebooks/isic-2024_kaggle_files
