@@ -1,10 +1,14 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRef, useState } from 'react';
 
 const imageStyle = { maxWidth: '100%', height: 'auto' };
 
 const ProjectSingle = (props) => {
+	const iframeRef = useRef(null);
+	const [isFullscreen, setIsFullscreen] = useState(false);
+
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}
@@ -44,5 +48,7 @@ const ProjectSingle = (props) => {
 		</motion.div>
 	);
 };
+
+
 
 export default ProjectSingle;
