@@ -3,10 +3,11 @@ import { FiX } from 'react-icons/fi';
 import Button from './reusable/Button';
 
 const selectOptions = [
-	'Web Application',
-	'Mobile Application',
-	'UI/UX Design',
-	'Branding',
+	'Data Science',
+	'Generative AI',
+	'Data Engineering',
+	'Software Engineering',
+	'Web Application'
 ];
 
 function HireMeModal({ onClose, onRequest }) {
