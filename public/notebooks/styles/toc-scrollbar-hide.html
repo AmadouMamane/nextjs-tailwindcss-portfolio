@@ -1,0 +1,48 @@
+<style>
+
+
+
+/* Hide scrollbar for the floating TOC only */
+#quarto-margin-sidebar {
+  scrollbar-width: none !important;         /* Firefox */
+  -ms-overflow-style: none !important;      /* Internet Explorer */
+}
+
+#quarto-margin-sidebar::-webkit-scrollbar {
+  display: none !important;                 /* Chrome, Safari, Edge */
+}
+
+/* Also target the TOC itself just in case */
+#TOC {
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+#TOC::-webkit-scrollbar {
+  display: none !important;
+}
+
+#quarto-margin-sidebar {
+  direction: ltr; /* Force left-to-right layout */
+}
+
+#quarto-margin-sidebar nav#TOC {
+  direction: ltr;         /* Ensure scrollbar is on the right */
+  overflow-y: auto !important; /* Restore scroll if needed */
+}
+#quarto-margin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+#quarto-margin-sidebar::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+#quarto-margin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+</style>
+
+  
