@@ -12,12 +12,12 @@ export const projectsData = [
 		id: 1,
 		title: '🧬 AI Skin Cancer Detection',
 		url: 'google-health-platform',
-		category: 'Data science',
+		category: 'Data Science',
 		img: '/images/web-project-2.jpg',
 		ProjectHeader: {
 			title: '🧬 AI Skin Cancer Detection Challenge (ISIC 2024)',
 			publishDate: 'March 24, 2025',
-			tags: 'Data science',
+			tags: 'Data Science',
 		},
 		ProjectImages: [
 			{
