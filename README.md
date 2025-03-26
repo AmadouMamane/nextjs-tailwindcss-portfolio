@@ -79,6 +79,51 @@ npm run dev
 -   Feel free to use it as your own portfolio
 -   Contributions are welcome
 
+## Notebooks rendering with Quarto
+
+1. Transform the jupyter notebook into a qmd file:
+
+```
+quarto convert isic-2024_kaggle.ipynb -o isic-2024_kaggle.qmd
+```
+
+2. Transform the qmd file to suit your layout needs, for example add this at the head of the qmd file: 
+
+```
+---
+format:
+  html:
+    title: ''
+    toc: true
+    toc-title: "<strong>Table of contents</strong>"
+    toc-location: right
+    toc-depth: 5
+    toc-expand: true 
+    toc-float:
+      collapsed: true
+      smooth-scroll: true
+      width: 300px
+    theme: cosmo
+    code-fold: false
+    code-fold-show: true  
+    page-layout: full
+    number-sections: true
+    code-tools: false
+    code-line-numbers: false
+    code-summary: "Show Code"
+    code-block-bg: true
+    include-in-header: styles/toc-scrollbar-hide.html
+execute:
+  enabled: false
+---
+```
+
+3. Convert the qmd into an html file:
+
+```
+quarto render isic-2024_kaggle.qmd   
+```
+
 ### License
 
 [MIT](https://github.com/realstoman/nextjs-tailwindcss-portfolio/blob/main/LICENSE)
