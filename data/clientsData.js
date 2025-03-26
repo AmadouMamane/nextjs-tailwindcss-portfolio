@@ -1,56 +1,56 @@
 import { v4 as uuidv4 } from 'uuid';
 
 // Import images
-import AmazonImage from '../public/images/brands/amazon_gray.png';
-import SonyImage from '../public/images/brands/sony_gray.png';
-import AdidasImage from '../public/images/brands/adidas_gray.png';
-import FilaImage from '../public/images/brands/fila_gray.png';
-import NBImage from '../public/images/brands/nb_gray.png';
-import SamsungImage from '../public/images/brands/samsung_gray.png';
-import CanonImage from '../public/images/brands/canon_gray.png';
-import PumaImage from '../public/images/brands/puma_gray.png';
+import SocieteGeneraleImage from '../public/images/brands/societe_generale_gray.png';
+import OrangeImage from '../public/images/brands/orange_gray.png';
+import SncfImage from '../public/images/brands/sncf_gray.png';
+import OuiSncfImage from '../public/images/brands/oui_sncf_gray.png';
+import RenaultImage from '../public/images/brands/renault_gray.png';
+import RciImage from '../public/images/brands/rci_gray.png';
+import CartesBancairesImage from '../public/images/brands/cartes_bancaires_gray.png';
+import EdfImage from '../public/images/brands/edf_gray.png';
 
 export const clientsHeading = 'Some of the brands I worked with';
 
 export const clientsData = [
 	{
 		id: uuidv4(),
-		title: 'Amazon',
-		img: AmazonImage,
+		title: 'SocieteGenerale',
+		img: SocieteGeneraleImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'Sony',
-		img: SonyImage,
+		title: 'Orange',
+		img: OrangeImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'Adidas',
-		img: AdidasImage,
+		title: 'Sncf',
+		img: SncfImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'FILA',
-		img: FilaImage,
+		title: 'OuiSncf',
+		img: OuiSncfImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'NB',
-		img: NBImage,
+		title: 'Renault',
+		img: RenaultImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'SAMSUNG',
-		img: SamsungImage,
+		title: 'Rci',
+		img: RciImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'CANON',
-		img: CanonImage,
+		title: 'CartesBancaires',
+		img: CartesBancairesImage,
 	},
 	{
 		id: uuidv4(),
-		title: 'PUMA',
-		img: PumaImage,
+		title: 'Edf',
+		img: EdfImage,
 	},
 ];
