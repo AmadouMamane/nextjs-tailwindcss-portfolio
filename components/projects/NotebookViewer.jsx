@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Fullscreen, Minimize } from 'lucide-react';
 
-const NotebookViewer = () => {
+const NotebookViewer = ({ notebookFile }) => {
   const containerRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -24,14 +24,17 @@ const NotebookViewer = () => {
     };
   }, []);
 
+  // Prevent rendering if no notebook file is provided
+  if (!notebookFile) return null;
+
   return (
     <div
       ref={containerRef}
       className={`w-full ${isFullscreen ? 'h-screen' : 'h-[90vh]'} mt-8 relative`}
     >
       <iframe
-        src="/notebooks/isic-2024_kaggle.html"
-        title="ISIC 2024 Notebook"
+        src={notebookFile}
+        title="Notebook Viewer"
         className="w-full h-full border rounded-xl shadow-lg"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
         loading="lazy"
