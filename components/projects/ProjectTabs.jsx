@@ -58,7 +58,9 @@ export default function ProjectTabs({ project }) {
         )}
 
         {/* Show NotebookViewer only for the "Implementation" tab */}
-        {activeTab === "Implementation" && project.type === "notebook" && <NotebookViewer />}
+        {activeTab === "Implementation" && project.Notebook?.file && (
+          <NotebookViewer notebookFile={project.Notebook.file} />
+        )}
       </div>
     </div>
   );
