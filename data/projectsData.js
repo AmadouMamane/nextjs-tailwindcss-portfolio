@@ -15,6 +15,9 @@ export const projectsData = [
 		category: 'Data Science',
 		img: '/images/web-project-2.jpg',
 		type: "notebook",
+		Notebook: {
+			file: '/notebooks/isic-2024_kaggle.html',
+		},
 		ProjectHeader: {
 			title: '🧬 AI Skin Cancer Detection Challenge (ISIC 2024)',
 			publishDate: 'March 24, 2025',
@@ -130,5 +133,84 @@ export const projectsData = [
 			// 	},
 			// ],
 		},
-	}
+	}, 
+	{
+        id: 2, // Unique ID
+        title: '🎵 Music Recommendation System',
+        url: 'music-recommendation',
+        category: 'Machine Learning',
+        img: '/images/music-recommendation.jpg', // Thumbnail image
+        type: 'notebook', // Mark as a notebook project
+        ProjectHeader: {
+            title: '🎵 AI-Powered Music Recommendation System',
+            publishDate: 'June 30, 2024',
+            tags: 'Machine Learning',
+        },
+        ProjectImages: [
+            {
+                id: uuidv4(),
+                title: 'Music Recommendation System',
+                img: '/images/music-recommendation.jpg',
+            },
+            {
+                id: uuidv4(),
+                title: 'Algorithm Training',
+                img: '/images/music-recommendation.jpg',
+            },
+        ],
+        ProjectInfo: {
+            OverviewHeading: 'Overview',
+            OverviewDetails: 
+                "This AI-powered music recommendation system leverages collaborative filtering and deep learning to suggest personalized playlists based on user behavior.",
+
+            ChallengeHighlightsHeading: 'Challenge Highlights',
+            ChallengeHighlightsInfo: [
+                {
+                    id: uuidv4(),
+                    title: '🎯 Objective',
+                    details: 'Develop an AI model that suggests music based on user history and trends.',
+                },
+                {
+                    id: uuidv4(),
+                    title: '📊 Dataset',
+                    details: 'Millions of user interactions from streaming platforms.',
+                },
+                {
+                    id: uuidv4(),
+                    title: '🧠 AI Model',
+                    details: 'Uses hybrid collaborative filtering and deep neural networks.',
+                },
+                {
+                    id: uuidv4(),
+                    title: '🔍 Real-Time Processing',
+                    details: 'Instantly adapts to user interactions and preferences.',
+                },
+            ],
+
+            KeyImpactHeading: 'Key Impact',
+            KeyImpactDetails:
+                'This project improves user engagement on music platforms by delivering high-quality, AI-driven song recommendations.',
+
+            GoalHeading: 'Goal',
+            GoalDetails:
+                'Build a scalable AI-based recommendation system that dynamically learns user preferences and refines suggestions.',
+
+            Technologies: [
+                {
+                    title: 'Tools & Technologies',
+                    techs: [
+                        'Python',
+                        'TensorFlow',
+                        'Scikit-learn',
+                        'Pandas',
+                        'Spotify API',
+                        'Flask',
+                    ],
+                },
+            ],
+        },
+        Notebook: {
+            file: '/notebooks/music-recommendation.html',
+        }
+    }
 ];
