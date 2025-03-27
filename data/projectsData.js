@@ -14,6 +14,7 @@ export const projectsData = [
 		url: 'google-health-platform',
 		category: 'Data Science',
 		img: '/images/web-project-2.jpg',
+		type: "notebook",
 		ProjectHeader: {
 			title: '🧬 AI Skin Cancer Detection Challenge (ISIC 2024)',
 			publishDate: 'March 24, 2025',
