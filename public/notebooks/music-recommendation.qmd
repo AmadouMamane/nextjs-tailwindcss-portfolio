@@ -24,7 +24,11 @@ format:
 execute:
   enabled: false
 ---
-### **Importing Libraries and the Dataset**
+
+
+## Initialization
+
+### **Importing Libraries and datasets**
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/}
