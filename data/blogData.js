@@ -18,7 +18,7 @@ Neural networks are a fundamental part of modern AI systems...`,
     title: 'Top 5 Data Science Tools in 2025',
     url: 'top-5-data-science-tools',
     category: 'Data Science',
-    img: '/images/blog-data-tools.jpg',
+    img: '/images/blog-data-tools.png',
     publishDate: 'April 5, 2025',
     tags: ['Data Science', 'Tools', 'Python'],
     content: `### The Best Tools for Data Science

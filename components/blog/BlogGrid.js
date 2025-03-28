@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 import { FiSearch } from 'react-icons/fi';
 import BlogSingle from './BlogSingle';
 import { blogData } from '../../data/blogData';

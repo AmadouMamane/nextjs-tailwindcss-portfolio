@@ -1,6 +1,7 @@
 import { blogData } from '../../data/blogData';
 import { useRouter } from 'next/router';
 import PagesMetaHead from '../../components/PagesMetaHead';
+import Link from 'next/link';
 
 export default function BlogSingle() {
   const router = useRouter();
