@@ -138,7 +138,7 @@ export const projectsData = [
         id: 2, // Unique ID
         title: '🎵 Music Recommendation System',
         url: 'music-recommendation',
-        category: 'Machine Learning',
+        category: 'Data Science',
         img: '/images/music-recommendation.jpg', // Thumbnail image
         type: 'notebook', // Mark as a notebook project
         ProjectHeader: {
