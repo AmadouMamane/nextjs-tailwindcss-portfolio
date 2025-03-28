@@ -33,7 +33,7 @@ export default function ProjectTabs({ project }) {
               ${
                 activeTab === tab
                   ? "text-indigo-500 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-indigo-500"
-                  : "text-gray-700 dark:text-gray-400"
+                  : "text-gray-900 dark:text-gray-200"
               }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -43,7 +43,7 @@ export default function ProjectTabs({ project }) {
       </div>
 
       {/* Tab content */}
-      <div className="mt-3 text-lg text-justify">
+      <div className="mt-3 text-lg text-justify text-gray-900 dark:text-gray-200">
         {/* Handle both list and string values dynamically */}
         {activeTab in project.ProjectInfo && (
           Array.isArray(project.ProjectInfo[activeTab]) ? (
@@ -53,7 +53,7 @@ export default function ProjectTabs({ project }) {
               <div className="space-y-3">
                 {project.ProjectInfo[activeTab].map((item) => (
                   <p key={item.id || item.title}>
-                    <span className="font-bold text-gray-600 dark:text-gray-300">{item.title}</span>: {item.details}
+                    <span className="font-bold text-gray-800 dark:text-gray-300">{item.title}</span>: {item.details}
                   </p>
                 ))}
               </div>
@@ -61,17 +61,17 @@ export default function ProjectTabs({ project }) {
               <ul className="list-disc pl-5 space-y-3">
                 {project.ProjectInfo[activeTab].map((item) => (
                   <li key={item.id || item.title}>
-                    <span className="font-bold text-gray-600 dark:text-gray-300">{item.title}</span>: {item.details}
+                    <span className="font-bold text-gray-800 dark:text-gray-300">{item.title}</span>: {item.details}
                   </li>
                 ))}
               </ul>
             )
           ) : (
-            <div className="leading-relaxed space-y-1 ">
+            <div className="leading-relaxed space-y-1">
               <ReactMarkdown
                 components={{
-                  ul: ({ children }) => <ul className="list-disc pl-10 space-y-15">{children}</ul>,
-                  ol: ({ children }) => <ol className=" list-decimal pl-10 space-y-1">{children}</ol>,
+                  ul: ({ children }) => <ul className="list-disc pl-10 space-y-2">{children}</ul>,
+                  ol: ({ children }) => <ol className=" list-decimal pl-10 space-y-2">{children}</ol>,
                   li: ({ children }) => <li className="ml-4">{children}</li>,
                 }}
               >

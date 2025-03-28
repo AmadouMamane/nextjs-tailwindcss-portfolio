@@ -59,10 +59,10 @@ function AppHeader() {
 							) : (
 								<Image
 									src={logoLight}
-									className="w-36 cursor-pointer"
+									className="w-[145px] h-auto cursor"
 									alt="Dark Logo"
-									width={1000}
-									height={1000}
+									width={1500}
+									height={1400}
 								/>
 							)}
 						</Link>
@@ -139,7 +139,7 @@ function AppHeader() {
 				</div>
 
 				{/* Header links large screen */}
-				<div className="font-general-medium hidden m-0 sm:ml-4 mt-5 sm:mt-3 sm:flex p-5 sm:p-0 justify-center items-center shadow-lg sm:shadow-none">
+				<div className="font-general-medium hidden m-0 sm:ml-4 mt-5 sm:mt-3 sm:flex p-2 sm:p-0 justify-center items-center shadow-lg sm:shadow-none">
 					<div
 						className="block text-left text-lg font-medium text-primary-dark dark:text-ternary-light hover:text-secondary-dark dark:hover:text-secondary-light  sm:mx-4 mb-2 sm:py-2"
 						aria-label="Projects"
