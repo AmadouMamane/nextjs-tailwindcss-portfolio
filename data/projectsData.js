@@ -178,7 +178,7 @@ export const projectsData = [
                 {
                     id: uuidv4(),
                     title: '🧠 AI Model',
-                    details: 'Uses hybrid collaborative filtering and deep neural networks.',
+                    details: 'Uses hybrid collaborative filtering and machine learning algorithms',
                 },
                 {
                     id: uuidv4(),
@@ -200,11 +200,10 @@ export const projectsData = [
                     title: 'Tools & Technologies',
                     techs: [
                         'Python',
-                        'TensorFlow',
+						'Pandas',
+                        'Suprise',
                         'Scikit-learn',
-                        'Pandas',
-                        'Spotify API',
-                        'Flask',
+                        'LightFM',
                     ],
                 },
             ],
