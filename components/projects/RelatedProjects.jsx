@@ -1,52 +1,43 @@
 import Image from 'next/image';
-import { v4 as uuidv4 } from 'uuid';
+import Link from 'next/link';
+import { projectsData } from '../../data/projectsData';
 
-const RelatedProject = {
-	title: 'Related Projects',
-	Projects: [
-		{
-			id: uuidv4(),
-			title: 'Mobile UI',
-			img: '/images/ui-project-2.jpg',
-		},
-		{
-			id: uuidv4(),
-			title: 'Web Application',
-			img: '/images/mobile-project-1.jpg',
-		},
-		{
-			id: uuidv4(),
-			title: 'UI Design',
-			img: '/images/web-project-1.jpg',
-		},
-		{
-			id: uuidv4(),
-			title: 'Kabul Mobile App UI',
-			img: '/images/mobile-project-2.jpg',
-		},
-	],
-};
+function RelatedProjects({ currentProject }) {
+	if (!currentProject) return null;
 
-function RelatedProjects() {
+	const relatedProjects = projectsData.filter(
+		(project) =>
+			project.category === currentProject.category &&
+			project.id !== currentProject.id
+	);
+
+	if (relatedProjects.length === 0) return null;
+
 	return (
-		<div className="mt-10 pt-10 sm:pt-14 sm:mt-20 border-t-2 border-primary-light dark:border-secondary-dark">
+		<div className="mt-10 pt-10 sm:pt-14 sm:mt-20 border-t-2 border-primary-light dark:border-secondary-dark max-w-7xl mx-auto w-full px-4">
 			<p className="font-general-regular text-primary-dark dark:text-primary-light text-3xl font-bold mb-10 sm:mb-14 text-left">
-				{RelatedProject.title}
+				Related Projects
 			</p>
 
-			<div className="grid grid-cols-1 sm:grid-cols-4 gap-10">
-				{RelatedProject.Projects.map((project) => {
-					return (
-						<Image
-							src={project.img}
-							className="rounded-xl cursor-pointer"
-							width="400"
-							height="400"
-							alt={project.title}
-							key={project.id}
-						/>
-					);
-				})}
+			<div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+				{relatedProjects.map((project) => (
+					<Link href={`/projects/${project.id}`} key={project.id} passHref>
+						<div className="rounded-xl cursor-pointer overflow-hidden w-full">
+							<Image
+								src={project.img}
+								className="object-cover w-full h-auto rounded-xl"
+								width={400}
+								height={300}
+								alt={project.title}
+							/>
+							<p className="mt-2 text-center text-lg font-medium tracking-medium text-primary-dark dark:text-primary-light">
+
+
+								{project.title}
+							</p>
+						</div>
+					</Link>
+				))}
 			</div>
 		</div>
 	);

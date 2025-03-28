@@ -67,15 +67,17 @@ function AppBanner() {
 				transition={{ ease: 'easeInOut', duration: 0.9, delay: 0.2 }}
 				className="w-full sm:w-2/3 text-right float-right mt-8 sm:mt-0"
 			>
-				<img
-					layout="responsive"
-					src={
-						activeTheme === 'dark'
-							? '/images/developer.svg'
-							: '/images/developer-dark.svg'
-					}
-					alt="Developer"
-				/>
+			<Image
+				src={
+					activeTheme === 'dark'
+						? '/images/developer.svg'
+						: '/images/developer-dark.svg'
+				}
+				alt="Developer"
+				width={100} 
+				height={0}
+				className="w-full sm:w-3/3 h-auto object-contain"
+			/>
 			</motion.div>
 		</motion.section>
 	);

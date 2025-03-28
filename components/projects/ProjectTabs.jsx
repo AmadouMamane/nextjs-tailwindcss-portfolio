@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NotebookViewer from "./NotebookViewer";
 import ReactMarkdown from "react-markdown";
 
@@ -20,10 +20,16 @@ export default function ProjectTabs({ project }) {
     ? DEFAULT_NOTEBOOK_TABS  
     : [];
 
-  const [activeTab, setActiveTab] = useState(tabs[0]); // First tab is default
+  // Keep track of the active tab
+  const [activeTab, setActiveTab] = useState(tabs[0]); 
+
+  // Reset the active tab to the first one whenever the project changes
+  useEffect(() => {
+    setActiveTab(tabs[0]);
+  }, [project]); // <-- Resets the tab when a related project is clicked
 
   return (
-    <div className="mt-7">
+     <div className="mt-7 max-w-45xl mx-auto w-full ">
       {/* Tab buttons */}
       <div className="flex flex-wrap gap-4 border-b border-gray-300 dark:border-gray-700">
         {tabs.map((tab) => (
@@ -44,19 +50,10 @@ export default function ProjectTabs({ project }) {
 
       {/* Tab content */}
       <div className="mt-3 text-lg text-justify text-gray-900 dark:text-gray-200">
-        {/* Handle both list and string values dynamically */}
         {activeTab in project.ProjectInfo && (
           Array.isArray(project.ProjectInfo[activeTab]) ? (
             activeTab === "Tools & Technologies" ? (
               <p>{project.ProjectInfo[activeTab].join(", ")}</p>
-            ) : activeTab === "Challenge Highlights" || activeTab === "Key Questions" ? (
-              <div className="space-y-3">
-                {project.ProjectInfo[activeTab].map((item) => (
-                  <p key={item.id || item.title}>
-                    <span className="font-bold text-gray-800 dark:text-gray-300">{item.title}</span>: {item.details}
-                  </p>
-                ))}
-              </div>
             ) : (
               <ul className="list-disc pl-5 space-y-3">
                 {project.ProjectInfo[activeTab].map((item) => (
@@ -70,9 +67,20 @@ export default function ProjectTabs({ project }) {
             <div className="leading-relaxed space-y-1">
               <ReactMarkdown
                 components={{
-                  ul: ({ children }) => <ul className="list-disc pl-10 space-y-2">{children}</ul>,
-                  ol: ({ children }) => <ol className=" list-decimal pl-10 space-y-2">{children}</ol>,
+                  p: ({ children }) => <p className="mb-4">{children}</p>,
+                  h1: ({ children }) => <h1 className="text-2xl font-bold my-4">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-xl font-semibold my-3">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-lg font-medium my-2">{children}</h3>,
+                  ul: ({ children }) => <ul className="list-disc pl-6 space-y-2">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-6 space-y-2">{children}</ol>,
                   li: ({ children }) => <li className="ml-4">{children}</li>,
+                  a: ({ href, children }) => (
+                    <a href={href} className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
+                      {children}
+                    </a>
+                  ),
+                  strong: ({ children }) => <strong className="font-bold text-gray-800 dark:text-gray-300">{children}</strong>,
+                  em: ({ children }) => <em className="italic text-gray-600 dark:text-gray-400">{children}</em>,
                 }}
               >
                 {project.ProjectInfo[activeTab]}

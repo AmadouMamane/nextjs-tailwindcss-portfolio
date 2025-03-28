@@ -178,26 +178,21 @@ This AI-powered music recommendation system leverages collaborative filtering an
 - What additional refinements or future strategies should be implemented to further enhance the recommendation system?`,
 
 			"Data Dictionary": `Our primary dataset is the Taste Profile Subset, released by Echo Nest as part of the Million Song Dataset. It consists of two files:
-
 - Songs data:
 	- song_id: Unique identifier for each song
 	- title: Song title
 	- release: Name of the album
 	- artist_name: Artist’s name
 	- year: Year of the song's release
-
 - Play counts data
 	- user _id: A unique id given to the user
 	- song_id: A unique id given to the song
-	- play_count: Number of times the song was played
-
+	- play_cont: Number of times the song was played
 - Data source
-	- http://millionsongdataset.com/
-
-`,
+	- http://millionsongdataset.com/ 
+	`,
 
 "Problem Formulation": `Given the available song and play-count data, our task is to predict each user's likelihood of enjoying specific songs. To measure user preference, we will use predicted ratings. Songs with ratings above a defined threshold will be recommended. Ultimately, we aim to generate a ranked list of the top K songs for each user.
-
 We plan to experiment with various recommendation approaches, including:
 - Knowledge/Rank-Based Recommendations
 - Similarity-Based Recommendations:
