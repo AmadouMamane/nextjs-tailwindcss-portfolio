@@ -210,7 +210,7 @@ export const projectsData = [
             ],
         },
         Notebook: {
-            file: '/notebooks/isic-2024_kaggle.html',
+            file: '/notebooks/music-recommendation.html',
         }
     }
 ];
