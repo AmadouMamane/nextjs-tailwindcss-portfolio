@@ -40,7 +40,7 @@ const ProjectSingle = (props) => {
 							{props.title}
 						</p>
 						<span className="text-lg text-ternary-dark dark:text-ternary-light">
-							{props.category}
+							{props.ProjectHeader.tags}
 						</span>
 					</div>
 				</div>

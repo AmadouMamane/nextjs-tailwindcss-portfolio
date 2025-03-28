@@ -21,7 +21,7 @@ export const projectsData = [
 		ProjectHeader: {
 			title: '🧬 AI Skin Cancer Detection Challenge (ISIC 2024)',
 			publishDate: 'March 24, 2025',
-			tags: 'Data Science',
+			tags: 'Deep Learning',
 		},
 		ProjectImages: [
 			{
@@ -161,7 +161,7 @@ export const projectsData = [
         ProjectInfo: {
             OverviewHeading: 'Overview',
             OverviewDetails: 
-                "This AI-powered music recommendation system leverages collaborative filtering and deep learning to suggest personalized playlists based on user behavior.",
+                "This AI-powered music recommendation system leverages collaborative filtering and machine learning to suggest personalized playlists based on user behavior.",
 
             ChallengeHighlightsHeading: 'Challenge Highlights',
             ChallengeHighlightsInfo: [
