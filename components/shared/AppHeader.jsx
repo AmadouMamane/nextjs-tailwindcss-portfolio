@@ -152,6 +152,10 @@ function AppHeader() {
 					>
 						<Link href="/about">About Me</Link>
 					</div>
+					<div className="block text-left text-lg font-medium text-primary-dark dark:text-ternary-light hover:text-secondary-dark dark:hover:text-secondary-light sm:mx-4 mb-2 sm:py-2">
+					<Link href="/blog">Blog</Link>
+					</div>
+
 
 					<div
 						className="block text-left text-lg font-medium text-primary-dark dark:text-ternary-light hover:text-secondary-dark dark:hover:text-secondary-light  sm:mx-4 mb-2 sm:py-2"
