@@ -1,11 +1,11 @@
 // components/ui/ShareButtons.tsx
-import { FiTwitter, FiLink } from "react-icons/fi";
+import { FiLink, FiLinkedin, FiX } from "react-icons/fi";
 import { useRouter } from "next/router";
 
-export default function ShareButtons() {
+export default function ShareButtons({ title }: { title: string }) {
   const router = useRouter();
-  const url = `https://yourdomain.com${router.asPath}`;
-  const title = encodeURIComponent("Running Through Berlin: The Ultimate Marathon Experience & City Adventure");
+  const url = `https://amadoumamane.fr${router.asPath}`;
+  const encodedTitle = encodeURIComponent(title);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(url);
@@ -13,15 +13,28 @@ export default function ShareButtons() {
   };
 
   return (
-    <div className="mt-16 text-center space-x-4">
+    <div className="mt-10 text-center flex flex-wrap justify-center gap-4">
+      {/* Twitter (X) Share */}
       <a
-        href={`https://twitter.com/intent/tweet?url=${url}&text=${title}`}
+        href={`https://x.com/intent/tweet?url=${url}&text=${encodedTitle}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+        className="inline-flex items-center px-4 py-2 rounded-lg bg-[#1DA1F2] text-white hover:bg-[#1A91DA]"
       >
-        <FiTwitter className="mr-2" /> Tweet
+        <FiX className="mr-2" /> Tweet
       </a>
+
+      {/* LinkedIn Share */}
+      <a
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${url}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center px-4 py-2 rounded-lg bg-[#0A66C2] text-white hover:bg-[#004182]"
+      >
+        <FiLinkedin className="mr-2" /> LinkedIn
+      </a>
+
+      {/* Copy Link Button */}
       <button
         onClick={copyToClipboard}
         className="inline-flex items-center px-4 py-2 rounded-lg bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-400 dark:hover:bg-gray-600"
