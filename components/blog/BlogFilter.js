@@ -1,4 +1,4 @@
-const selectOptions = ['Machine Learning', 'Data Science', 'AI', 'Deep Learning'];
+const selectOptions = ['Machine Learning', 'Data Science', 'AI', 'Deep Learning', 'Running'];
 
 function BlogFilter({ setSelectCategory }) {
     return (
@@ -34,3 +34,4 @@ function BlogFilter({ setSelectCategory }) {
 }
 
 export default BlogFilter;
+

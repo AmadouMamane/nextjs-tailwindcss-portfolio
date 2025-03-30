@@ -17,3 +17,10 @@ rm -rf node_modules package-lock.json .next
 npm install
 npm run build
 npm run dev
+
+
+brew install trash
+trash node_modules
+rm -rf ~/.Trash/*
+
+npm install

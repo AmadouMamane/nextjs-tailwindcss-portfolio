@@ -245,3 +245,26 @@ a {
 		opacity: 0.5;
 	}
 }
+
+
+/* Force center the thumbnails track */
+.yarl__thumbnails_track {
+	justify-content: center !important;
+  }
+  
+  /* Optional: smooth transition when switching */
+  .yarl__thumbnails_thumbnail {
+	transition: transform 0.3s ease;
+  }
+  
+  /* Optional: outline active thumb */
+  .yarl__thumbnails_thumbnail_active {
+	outline: 2px solid #6366f1; /* or any color you prefer */
+	outline-offset: 2px;
+  }
+  
+
+  html {
+	scroll-behavior: smooth;
+  }
+  
