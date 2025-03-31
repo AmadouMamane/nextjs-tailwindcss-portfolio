@@ -22,13 +22,12 @@ import readingTime from "reading-time";
 import DefaultBlogLayout from "../../components/blog/layouts/DefaultBlogLayout";
 import PagesMetaHead from "../../components/PagesMetaHead";
 import TableOfContents from "../../components/TableOfContents";
-import Callout from "../../components/ui/Callout";
-import FadeInSection from "../../components/ui/FadeInSection";
-import AuthorBox from "../../components/ui/AuthorBox";
-import ShareButtons from "../../components/ui/ShareButtons";
+
 import GalleryLightbox from "../../components/ui/GalleryLightbox";
 import NextPrevNav from "../../components/ui/NextPrevNav";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection } from '../../components/ui';
+
 
 const blogDirectory = path.join(process.cwd(), "content/blog");
 
@@ -209,13 +208,18 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
             ),
             Image,
             motion,
+            AnimatedSection, 
             Callout,
             FadeInSection,
             AuthorBox,
             ShareButtons,
             TableOfContents,
             GalleryLightbox,
-            NextPrevNav
+            NextPrevNav, 
+            ImageGallery, 
+            Section, 
+            p: (props) => <>{props.children}</>
+          
             
           }}
         />

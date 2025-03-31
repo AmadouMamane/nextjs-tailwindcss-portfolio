@@ -1,5 +1,5 @@
 ---
-title: "Running Through Berlin: The Ultimate Marathon Experience & City Adventure good"
+title: "Running Through Berlin: A Marathon Experience & City Adventure"
 date: "2023-09-24"
 image: "/images/blog/sports/berlin-marathon/berlin-marathon-2.png"
 category: "sports"
@@ -8,34 +8,22 @@ readingTime: "6 min read"
 description: "A deep-dive into the Berlin Marathon experience — from race day adrenaline to post-run city joy."
 ---
 
-import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import FadeInSection from '@/components/ui/FadeInSection'
-import Callout from '@/components/ui/Callout'
-import ShareButtons from '@/components/ui/ShareButtons'
-import AuthorBox from '@/components/ui/AuthorBox'
-import TableOfContents from '@/components/TableOfContents'
-import GalleryLightbox from '@/components/ui/GalleryLightbox'
+import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareButtons, AuthorBox, GalleryLightbox} from '@/components/ui'
 
 <script type="application/ld+json">{`
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "Running Through Berlin: The Ultimate Marathon Experience & City Adventure",
+  "headline": "Running Through Berlin: A Marathon Experience & City Adventure",
   "image": ["https://yourdomain.com/images/blog/sports/berlin-marathon/berlin-marathon-2.png"],
   "datePublished": "2023-09-24",
-  "author": {
-    "@type": "Person",
-    "name": "Alex"
-  },
+  "author": { "@type": "Person", "name": "Amadou" },
   "publisher": {
     "@type": "Organization",
     "name": "Your Blog Name",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yourdomain.com/logo.png"
-    }
+    "logo": { "@type": "ImageObject", "url": "https://yourdomain.com/logo.png" }
   },
   "description": "A deep-dive into the Berlin Marathon experience — from race day adrenaline to post-run city joy."
 }
@@ -43,41 +31,9 @@ import GalleryLightbox from '@/components/ui/GalleryLightbox'
 
 <main className="min-h-screen w-full bg-white dark:bg-black text-gray-900 dark:text-gray-100 overflow-x-hidden">
 
-
-
 {/* Hero Section */}
 <FadeInSection>
-  <section className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-20">
-    <div className="space-y-16">
-      <GalleryLightbox>
-        <div className="relative w-full h-[500px]">
-          <Image
-            src="/images/blog/sports/berlin-marathon/berlin-marathon-hero.png"
-            alt="Runners at the start line of Berlin Marathon"
-            fill
-            className="rounded-3xl shadow-2xl object-cover border border-gray-200 dark:border-gray-700 transition-transform duration-500 hover:scale-105"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="relative w-full h-[400px]">
-            <Image
-              src="/images/blog/sports/berlin-marathon/berlin-marathon-crowd.png"
-              alt="Berlin Marathon crowd cheering"
-              fill
-              className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600 transition-transform duration-500 hover:scale-105"
-            />
-          </div>
-          <div className="relative w-full h-[400px]">
-            <Image
-              src="/images/blog/sports/berlin-marathon/berlin-marathon-streets.png"
-              alt="Berlin city streets during marathon morning"
-              fill
-              className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600 transition-transform duration-500 hover:scale-105"
-            />
-          </div>
-        </div>
-      </GalleryLightbox>
-
+  <Section>
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
         <div className="text-2xl leading-relaxed font-light">
           From sunrise training to nightlife celebrations, this is the story of a city, a race, and everything in between. Berlin didn’t just host my marathon — it transformed it into a life highlight.
@@ -85,175 +41,449 @@ import GalleryLightbox from '@/components/ui/GalleryLightbox'
         <div className="mt-6 text-lg text-gray-600 dark:text-gray-400">
           Whether you're chasing a personal best or a passport stamp, the Berlin Marathon delivers something unforgettable — a runner’s dream infused with culture, history, and heart.
         </div>
-      </motion.div>
-    </div>
-  </section>
+    </motion.div>
+
+    <GalleryLightbox>
+      <div className="relative w-full h-[500px]">
+        <Image
+          src="/images/blog/sports/berlin-marathon/berlin-marathon-hero.png"
+          alt="Runners at the start line of Berlin Marathon"
+          fill
+          className="rounded-3xl shadow-2xl object-cover border border-gray-200 dark:border-gray-700 transition-transform duration-500 hover:scale-105"
+        />
+      </div>
+    </GalleryLightbox>
+  
+
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
+        <div className="text-2xl leading-relaxed font-light text-justify">
+          The Berlin Marathon is not just a race—it’s an experience that intertwines endurance, history, and the electrifying pulse of one of Europe’s most fascinating cities. From its flat, record-breaking course to the rich tapestry of Berlin’s culture, food, and nightlife, every step of this journey was unforgettable. 
+          Whether you’re a seasoned marathoner or a curious traveler, Berlin offers something beyond the finish line. 
+          Let me take you through my Berlin Marathon adventure, from the excitement of arrival to the thrill of running through the Brandenburg Gate.
+
+        </div>
+    </motion.div>
+  </Section>
 </FadeInSection>
-
-
-
-
-
-
 
 {/* Section: First Glimpses */}
 <FadeInSection>
-<section className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-20 space-y-16">
-  <div className="text-center">
-    <h2 className="text-3xl md:text-4xl font-bold mb-4">✈️ First Glimpses of Berlin</h2>
-    <div className="text-lg text-gray-600 dark:text-gray-300">
+  <Section title="✈️ First Glimpses of Berlin">
+    <div className="text-lg text-gray-600 dark:text-gray-300 text-center">
       Delayed flights couldn’t dull my excitement. Stepping into Berlin’s Tiergarten after a whirlwind arrival felt like unlocking a dream level.
     </div>
-  </div>
-
-  <div className="relative w-full h-[500px]">
-    <Image src="/images/blog/sports/berlin-marathon/berlin-marathon-arrival.png" alt="Arriving in Berlin at sunset" fill className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600" />
-  </div>
-
-  <ul className="list-disc list-inside text-lg text-gray-700 dark:text-gray-300 max-w-4xl mx-auto">
-    <li><strong>Flight chaos?</strong> Check. Still worth it.</li>
-    <li><strong>RER 8:</strong> Sleek, fast, and ultra-efficient.</li>
-  </ul>
-
-
-  <div className="bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 p-6 rounded-xl shadow-inner max-w-2xl mx-auto">
-    <h3 className="text-xl font-semibold mb-2">🏨 Where I Stayed</h3>
-    <ul className="list-disc list-inside">
-      <li>Smartment Business Berlin City West: Digital check-in made it smooth.</li>
-      <li>Missed having someone at reception pre-race morning.</li>
+    <div className="relative w-full h-[500px]">
+      <Image src="/images/blog/sports/berlin-marathon/tiergarten.webp" alt="Arriving in Berlin at sunset" fill className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600" />
+    </div>
+    <ul className="list-disc list-inside text-lg text-gray-700 dark:text-gray-300 max-w-4xl mx-auto text-justify">
+      <li><strong>Flight chaos? - A Rocky Start :</strong> Travel is rarely smooth, and my journey was no exception. A delayed flight from Paris turned my well-planned afternoon arrival into an evening scramble. Still, stepping off the plane at Berlin Brandenburg Airport (BER), I felt the rush of excitement—I was finally in Berlin!</li>
+      <li><strong>Navigating to Tiergarten - RER 8:</strong> Berlin’s public transport is legendary, and rather than wasting money on a cab, 
+      I took the RER 8 into the city. The efficiency was impressive, and before I knew it, I had arrived in Tiergarten, one of Berlin’s largest parks and the perfect backdrop for my marathon weekend.</li>
     </ul>
-  </div>
-</section>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  
+      <div className="p-6 rounded-xl shadow-md bg-gray-100 dark:bg-gray-800">
+        <h3 className="text-xl font-semibold mb-2"> 🏨  My stay: Smartment Business Berlin City West</h3>
+          <p className="text-gray-700 dark:text-gray-300 text-justify">
+            Finding the right accommodation was a challenge—I wanted a quiet, comfortable place to rest, but also one that gave me access to the city’s vibrant neighborhoods.
+          </p>
+
+          <p className="text-gray-700 dark:text-gray-300 text-justify">
+            I opted for Smartment Business Berlin City West, a hybrid between an Airbnb and a hotel. It offered minimal staff interaction, but the digital check-in process was surprisingly seamless.
+          </p>
+      </div>
+
+    <div className="p-6 rounded-xl  bg-gray-10 dark:bg-gray-100">
+        <h3 className="text-xl font-semibold mb-2">📌  What I Learned</h3>
+    <Callout type="tip">
+      <p>Booking a traditional hotel might have been a better choice, especially for a marathon weekend. Though the room was spacious and well-equipped, not having a 24/7 reception was a slight inconvenience</p>
+    </Callout>
+    </div>
+
+    </div>
+
+  </Section>
 </FadeInSection>
 
 
 
 
 
-
-
-
-{/* Section: Behind the Team */}
-<motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-40 space-y-16">
-  <div className="text-center">
-    <h2 className="text-3xl md:text-4xl font-bold mb-4">🎬 Behind the Team – The Soul of Elite Running</h2>
-    <div className="text-lg text-gray-600 dark:text-gray-300">
-      “Behind the Team” gave us a front-row seat to the mindset of Kenyan elites.
-    </div>
+<motion.section
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+  viewport={{ once: true }}
+  className="relative px-4 py-24 sm:px-6 lg:px-24 xl:px-20 space-y-20 bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-gray-900 space-y-16"
+>
+  {/* Intro */}
+  <div className="text-center space-y-4">
+    <h2 className="text-4xl md:text-5xl font-bold tracking-tight">🎬 A Cinematic Look Into Greatness</h2>
+    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+      What started as a simple pre-race evening turned into a profound encounter with elite mindset, culture, and inspiration
+    </p>
   </div>
 
-  <Image src="/images/blog/sports/berlin-marathon/berlin-marathon-2.png" alt="Babylon Cinema" width={1600} height={900} className="rounded-2xl shadow-xl mx-auto border border-gray-300 dark:border-gray-600" />
-
-  <div className="bg-blue-100 dark:bg-gray-800 p-6 rounded-2xl shadow-inner border border-blue-200 dark:border-gray-700 max-w-3xl mx-auto">
-    <p className="font-semibold mb-2">📍 Babylon Cinema, Est. 1929</p>
-    <ul className="list-disc list-inside mt-3">
-      <li><strong>Patrick Sang:</strong> "The mind is the foundation of greatness." Goosebumps.</li>
-      <li><strong>Nike:</strong> “Run with legends. That’s the magic of a marathon.”</li>
-    </ul>
+  {/* Hero Image */}
+  <div className="relative w-full h-[600px]">
+    <Image
+      src="/images/blog/sports/berlin-marathon/behind_the_team.jpg"
+      alt="Babylon Cinema"
+      fill
+      className="rounded-3xl shadow-2xl object-cover border border-gray-200 dark:border-gray-700"
+    />
   </div>
+
+  {/* Main Content */}
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.2, duration: 0.6 }}
+    viewport={{ once: true }}
+    className="max-w-6xl mx-auto space-y-12"
+  >
+    <p className="text-xl md:text-[1.3rem] text-justify text-gray-800 dark:text-gray-200 leading-normal">
+      One of the most inspiring parts of my pre-race experience was attending the screening of <strong>“Behind the Team”</strong> at <strong>Babylon Cinema</strong>, a historic venue dating back to 1929. This wasn’t just a film—it was a cinematic portrait of greatness, culture, and discipline.
+    </p>
+
+    {/* Cards */}
+    <FadeInSection>
+      <div className="grid md:grid-cols-3 gap-6">
+        {/* Card */}
+        {[
+          {
+            icon: "🧠",
+            title: "The Kenyan Training Philosophy",
+            desc: "More than physical effort — it’s a celebration of mental grit, community, and spiritual drive."
+          },
+          {
+            icon: "🎙️",
+            title: "Q&A with Patrick Sang",
+            desc: "Legendary coach of Kipchoge: “A great athlete is not just built in the body, but in the mind.”"
+          },
+          {
+            icon: "👟",
+            title: "Nike on Running Culture",
+            desc: "Running unites pros and amateurs alike. The spirit of the marathon is democratic, raw, and magical."
+          }
+        ].map((item, i) => (
+          <div
+            key={i}
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-3xl shadow-md p-6 hover:shadow-xl transition-all duration-300 hover:bg-gradient-to-br hover:from-blue-50 hover:to-white dark:hover:from-gray-800 dark:hover:to-gray-900"
+          >
+            <div className="text-3xl mb-4">{item.icon}</div>
+            <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{item.title}</h4>
+            <p className="text-gray-700 dark:text-gray-300 text-[0.95rem] leading-normal text-justify">
+              {item.desc}
+            </p>
+          </div>
+        ))}
+      </div>
+    </FadeInSection>
+
+    <p className="text-xl md:text-[1.3rem] text-justify text-gray-800 dark:text-gray-200 leading-normal">
+      Leaving the cinema, I wasn’t just inspired—I felt equipped. I wasn't only running a marathon the next day; I was running with the energy of legends.
+    </p>
+
+    {/* Quote Box */}
+    <FadeInSection>
+      <div className="bg-blue-100 dark:bg-gray-800 p-4 rounded-3xl shadow-inner border border-blue-200 dark:border-gray-700 max-w-4xl mx-auto">
+        <p className="font-bold text-gray-900 dark:text-white text-xl">📍 Babylon Cinema, Est. 1929</p>
+        <ul className="list-disc pl-6 text-gray-800 dark:text-gray-300 text-[1rem] space-y-1">
+          <li><strong>Patrick Sang:</strong> "The mind is the foundation of greatness."</li>
+          <li><strong>Nike:</strong> “Run with legends. That’s the magic of a marathon.”</li>
+        </ul>
+      </div>
+    </FadeInSection>
+  </motion.div>
+
+
 </motion.section>
+
+
+
+
+
+
+
+
+
 
 {/* Section: Race Day */}
-<motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-40 space-y-16">
-  <div className="text-center">
-    <h2 className="text-3xl md:text-4xl font-bold mb-4">🏃‍♂️ Race Day – September 24, 2023</h2>
+<motion.section
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+  viewport={{ once: true }}
+  className="relative px-4 py-24 sm:px-6 lg:px-24 xl:px-32 bg-white dark:bg-black space-y-16"
+>
+  {/* Intro */}
+  <div className="max-w-4xl mx-auto text-center space-y-5">
+    <h2 className="text-5xl font-bold tracking-tight leading-tight">
+      🏃‍♂️ Race Day – September 24, 2023
+    </h2>
+    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+      From pre-dawn chaos to a personal record on the world’s fastest marathon course — this was Berlin, in all its raw magic.
+    </p>
   </div>
 
-  <Image src="/images/blog/sports/berlin-marathon/berlin-marathon-2.png" alt="Race Start" width={1600} height={900} className="rounded-2xl shadow-xl mx-auto border border-gray-300 dark:border-gray-600" />
+  {/* Hero Image */}
+  <div className="relative w-full h-[700px] rounded-3xl overflow-hidden shadow-2xl border border-gray-300 dark:border-gray-700">
+    <Image
+      src="/images/blog/sports/berlin-marathon/race_day_outfit.png"
+      alt="Race Day Vibes"
+      fill
+      className="object-cover"
+    />
+  </div>
 
-  <Callout type="tip">
-    Pack your nutrition smart — aid stations vary every 5K!
-  </Callout>
+  {/* Narrative Blocks */}
+  <div className="max-w-5xl mx-auto space-y-14">
+    {/* Scene: Build-up */}
+    <div className="space-y-2">
+      <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">⏰ Before the Start</h3>
+      <p className="text-xl leading-relaxed text-justify text-gray-800 dark:text-gray-200">
+        Woke up with a cramp in my right leg — not exactly ideal. My nerves were high. I left the hotel far too late and ended up sprinting through tens of thousands of runners to reach my corral. Chaos, anxiety... and adrenaline.
+      </p>
+    </div>
 
-  <ul className="list-disc list-inside text-lg text-gray-700 dark:text-gray-300 max-w-4xl mx-auto">
-    <li>🎯 Hit my PB: <strong>2h39m50s</strong></li>
-    <li>🍬 Gummy bears at 30K? Berlin’s got jokes — and fuel!</li>
-    <li>🏁 Running through the Brandenburg Gate is surreal.</li>
-  </ul>
+    {/* Scene: The Marathon Experience */}
+    <div className="grid md:grid-cols-2 gap-4 items-start">
+      <div className="space-y-2">
+        <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">🔥 The Race – 42.195km of Emotion</h3>
+        <ul className="list-disc pl-6 text-lg text-gray-800 dark:text-gray-300 leading-relaxed space-y-3">
+          <li><strong>The Atmosphere:</strong> Berliners lined the streets with energy, humor, and music. It felt like the city itself was cheering me on.</li>
+          <li><strong>Mid-race Boost:</strong> At kilometer 30, volunteers handed me gummy bears — the weirdest, most perfect pick-me-up I never saw coming.</li>
+          <li><strong>The Pain:</strong> My leg cramped again just past halfway. I dug deep. Every cheer, every footstep helped me keep moving.</li>
+          <li><strong>The Finish:</strong> Running through the Brandenburg Gate... goosebumps. My time? <strong>2h39m50s</strong>. A lifetime PB.</li>
+        </ul>
+        <Callout type="tip">
+          Bring your own fuel. Aid stations appear every 5K, but choices are limited and crowded.
+        </Callout>
+      </div>
+
+      {/* Visual Side Card */}
+      <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-300 dark:border-gray-700 space-y-4">
+        <h4 className="text-lg font-bold text-gray-900 dark:text-white">🏅 The Elites</h4>
+        <ul className="list-disc pl-6 text-base text-gray-700 dark:text-gray-300 leading-relaxed space-y-2">
+          <li><strong>Eliud Kipchoge:</strong> Another title. 2h02m40s.</li>
+          <li><strong>Tigist Assefa:</strong> New women’s world record – 2h11m51s. A seismic moment.</li>
+        </ul>
+      </div>
+    </div>
+
+    {/* Recap Card */}
+    <div className="bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-black p-8 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 text-center">
+      <h4 className="text-xl font-semibold text-gray-900 dark:text-white">🏁 Race in 3 Highlights</h4>
+      <ul className="list-disc list-inside text-lg text-gray-800 dark:text-gray-300 space-y-2">
+        <li>🎯 Personal Best: <strong>2h39m50s</strong></li>
+        <li>🍬 Gummy bears at 30K? Yes. Berlin style.</li>
+        <li>🏛️ Through the Brandenburg Gate = goosebumps forever.</li>
+      </ul>
+    </div>
+  </div>
 </motion.section>
+
+
+
 
 {/* Section: Post-Race Berlin */}
-<motion.section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-40 space-y-16">
-  <div className="text-center">
-    <h2 className="text-3xl md:text-4xl font-bold mb-10">🖼️ Post-Race Berlin – Beauty in Motion</h2>
+<motion.section
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+  viewport={{ once: true }}
+  className="relative px-4 py-28 sm:px-6 lg:px-24 xl:px-32 bg-white dark:bg-black space-y-16"
+>
+  {/* Header */}
+  <div className="text-center max-w-3xl mx-auto space-y-6">
+    <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
+      🌇 Post-Race Berlin – The City, The Soul, The Slowdown
+    </h2>
+    <p className="text-xl text-gray-600 dark:text-gray-300">
+      The race may have ended, but Berlin had more to give. With sore legs and a full heart, I let the city move me in unexpected ways.
+    </p>
   </div>
 
-  <div className="grid md:grid-cols-3 gap-10">
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-      <h3 className="text-lg font-semibold">🎨 East Side Gallery</h3>
-      <p>Art and protest immortalized on the Berlin Wall.</p>
-    </div>
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-      <h3 className="text-lg font-semibold">🕊️ Holocaust Memorial</h3>
-      <p>Walked among silence and shadow. Powerful.</p>
-    </div>
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-      <h3 className="text-lg font-semibold">💃 Bachata by the River</h3>
-      <p>Unexpected joy with strangers. Berlin danced back.</p>
-    </div>
+  {/* Main Photo */}
+  <div className="relative w-full h-[600px] rounded-3xl overflow-hidden shadow-xl border border-gray-300 dark:border-gray-700">
+    <Image
+      src="/images/blog/sports/berlin-marathon/east-side-galery-1.png"
+      alt="Berlin Wall Art"
+      fill
+      className="object-cover"
+    />
   </div>
 
-  <div className="text-center">
-    <h3 className="text-2xl font-semibold mt-10 mb-6">🍽️ My Last Meals in Berlin</h3>
-    <ul className="list-disc list-inside max-w-2xl mx-auto text-lg text-gray-700 dark:text-gray-300">
-      <li>🥙 <strong>Mustafa’s Kebab:</strong> Worth every second in line.</li>
-      <li>🐟 <strong>FunkyFisch:</strong> Refined, rich, rewarding.</li>
-      <li>🍜 <strong>Ni’s Thai:</strong> Comfort food royalty.</li>
-    </ul>
+  {/* Highlights in 3 cards */}
+  <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+    {[
+      {
+        icon: "🖼️",
+        title: "East Side Gallery",
+        description: "Strolling along a 1.4km stretch of painted history. The Berlin Wall’s remnants now breathe with color and peace."
+      },
+      {
+        icon: "🕊️",
+        title: "Holocaust Memorial",
+        description: "A walk through silence. Among 2,700 concrete blocks, I found perspective, weight, and stillness."
+      },
+      {
+        icon: "💃",
+        title: "Bachata by the Spree",
+        description: "Berlin dances. I found myself moving with strangers, the Spree sparkling beside us, bachata in our bones. Joy, unexpected."
+      }
+    ].map(({ icon, title, description }, i) => (
+      <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-md p-6 space-y-3">
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+          {icon} {title}
+        </h3>
+        <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed text-justify">
+          {description}
+        </p>
+      </div>
+    ))}
+  </div>
+
+  {/* Gallery */}
+  <div className="max-w-6xl mx-auto">
+    <ImageGallery
+      images={[
+        { src: "/images/blog/sports/berlin-marathon/east-side-galery-2.png", alt: "East side gallery 1" },
+        { src: "/images/blog/sports/berlin-marathon/east-side-galery-3.png", alt: "East side gallery 2" },
+        { src: "/images/blog/sports/berlin-marathon/hollocost-memeorial.png", alt: "Holocaust memorial" },
+        { src: "/images/blog/sports/berlin-marathon/east-side-galery-4.png", alt: "East side gallery 3" }
+      ]}
+    />
+  </div>
+
+  {/* Food Memories */}
+  <div className="text-center space-y-10 max-w-3xl mx-auto">
+    <h3 className="text-3xl font-bold">🍽️ My Final Bites in Berlin</h3>
+    <div className="grid md:grid-cols-3 gap-6 text-left">
+      {[
+        {
+          emoji: "🥙",
+          name: "Mustafa’s Kebab",
+          desc: "The myth is real is real. Juicy, crunchy, explosive - I’d queue again without hesitation."
+        },
+        {
+          emoji: "🐟",
+          name: "FunkyFisch",
+          desc: "Refined and radiant, one of Berlin’s top-rated seafood spots - with a hefty price tag but divine flavors."
+        },
+        {
+          emoji: "🍜",
+          name: "Ni’s Thai",
+          desc: " Comfort food, depth of flavor, and the best dumplings I’ve had."
+        }
+      ].map(({ emoji, name, desc }, i) => (
+        <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 rounded-xl shadow-md">
+          <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{emoji} {name}</h4>
+          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-justify">{desc}</p>
+        </div>
+      ))}
+    </div>
   </div>
 </motion.section>
 
-{/* Section: Final Reflections */}
-<section initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-40 text-center space-y-12">
-  <blockquote className="italic text-xl max-w-3xl mx-auto text-gray-600 dark:text-gray-300 border-l-4 border-red-400 pl-6">
-    “Would I return? In a heartbeat. Smarter, stronger, and maybe this time, with a Berghain wristband.”
-  </blockquote>
 
-  <Image src="/images/blog/sports/berlin-marathon/berlin-marathon-2.png" alt="Berlin at Night" width={1600} height={900} className="rounded-3xl shadow-2xl mx-auto border border-gray-300 dark:border-gray-600" />
 
-  <div className="text-2xl font-bold text-gray-800 dark:text-gray-100 animate-fadeIn delay-500">
-    Danke, Berlin. Ich komme wieder. 🇩🇪❤️‍🔥
+<Section title="🫶 Final Thoughts – Why Berlin Stole My Heart">
+  {/* Hero Visual Anchor */}
+  <div className="relative w-full h-[500px] mt-16">
+    <Image
+      src="/images/blog/sports/berlin-marathon/porte-brandebourg.jpg.webp"
+      alt="Berlin at Night – Brandenburg Gate"
+      fill
+      className="rounded-3xl shadow-2xl object-cover border border-gray-300 dark:border-gray-600"
+    />
   </div>
-</section>
+
+  {/* Narrative Wrap-Up */}
+  <div className="max-w-4xl mx-auto text-lg md:text-xl leading-relaxed text-justify text-gray-800 dark:text-gray-200 space-y-7 mt-10">
+    <p>
+      The Berlin Marathon isn’t just 42.195 kilometers — it’s a moving masterpiece. A story told in cadence, cobblestone, and collective breath. It’s the kind of race that leaves footprints not only on the course, but on your character.
+    </p>
+
+    <p>
+      From the electrifying echoes of cheering crowds along Unter den Linden to the hushed reverence of the Holocaust Memorial, Berlin becomes more than a backdrop — it becomes your co-runner. Your rhythm. Your reward.
+    </p>
+
+    <p>
+      My race may have ended at the Brandenburg Gate, but Berlin’s impact didn’t stop there. The city unraveled itself layer by layer — through its food, its music, its contradictions. And somehow, in all that chaos and clarity, it gave something back.
+    </p>
+
+    {/* Reflective Pull Quote */}
+    <blockquote className="italic text-xl text-center text-gray-600 dark:text-gray-300 border-l-4 border-red-400 pl-6 mx-auto max-w-3xl">
+      Would I return? Without hesitation. Next time, I’ll come back stronger, stay longer — and maybe, just maybe, I’ll finally earn that Berghain wristband.
+    </blockquote>
+  </div>
+
+  {/* Emotional Close */}
+  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100 text-center mt-14 animate-fadeIn delay-500">
+    Danke, Berlin. Ich komme wieder. 🇩🇪❤️‍🔥
+  </p>
+</Section>
 
 
-  <section className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-20">
-    <div className="text-center">
-    <h2 className="text-3xl md:text-4xl font-bold mb-10">🖼️ Gallery</h2>
-     </div>
-    <div className="space-y-16">
-      <GalleryLightbox>
-        <div className="relative w-full h-[500px]">
-          <Image
-            src="/images/blog/sports/berlin-marathon/berlin-marathon-hero.png"
-            alt="Runners at the start line of Berlin Marathon"
-            fill
-            className="rounded-3xl shadow-2xl object-cover border border-gray-200 dark:border-gray-700 transition-transform duration-500 hover:scale-105"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="relative w-full h-[400px]">
-            <Image
-              src="/images/blog/sports/berlin-marathon/berlin-marathon-crowd.png"
-              alt="Berlin Marathon crowd cheering"
-              fill
-              className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600 transition-transform duration-500 hover:scale-105"
-            />
-          </div>
-          <div className="relative w-full h-[400px]">
-            <Image
-              src="/images/blog/sports/berlin-marathon/berlin-marathon-streets.png"
-              alt="Berlin city streets during marathon morning"
-              fill
-              className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600 transition-transform duration-500 hover:scale-105"
-            />
-          </div>
-        </div>
-      </GalleryLightbox>
-      </div>
-</section>
+<Section title="📸 Gallery – Snapshots of a Weekend I’ll Never Forget">
+  <p className="text-center max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-10">
+    From iconic monuments to candid moments, here’s a visual love letter to Berlin — one frame at a time.
+  </p>
+
+  <ImageGallery
+    images={[
+      { src: "/images/blog/sports/berlin-marathon/altes-musueum-3.png", alt: "Altes Museum 3" },
+      { src: "/images/blog/sports/berlin-marathon/altes-musueum-1.png", alt: "Altes Museum 1" },
+      { src: "/images/blog/sports/berlin-marathon/altes-musueum-2.png", alt: "Altes Museum 2" },
+      { src: "/images/blog/sports/berlin-marathon/altes-musueum-4.png", alt: "Altes Museum 4" },
+      { src: "/images/blog/sports/berlin-marathon/babylon-cinema-2.png", alt: "Babylon Cinema 2" },
+      { src: "/images/blog/sports/berlin-marathon/behind_the_team_large.jpg", alt: "Behind the Team Large" },
+      { src: "/images/blog/sports/berlin-marathon/patrick_sang.png", alt: "Patrick Sang Speaking" },
+      { src: "/images/blog/sports/berlin-marathon/patrick_sang_questions.png", alt: "Patrick Sang Q&A" },
+
+      { src: "/images/blog/sports/berlin-marathon/behind_the_team-questions.png", alt: "Behind the Team Q&A" },
+      { src: "/images/blog/sports/berlin-marathon/pack-collection.png", alt: "Race Pack Collection" },
+      { src: "/images/blog/sports/berlin-marathon/pack-collection-2.png", alt: "Race Pack 2" },
+      { src: "/images/blog/sports/berlin-marathon/pack-collection-3.png", alt: "Race Pack 3" },
+      { src: "/images/blog/sports/berlin-marathon/race-start-3.png", alt: "Race Start 3" },
+      { src: "/images/blog/sports/berlin-marathon/race-start-2.png", alt: "Race Start 2" },
+
+      { src: "/images/blog/sports/berlin-marathon/race-start-1.png", alt: "Race Start 1" },
+
+      { src: "/images/blog/sports/berlin-marathon/berlin-marathon-1.png", alt: "Berlin Marathon Start" },
+
+      { src: "/images/blog/sports/berlin-marathon/brendenbourg-race-1.png", alt: "Running to Brandenburg" },
+      { src: "/images/blog/sports/berlin-marathon/berlin-marathon-arrival.png", alt: "Arrival in Berlin" },
+      { src: "/images/blog/sports/berlin-marathon/east-side-galery-1.png", alt: "East Side Gallery 1" },
+      { src: "/images/blog/sports/berlin-marathon/east-side-galery-2.png", alt: "East Side Gallery 2" },
+      { src: "/images/blog/sports/berlin-marathon/east-side-galery-3.png", alt: "East Side Gallery 3" },
+      { src: "/images/blog/sports/berlin-marathon/east-side-galery-4.png", alt: "East Side Gallery 4" },
+      { src: "/images/blog/sports/berlin-marathon/fernsehturm-inside.png", alt: "Inside Fernsehturm" },
+      { src: "/images/blog/sports/berlin-marathon/fernsehturm.png", alt: "Fernsehturm Tower" },
+      { src: "/images/blog/sports/berlin-marathon/hollocost-memeorial.png", alt: "Holocaust Memorial" },
+      { src: "/images/blog/sports/berlin-marathon/mustapha-kebab-1.png", alt: "Mustafa’s Kebab 1" },
+      { src: "/images/blog/sports/berlin-marathon/mustapha-kebab-2.png", alt: "Mustafa’s Kebab 2" },
+      { src: "/images/blog/sports/berlin-marathon/neues-museim.png", alt: "Neues Museum" },
+      { src: "/images/blog/sports/berlin-marathon/neues-museim-2.png", alt: "Neues Museum 2" },
+      { src: "/images/blog/sports/berlin-marathon/neues-museim-3.png", alt: "Neues Museum 3" },
+
+
+      { src: "/images/blog/sports/berlin-marathon/pergamon-museum-2.png", alt: "Pergamon Museum 2" },
+      { src: "/images/blog/sports/berlin-marathon/pergamum-meusum.png", alt: "Pergamon Museum 1" },
+
+    ]}
+  />
+</Section>
 
 <AuthorBox name="Amadou" bio="Paris-based AI engineer, runner and dancer. Sharing stories from the track and the terminal — race recaps and AI deep dives." avatar="/images/profile.jpeg" />
 <ShareButtons />
+
+
+
+
+
 
 </main>

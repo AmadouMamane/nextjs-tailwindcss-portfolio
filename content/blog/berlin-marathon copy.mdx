@@ -1,5 +1,5 @@
 ---
-title: "Running Through Berlin: The Ultimate Marathon Experience & City Adventure cop"
+title: "Running Through Berlin: The Ultimate Marathon Experience & City Adventure good"
 date: "2023-09-24"
 image: "/images/blog/sports/berlin-marathon/berlin-marathon-2.png"
 category: "sports"
@@ -15,7 +15,6 @@ import FadeInSection from '@/components/ui/FadeInSection'
 import Callout from '@/components/ui/Callout'
 import ShareButtons from '@/components/ui/ShareButtons'
 import AuthorBox from '@/components/ui/AuthorBox'
-import NextPrevNav from '@/components/ui/NextPrevNav'
 import TableOfContents from '@/components/TableOfContents'
 import GalleryLightbox from '@/components/ui/GalleryLightbox'
 
@@ -116,9 +115,6 @@ import GalleryLightbox from '@/components/ui/GalleryLightbox'
     <li><strong>RER 8:</strong> Sleek, fast, and ultra-efficient.</li>
   </ul>
 
-  <Callout type="tip">
-    Pack your nutrition smart — aid stations vary every 5K!
-  </Callout>
 
   <div className="bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 p-6 rounded-xl shadow-inner max-w-2xl mx-auto">
     <h3 className="text-xl font-semibold mb-2">🏨 Where I Stayed</h3>
@@ -164,6 +160,10 @@ import GalleryLightbox from '@/components/ui/GalleryLightbox'
   </div>
 
   <Image src="/images/blog/sports/berlin-marathon/berlin-marathon-2.png" alt="Race Start" width={1600} height={900} className="rounded-2xl shadow-xl mx-auto border border-gray-300 dark:border-gray-600" />
+
+  <Callout type="tip">
+    Pack your nutrition smart — aid stations vary every 5K!
+  </Callout>
 
   <ul className="list-disc list-inside text-lg text-gray-700 dark:text-gray-300 max-w-4xl mx-auto">
     <li>🎯 Hit my PB: <strong>2h39m50s</strong></li>
@@ -216,8 +216,44 @@ import GalleryLightbox from '@/components/ui/GalleryLightbox'
   </div>
 </section>
 
-<AuthorBox name="Amadou" bio="Paris-based AI engineer, runner, and dancer. Sharing stories from the track and the terminal — race recaps and AI deep dives." avatar="/images/profile.jpeg" />
-<ShareButtons />
 
+  <section className="relative px-4 py-20 sm:px-6 lg:px-24 xl:px-20">
+    <div className="text-center">
+    <h2 className="text-3xl md:text-4xl font-bold mb-10">🖼️ Gallery</h2>
+     </div>
+    <div className="space-y-16">
+      <GalleryLightbox>
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/images/blog/sports/berlin-marathon/berlin-marathon-hero.png"
+            alt="Runners at the start line of Berlin Marathon"
+            fill
+            className="rounded-3xl shadow-2xl object-cover border border-gray-200 dark:border-gray-700 transition-transform duration-500 hover:scale-105"
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="relative w-full h-[400px]">
+            <Image
+              src="/images/blog/sports/berlin-marathon/berlin-marathon-crowd.png"
+              alt="Berlin Marathon crowd cheering"
+              fill
+              className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600 transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+          <div className="relative w-full h-[400px]">
+            <Image
+              src="/images/blog/sports/berlin-marathon/berlin-marathon-streets.png"
+              alt="Berlin city streets during marathon morning"
+              fill
+              className="rounded-2xl shadow-xl object-cover border border-gray-300 dark:border-gray-600 transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+        </div>
+      </GalleryLightbox>
+      </div>
+</section>
+
+<AuthorBox name="Amadou" bio="Paris-based AI engineer, runner and dancer. Sharing stories from the track and the terminal — race recaps and AI deep dives." avatar="/images/profile.jpeg" />
+<ShareButtons />
 
 </main>
