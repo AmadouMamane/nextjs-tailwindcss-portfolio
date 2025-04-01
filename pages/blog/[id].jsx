@@ -48,7 +48,6 @@ export async function getStaticProps({ params }) {
 
   const source = fs.readFileSync(filePath, "utf8");
   const { content, data } = matter(source);
-  const safeContent = content.replace(/(?<=\w)'(?=\w)/g, "&rsquo;");
   const readStats = readingTime(content);
 
   const files = fs.readdirSync(blogDirectory).filter((file) =>
@@ -72,7 +71,7 @@ export async function getStaticProps({ params }) {
 
 
 
-  const mdxSource = await serialize(safeContent, {
+  const mdxSource = await serialize(content, {
     scope: data,
     mdxOptions: {
       remarkPlugins: [remarkGfm, remarkFrontmatter, remarkSlug],
