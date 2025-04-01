@@ -10,7 +10,7 @@ import {
 export const projectsData = [
 	{
 		id: 1,
-		title: '🧬 AI Skin Cancer Detection',
+		title: '🧬 AI Skin Cancer Detection Challenge',
 		url: 'google-health-platform',
 		category: 'Data Science',
 		img: '/images/web-project-2.jpg',

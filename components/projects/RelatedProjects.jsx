@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { projectsData } from '../../data/projectsData';
+import { FiTag } from 'react-icons/fi';
 
 function RelatedProjects({ currentProject }) {
 	if (!currentProject) return null;
@@ -19,23 +20,35 @@ function RelatedProjects({ currentProject }) {
 				Related Projects
 			</p>
 
-			<div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full">
+			<div className="grid grid-cols-1 sm:grid-cols-3  w-full">
 				{relatedProjects.map((project) => (
 					<Link href={`/projects/${project.id}`} key={project.id} passHref>
-						<div className="rounded-xl cursor-pointer overflow-hidden w-full">
-							<Image
-								src={project.img}
-								className="object-cover w-full h-auto rounded-xl"
-								width={400}
-								height={300}
-								alt={project.title}
-							/>
-							<p className="mt-2 text-center text-lg font-medium tracking-medium text-primary-dark dark:text-primary-light">
+						<div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark">
+							<div className="relative w-full h-80">
+								<Image
+									src={project.img}
+				
+									alt={project.title}
+										layout="fill"
+									className="object-fill rounded-t-xl border-none"
+								/>
+							</div>
 
+							<div className="text-center px-4 py-6">
+							<p className="text-xl md:text-xl text-ternary-dark dark:text-ternary-light mb-2">{project.title}</p>
+								<div className="flex flex-wrap justify-center items-center gap-1 mt-3">
 
-								{project.title}
-							</p>
+						
+								<FiTag className="text-ternary-dark dark:text-ternary-light" />
+								<span className="text-xs px-2 py-1 bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-ternary-light rounded-full">
+
+									{project.ProjectHeader.tags}
+								</span>
+								</div>
+				
+							</div>
 						</div>
+	
 					</Link>
 				))}
 			</div>

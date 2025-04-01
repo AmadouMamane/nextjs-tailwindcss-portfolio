@@ -11,13 +11,12 @@ function BlogSingle({ title, img, publishDate, slug, tags = [] }) {
             src={img || "/default-thumbnail.jpg"}
             alt={title}
             layout="fill"
-            objectFit="cover"
-            className="rounded-t-xl border-none"
-            priority
+            className="object-fill rounded-t-xl border-none"
+  
           />
         </div>
         <div className="text-center px-4 py-6">
-          <p className="text-xl md:text-2xl text-ternary-dark dark:text-ternary-light mb-2">
+          <p className="text-xl md:text-xl text-ternary-dark dark:text-ternary-light mb-2">
             {title}
           </p>
           <span className="text-lg text-ternary-dark dark:text-ternary-light block mb-2">
@@ -25,7 +24,7 @@ function BlogSingle({ title, img, publishDate, slug, tags = [] }) {
           </span>
 
           {Array.isArray(tags) && tags.length > 0 && (
-            <div className="flex flex-wrap justify-center items-center gap-2 mt-2">
+            <div className="flex flex-wrap justify-center items-center gap-1 mt-3">
               <FiTag className="text-ternary-dark dark:text-ternary-light" />
               {tags.map((tag) => (
                 <span

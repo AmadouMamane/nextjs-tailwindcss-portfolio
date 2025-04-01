@@ -94,22 +94,37 @@ export async function getStaticProps({ params }) {
 export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
   const [showNav, setShowNav] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  
+
+  
 
   useEffect(() => {
+    // prevent automatic scrolling if hash (#...) in URL
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      if (hash) {
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'auto' });
+          history.replaceState(null, '', window.location.pathname);
+        }, 0);
+      }
+    }
+  
+    // Scroll tracking logic
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const pageHeight = document.documentElement.scrollHeight;
       const viewportHeight = window.innerHeight;
       const scrolledToBottom = scrollY + viewportHeight >= pageHeight - 200;
       setShowNav(scrolledToBottom);
-
+  
       const scrollTop = window.scrollY;
       const height = document.body.scrollHeight - window.innerHeight;
       setScrollProgress((scrollTop / height) * 100);
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleLightbox = (src) => {
