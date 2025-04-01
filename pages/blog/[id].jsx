@@ -48,6 +48,7 @@ export async function getStaticProps({ params }) {
 
   const source = fs.readFileSync(filePath, "utf8");
   const { content, data } = matter(source);
+  const safeContent = content.replace(/(?<=\w)'(?=\w)/g, "&rsquo;");
   const readStats = readingTime(content);
 
   const files = fs.readdirSync(blogDirectory).filter((file) =>
@@ -69,7 +70,9 @@ export async function getStaticProps({ params }) {
   const prevPost = getPostMeta(slugs[currentIndex - 1]);
   const nextPost = getPostMeta(slugs[currentIndex + 1]);
 
-  const mdxSource = await serialize(content, {
+
+
+  const mdxSource = await serialize(safeContent, {
     scope: data,
     mdxOptions: {
       remarkPlugins: [remarkGfm, remarkFrontmatter, remarkSlug],
