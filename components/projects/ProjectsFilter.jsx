@@ -13,9 +13,10 @@ function ProjectsFilter({ setSelectProject }) {
 				setSelectProject(e.target.value);
 			}}
 			className="
+				w-48
                 px-4
                 sm:px-6
-                py-2
+                h-10
                 border
                 dark:border-secondary-dark
                 rounded-lg

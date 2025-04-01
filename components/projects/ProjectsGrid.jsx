@@ -34,7 +34,7 @@ function ProjectsGrid() {
 				</p>
 			</div>
 
-			<div className="mt-10 sm:mt-16">
+			<div className="mt-50 sm:mt-16">
 				<h3
 					className="
                         font-general-regular 
@@ -43,6 +43,7 @@ function ProjectsGrid() {
                         text-md
                         sm:text-xl
                         mb-3
+						mt-10
                         "
 				>
 					Search projects by title or filter by category
@@ -57,7 +58,7 @@ function ProjectsGrid() {
                         gap-3
                         "
 				>
-					<div className="flex justify-between gap-2">
+					<div className="flex justify-between gap-2 mt-2">
 						<span
 							className="
                                 hidden
@@ -77,7 +78,7 @@ function ProjectsGrid() {
 								setSearchProject(e.target.value);
 							}}
 							className="
-                                ont-general-medium 
+                                font-general-medium 
                                 pl-3
                                 pr-1
                                 sm:px-4
