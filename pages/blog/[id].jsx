@@ -185,7 +185,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
 
       {/* Article */}
       <motion.article
-        className="prose lg:prose-xl mx-auto dark:prose-invert mt-12"
+        className="prose lg:prose-xl mx-auto dark:prose-invert"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}

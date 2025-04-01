@@ -32,8 +32,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 <main className="min-h-screen w-full bg-white dark:bg-black text-gray-900 dark:text-gray-100 overflow-x-hidden">
 
 {/* Hero Section */}
-<FadeInSection>
-  <Section>
+
+  <Section marginTop='mt-2'>
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
         <div className="text-2xl leading-relaxed font-light">
           From sunrise training to nightlife celebrations, this is the story of a city, a race, and everything in between. Berlin didn’t just host my marathon — it transformed it into a life highlight.
@@ -64,10 +64,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
         </div>
     </motion.div>
   </Section>
-</FadeInSection>
+
 
 {/* Section: First Glimpses */}
-<FadeInSection>
   <Section title="✈️ First Glimpses of Berlin">
     <div className="text-lg text-gray-600 dark:text-gray-300 text-center">
       Delayed flights couldn’t dull my excitement. Stepping into Berlin’s Tiergarten after a whirlwind arrival felt like unlocking a dream level.
@@ -83,8 +82,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
   
-      <div className="p-6 rounded-xl shadow-md bg-gray-100 dark:bg-gray-800">
-        <h3 className="text-xl font-semibold mb-2"> 🏨  My stay: Smartment Business Berlin City West</h3>
+      <div  className="p-6 rounded-xl shadow-md bg-gray-100 dark:bg-gray-800">
+        <h3 id="My stay" className="text-xl font-semibold mb-2"> 🏨  My stay: Smartment Business Berlin City West</h3>
           <p className="text-gray-700 dark:text-gray-300 text-justify">
             Finding the right accommodation was a challenge—I wanted a quiet, comfortable place to rest, but also one that gave me access to the city’s vibrant neighborhoods.
           </p>
@@ -95,7 +94,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
       </div>
 
     <div className="p-6 rounded-xl  bg-gray-10 dark:bg-gray-100">
-        <h3 className="text-xl font-semibold mb-2">📌  What I Learned</h3>
+        <h3 id="What I Learned" className="text-xl font-semibold mb-2">📌  What I Learned</h3>
     <Callout type="tip">
       <p>Booking a traditional hotel might have been a better choice, especially for a marathon weekend. Though the room was spacious and well-equipped, not having a 24/7 reception was a slight inconvenience</p>
     </Callout>
@@ -104,27 +103,18 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
     </div>
 
   </Section>
-</FadeInSection>
 
 
 
 
-
-<motion.section
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6 }}
-  viewport={{ once: true }}
-  className="relative px-4 py-24 sm:px-6 lg:px-24 xl:px-20 space-y-20 bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-gray-900 space-y-16"
->
+<Section title="🎬 A Cinematic Look Into Greatness">
   {/* Intro */}
-  <div className="text-center space-y-4">
-    <h2 className="text-4xl md:text-5xl font-bold tracking-tight">🎬 A Cinematic Look Into Greatness</h2>
-    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+  <div className="text-center space-y-6">
+       <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
       What started as a simple pre-race evening turned into a profound encounter with elite mindset, culture, and inspiration
     </p>
   </div>
-
+ 
   {/* Hero Image */}
   <div className="relative w-full h-[600px]">
     <Image
@@ -199,7 +189,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   </motion.div>
 
 
-</motion.section>
+</Section>
 
 
 
@@ -211,19 +201,11 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 {/* Section: Race Day */}
-<motion.section
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6 }}
-  viewport={{ once: true }}
-  className="relative px-4 py-24 sm:px-6 lg:px-24 xl:px-32 bg-white dark:bg-black space-y-16"
->
+<Section title="🏃‍♂️ Race Day – September 24, 2023">
+
   {/* Intro */}
-  <div className="max-w-4xl mx-auto text-center space-y-5">
-    <h2 className="text-5xl font-bold tracking-tight leading-tight">
-      🏃‍♂️ Race Day – September 24, 2023
-    </h2>
-    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+  <div className="max-w-4xl mx-auto text-center space-y-6">
+    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto ">
       From pre-dawn chaos to a personal record on the world’s fastest marathon course — this was Berlin, in all its raw magic.
     </p>
   </div>
@@ -237,12 +219,13 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
       className="object-cover"
     />
   </div>
+  
 
   {/* Narrative Blocks */}
   <div className="max-w-5xl mx-auto space-y-14">
     {/* Scene: Build-up */}
     <div className="space-y-2">
-      <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">⏰ Before the Start</h3>
+      <h3 id="Before the Start" className="text-2xl font-semibold text-gray-800 dark:text-white">⏰ Before the Start</h3>
       <p className="text-xl leading-relaxed text-justify text-gray-800 dark:text-gray-200">
         Woke up with a cramp in my right leg — not exactly ideal. My nerves were high. I left the hotel far too late and ended up sprinting through tens of thousands of runners to reach my corral. Chaos, anxiety... and adrenaline.
       </p>
@@ -251,7 +234,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
     {/* Scene: The Marathon Experience */}
     <div className="grid md:grid-cols-2 gap-4 items-start">
       <div className="space-y-2">
-        <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">🔥 The Race – 42.195km of Emotion</h3>
+        <h3 id="The Race – 42.195km of Emotion"  className="text-2xl font-semibold text-gray-800 dark:text-white">🔥 The Race – 42.195km of Emotion</h3>
         <ul className="list-disc pl-6 text-lg text-gray-800 dark:text-gray-300 leading-relaxed space-y-3">
           <li><strong>The Atmosphere:</strong> Berliners lined the streets with energy, humor, and music. It felt like the city itself was cheering me on.</li>
           <li><strong>Mid-race Boost:</strong> At kilometer 30, volunteers handed me gummy bears — the weirdest, most perfect pick-me-up I never saw coming.</li>
@@ -283,31 +266,22 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
       </ul>
     </div>
   </div>
-</motion.section>
-
+</Section>
 
 
 
 {/* Section: Post-Race Berlin */}
-<motion.section
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.6 }}
-  viewport={{ once: true }}
-  className="relative px-4 py-28 sm:px-6 lg:px-24 xl:px-32 bg-white dark:bg-black space-y-16"
->
+<Section title="🌇 Post-Race Berlin – The City, The Soul, The Slowdown">
   {/* Header */}
   <div className="text-center max-w-3xl mx-auto space-y-6">
-    <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
-      🌇 Post-Race Berlin – The City, The Soul, The Slowdown
-    </h2>
+
     <p className="text-xl text-gray-600 dark:text-gray-300">
       The race may have ended, but Berlin had more to give. With sore legs and a full heart, I let the city move me in unexpected ways.
     </p>
   </div>
 
   {/* Main Photo */}
-  <div className="relative w-full h-[600px] rounded-3xl overflow-hidden shadow-xl border border-gray-300 dark:border-gray-700">
+  <div className="relative w-full h-[800px] rounded-3xl overflow-hidden shadow-xl border border-gray-300 dark:border-gray-700">
     <Image
       src="/images/blog/sports/berlin-marathon/east-side-galery-1.png"
       alt="Berlin Wall Art"
@@ -336,7 +310,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
       }
     ].map(({ icon, title, description }, i) => (
       <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-md p-6 space-y-3">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+        <h3 id={title} className="text-xl font-semibold text-gray-800 dark:text-white">
           {icon} {title}
         </h3>
         <p className="text-gray-700 dark:text-gray-300 text-base leading-relaxed text-justify">
@@ -360,7 +334,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
   {/* Food Memories */}
   <div className="text-center space-y-10 max-w-3xl mx-auto">
-    <h3 className="text-3xl font-bold">🍽️ My Final Bites in Berlin</h3>
+    <h3 id="My Final Bites in Berlin" className="text-3xl font-bold">🍽️ My Final Bites in Berlin</h3>
     <div className="grid md:grid-cols-3 gap-6 text-left">
       {[
         {
@@ -386,13 +360,13 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
       ))}
     </div>
   </div>
-</motion.section>
+</Section>
 
 
 
 <Section title="🫶 Final Thoughts – Why Berlin Stole My Heart">
   {/* Hero Visual Anchor */}
-  <div className="relative w-full h-[500px] mt-16">
+  <div className="relative w-full h-[500px] mt-12">
     <Image
       src="/images/blog/sports/berlin-marathon/porte-brandebourg.jpg.webp"
       alt="Berlin at Night – Brandenburg Gate"
@@ -429,7 +403,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 <Section title="📸 Gallery – Snapshots of a Weekend I’ll Never Forget">
-  <p className="text-center max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-10">
+  <p className="text-center max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-1">
     From iconic monuments to candid moments, here’s a visual love letter to Berlin — one frame at a time.
   </p>
 
@@ -478,7 +452,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   />
 </Section>
 
-<AuthorBox name="Amadou" bio="Paris-based AI engineer, runner and dancer. Sharing stories from the track and the terminal — race recaps and AI deep dives." avatar="/images/profile.jpeg" />
+<AuthorBox name="Amadou" bio="Paris-based AI Engineer, Runner and Dancer. Sharing stories from the Track and the Terminal — race recaps and AI deep dives." avatar="/images/profile.jpeg" />
 <ShareButtons />
 
 
