@@ -1,0 +1,187 @@
+---
+title: "My Personal Library of Transformation: The Books That Changed Everything"
+date: "2025-04-04"
+image: "/images/blog/readings/books-changed-my-life/books-changed-my-life.jpg"
+category: "Readings"
+tags: ["readings"]
+readingTime: "6 min read"
+description: "​Books have the power to transform our perspectives and shape our lives. Here are some of my favorite books and authors who have profoundly impacted me:"
+
+defaultImageFolder: "/images/blog/readings/books-changed-my-life"
+---
+
+
+
+import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareButtons, AuthorBox, GalleryLightbox, Gallery, ExplodedBookGallery} from '../../components/ui'
+
+
+<script type="application/ld+json">{`
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "My Personal Library of Transformation: The Books That Changed Everything"",
+  "image": ["/images/blog/readings/books-changed-my-life/books-changed-my-life.jpg"],
+  "datePublished": "2023-09-24",
+  "author": { "@type": "Person", "name": "Amadou" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Amadou Mamane",
+    "logo": { "@type": "ImageObject", "url": "https://amadoumamane.fr/images/profile.jpeg" }
+  },
+  "description": "​Books have the power to transform our perspectives and shape our lives. Here are some of my favorite books and authors who have profoundly impacted me"
+}
+`}</script>
+
+<main className="min-h-screen w-full bg-white dark:bg-black text-gray-900 dark:text-gray-100 overflow-x-hidden">
+
+
+
+
+{/* Hero Section */}
+ 
+  <Section marginTop='mt-2'>
+
+
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
+        <div className="text-2xl leading-relaxed font-light">
+          There are books that entertain, books that educate—and then there are books that transform. These are the ones that found me at the right moment, cracked me open, and helped me evolve. 
+          Below is a collection of the most powerful books I've ever read, accompanied by images of their authors and covers, along with reflections on their impact.​
+        </div>
+      </motion.div>
+
+  </Section>
+
+
+
+<Section title="🧘‍♂️  Eckhart Tolle – A Quiet Revolution">
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+    <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+      His teachings didn’t shout — they whispered. They didn’t instruct — they revealed. Tolle didn’t just change what I knew, he changed how I *noticed*.
+    </p>
+  </div>
+
+  <ExplodedBookGallery
+    folder={defaultImageFolder}
+    section="eckhart-tolle"
+    authorImage="1-eckhart-tolle.jpg"
+    authorName="Eckhart Tolle"
+    authorDescription ="
+      A voice from the silence. A thinker who dismantled thought itself. Eckhart Tolle's books were less about reading and more about remembering what presence feels like.
+      "
+    books={[
+      {
+        title: "The Power of Now",
+        image: "the_power_of_now.jpg",
+        description: (
+          <>
+            This wasn’t a book — it was a lifeline. In a world obsessed with productivity, <em>The Power of Now</em> reminded me that stillness is not emptiness — it’s everything. I began to notice space between thoughts. In that space, I found peace.
+          </>
+        ),       
+         quote: "Nothing ever happened in the past; it happened in the Now. Nothing will ever happen in the future; it will happen in the Now.",
+      },
+      {
+        title: "A New Earth",
+        image: "a-new-earth.jpg",
+        description: (
+          <>
+          <em>A New Earth</em> gave me language for the ego. It wasn’t just about personal growth — it was about collective awakening. The book cracked open the illusion of separateness and offered the possibility of conscious evolution.
+          </>
+        ),   
+        quote: "You are not the voice in your mind, but the one who is aware of it.",
+      }
+    ]}
+  />
+</Section>
+
+
+
+
+
+<Section title="💼  Napoleon Hill">
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+    <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+      Hill didn’t just write about success — he reverse-engineered it. His words weren’t formulas, they were frequencies. He helped me realize that wealth isn’t pursued — it’s magnetized by belief, clarity, and burning desire.
+    </p>
+  </div>
+
+  <ExplodedBookGallery
+    folder={defaultImageFolder}
+    section="napoleon-hill"
+    authorImage="napoleon-hill.jpeg"
+    authorName="Napoleon Hill"
+    authorDescription="A mind that mapped the mindset of millionaires. Napoleon Hill didn’t sell dreams — he translated them into plans. His legacy is a blueprint for mental alchemy."
+    books={[
+      {
+        title: "Think and grow rich",
+        image: "think-and-grow-rich.png",
+        description: (
+          <>
+          This was the first book that truly showed me the link between desire, belief, and achievement. It’s not just about money—<em>Think and Grow Rich</em>  taught me how powerful thoughts are. It helped me develop a new relationship with intention, faith, and discipline. It planted the seed that mindset creates reality.
+            <em>Think and Grow Rich</em> didn’t teach me how to make money — it taught me how to think differently. It was about aligning thought with intention, and emotion with vision. Success, I learned, begins in the invisible.
+          </>
+        ),   
+        quote: "Whatever the mind can conceive and believe, it can achieve.",
+      }
+    ]}
+  />
+</Section>
+
+
+<Section title="🧠 Dr. Joe Dispenza">
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+    <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+      Dispenza didn't ask me to believe — he asked me to become. His books weren’t just ideas to read, they were experiments to live. Through his lens, the mind wasn’t a mirror — it was a map.
+    </p>
+  </div>
+
+  <ExplodedBookGallery
+    folder={defaultImageFolder}
+    section="dr-joe-dispenza"
+    authorImage="dr-joe-dispenza.jpg"
+    authorName="Dr. Joe Dispenza"
+    authorDescription ="
+            A neuroscientist who speaks in the language of transformation. Dr. Joe Dispenza explores how thought rewires biology — and how belief bends reality.
+      "
+    books={[
+      {
+        title: "Breaking the Habit of Being Yourself",
+        image: "breaking-habit-being-yourself.jpg",
+        description: (
+          <>
+            This book unraveled the invisible loops I was living in. <em>Breaking the Habit of Being Yourself</em> showed me that personality isn’t permanent — it’s programmed. And more importantly: it’s reprogrammable.
+
+
+          </>
+        ),       
+        quote: "To change is to think greater than your environment, greater than the conditions in your life, and greater than the emotional habits of the body.",
+      },
+      {
+        title: "You Are the Placebo",
+        image: "you-are-the-placebo.jpg",
+        description: (
+          <>
+            <em>You Are the Placebo</em> asked a radical question: what if healing didn’t come from the outside in, but the inside out? It blurred the line between mind and medicine — and left me wondering what else I’d been outsourcing to belief.
+          </>
+        ),   
+        quote: "The moment you start feeling abundant and worthy, you are generating wealth.",
+      }
+    ]}
+  />
+</Section>
+
+
+
+<AuthorBox name="Amadou" bio="Paris-based AI Engineer, Runner and Dancer. Sharing stories from the Track and the Terminal — Race recaps and AI deep dives." avatar="/images/profile.jpeg" />
+<ShareButtons />
+
+
+
+
+
+
+
+
+
+</main>

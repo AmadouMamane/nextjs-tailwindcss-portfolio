@@ -26,7 +26,7 @@ import TableOfContents from "../../components/TableOfContents";
 import GalleryLightbox from "../../components/ui/GalleryLightbox";
 import NextPrevNav from "../../components/ui/NextPrevNav";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection } from '../../components/ui';
+import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection, ExplodedBookGallery } from '../../components/ui';
 
 
 const blogDirectory = path.join(process.cwd(), "content/blog");
@@ -235,6 +235,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
             NextPrevNav, 
             ImageGallery, 
             Section, 
+            ExplodedBookGallery,
             p: (props) => <>{props.children}</>
           
             
