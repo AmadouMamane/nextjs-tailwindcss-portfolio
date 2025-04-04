@@ -42,8 +42,6 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 {/* Hero Section */}
  
   <Section marginTop='mt-2'>
-
-
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
         <div className="text-2xl leading-relaxed font-light">
           There are books that entertain, books that educate—and then there are books that transform. These are the ones that found me at the right moment, cracked me open, and helped me evolve. 
@@ -54,7 +52,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   </Section>
 
 
-<Section title="💼  Napoleon Hill – The Inner Architect of Wealth">
+<Section title="💼  Napoleon Hill – The Inner Architect of Wealth" marginTop = 'mt-4'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Hill didn’t just write about success — he reverse-engineered it. His words weren’t formulas, they were frequencies. He helped me realize that wealth isn’t pursued — it’s magnetized by belief, clarity, and burning desire.
@@ -91,7 +89,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 
-<Section title="🧠 Dr. Joe Dispenza – Rerouting Reality from the Inside Out">
+<Section title="🧠 Dr. Joe Dispenza – Rerouting Reality from the Inside Out" marginTop = 'mt-4'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Dispenza didn't ask me to believe — he asked me to become. His books weren’t just ideas to read, they were experiments to live. Through his lens, the mind wasn’t a mirror — it was a map.
@@ -135,7 +133,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
-<Section title="🧘‍♂️  Eckhart Tolle – A Quiet Revolution">
+<Section title="🧘‍♂️  Eckhart Tolle – A Quiet Revolution" marginTop = 'mt-20'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       His teachings didn’t shout — they whispered. They didn’t instruct — they revealed. Tolle didn’t just change what I knew, he changed how I *noticed*.
@@ -177,7 +175,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 
-<Section title="🔥 Tony Robbins – Vitality as Strategy">
+<Section title="🔥 Tony Robbins – Vitality as Strategy" marginTop = 'mt-4'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Robbins has always been about peak performance — but <em>Life Force</em> felt different. It wasn’t just about pushing harder; it was about upgrading the system. The book wasn’t hype — it was hope, backed by science and urgency.
@@ -206,6 +204,123 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
     ]}
   />
 </Section>
+
+
+
+<Section title="🕊️ Dr. David R. Hawkins – Mapping the Invisible Terrain" marginTop = 'mt-4'>
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+    <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+      Hawkins didn’t teach in steps — he revealed in frequencies. His words had the stillness of truth. With him, I stopped striving to understand everything — and started calibrating what felt real.
+    </p>
+  </div>
+
+  <ExplodedBookGallery
+    folder={defaultImageFolder}
+    section="david-r-hawkins"
+    authorImage="dr-david-hawkins.jpg"
+    authorName="Dr. David R. Hawkins"
+    authorDescription="
+      Psychiatrist, mystic, mapmaker of consciousness. Dr. David R. Hawkins offered more than knowledge — he offered clarity. His books weren’t conclusions; they were invitations to let go.
+    "
+    books={[
+      {
+        title: "Power vs Force",
+        image: "power-vs-force.jpeg",
+        description: (
+          <>
+            <em>Power vs Force</em> reframed everything I thought I knew about influence, truth, and integrity. It introduced me to a world where energy speaks louder than logic — and where true power doesn’t push, it attracts.
+          </>
+        ),
+        quote: "In the presence of truth, the false falls away by itself.",
+      },
+      {
+        title: "Letting Go",
+        image: "letting-go.jpeg",
+        description: (
+          <>
+            <em>Letting Go</em> wasn’t a manual for fixing — it was a method for releasing. Hawkins showed me that emotions weren’t problems to solve, but energy to surrender. And in that surrender, freedom.
+          </>
+        ),
+        quote: "Surrender is the simple but profound wisdom of yielding to rather than opposing the flow of life.",
+      }
+    ]}
+  />
+</Section>
+
+
+<Section title="🌍 Chimamanda Ngozi Adichie – Stories That Carry Home">
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+    <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+      Adichie’s stories didn’t just move me — they relocated me. Her writing is memory and music, history and heartbeat. Through her characters, I remembered that the personal is always political, and love is never untouched by place.
+    </p>
+  </div>
+
+  <ExplodedBookGallery
+    folder={defaultImageFolder}
+    section="chimamanda-ngozi-adichie"
+    authorImage="chimamanda-ngozi-adichie.jpg"
+    authorName="Chimamanda Ngozi Adichie"
+    authorDescription="
+      A voice that spans continents and generations. Chimamanda Ngozi Adichie writes with a clarity that cuts and a warmth that holds. Her stories are bridges between cultures, and mirrors for those in between.
+    "
+    books={[
+      {
+        title: "Americanah",
+        image: "americanah.jpg",
+        description: (
+          <>
+            <em>Americanah</em> is a love story stretched across time, distance, and diaspora. But beneath the romance, it’s a meditation on identity — how it shifts, performs, resists, and returns. Adichie gave voice to the in-betweenness that so many carry in silence.
+          </>
+        ),
+        quote: "You can’t write an honest novel about race in this country without it being political.",
+      },
+      {
+        title: "Half of a Yellow Sun",
+        image: "half-of-a-yellow-sun.jpg",
+        description: (
+          <>
+            <em>Half of a Yellow Sun</em> broke me open. Set against the Biafran War, it’s both epic and intimate — weaving history into human texture. It reminded me that fiction can preserve what facts forget: the weight of a glance, the cost of silence, the hope of a meal shared.
+          </>
+        ),
+        quote: "There are some things that are so unforgivable that they make other things easily forgivable.",
+      }
+    ]}
+  />
+</Section>
+
+<Section title="🌌 Deepak Chopra – Beyond the Known Self">
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+    <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
+      Chopra doesn’t just explore the mind — he dissolves the idea of a separate self entirely. <em>Metahuman</em> wasn’t about self-improvement. It was about self-transcendence. He didn’t hand me answers — he questioned the one who’s asking.
+    </p>
+  </div>
+
+  <ExplodedBookGallery
+    folder={defaultImageFolder}
+    section="deepak-chopra"
+    authorImage="deepak-chopra.jpg"
+    authorName="Deepak Chopra"
+    authorDescription="
+      A physician of consciousness. Deepak Chopra bridges quantum fields and ancient wisdom with a voice that is both scientific and sacred. In Metahuman, he invites us to wake up from the dream of limitation.
+    "
+    books={[
+      {
+        title: "Metahuman",
+        image: "metahuman.jpg",
+        description: (
+          <>
+            <em>Metahuman</em> isn't a book you finish — it's one you integrate. Chopra challenges every mental boundary we’ve accepted as truth, and opens a portal to the awareness that observes all experience. What if freedom isn’t something to achieve — but something we’ve simply forgotten?
+          </>
+        ),
+        quote: "Waking up is not a mistake. It's the only way to truly live.",
+      }
+    ]}
+  />
+</Section>
+
+
+
+
 
 
 
