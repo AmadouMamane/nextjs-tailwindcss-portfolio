@@ -61,7 +61,7 @@ export const ExplodedBookGallery = ({
                     src={`${folder}/${section}/${book.image}`}
                     alt={book.title}
                     fill
-                    className="object-cover"
+                    className="object-fill"
                   />
                 </div>
               </div>
