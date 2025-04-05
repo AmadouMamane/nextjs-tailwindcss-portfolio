@@ -24,3 +24,11 @@ trash node_modules
 rm -rf ~/.Trash/*
 
 npm install
+
+
+
+trash node_modules
+rm -rf ~/.Trash/*
+rm -rf .next node_modules package-lock.json yarn.lock
+npm install
+npm run dev

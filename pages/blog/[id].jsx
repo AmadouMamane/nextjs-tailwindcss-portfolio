@@ -16,7 +16,7 @@ import Image from "next/image";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { FiClock, FiTag } from "react-icons/fi";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import readingTime from "reading-time";
 
 import DefaultBlogLayout from "../../components/blog/layouts/DefaultBlogLayout";
@@ -24,7 +24,9 @@ import PagesMetaHead from "../../components/PagesMetaHead";
 import TableOfContents from "../../components/TableOfContents";
 
 import GalleryLightbox from "../../components/ui/GalleryLightbox";
-import NextPrevNav from "../../components/ui/NextPrevNav";
+
+import NextPrev from "../../components/ui/NextPrev";
+
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection, ExplodedBookGallery } from '../../components/ui';
 
@@ -38,6 +40,7 @@ export async function getStaticPaths() {
   }));
   return { paths, fallback: false };
 }
+
 
 export async function getStaticProps({ params }) {
   const filePathMdx = path.join(blogDirectory, `${params.id}.mdx`);
@@ -89,6 +92,7 @@ export async function getStaticProps({ params }) {
       mdxSource,
       prevPost,
       nextPost,
+      isBlog: true,
     },
   };
 }
@@ -232,7 +236,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
             ShareButtons,
             TableOfContents,
             GalleryLightbox,
-            NextPrevNav, 
+            NextPrev, 
             ImageGallery, 
             Section, 
             ExplodedBookGallery,
@@ -241,15 +245,15 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
             
           }}
         />
+
+
+
       </motion.article>
 
-      {/* Floating Prev/Next Navigation */}
-      {showNav && (prevPost || nextPost) && (
-        <div className="max-w-6xl mx-auto mt-20 px-4">
-  <NextPrevNav prev={prevPost} next={nextPost} />
-</div>
 
-      )}
+<NextPrev prev={prevPost} next={nextPost} />
+
+
     </DefaultBlogLayout>
   );
 }

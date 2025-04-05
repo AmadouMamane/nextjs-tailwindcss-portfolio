@@ -1,13 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default function TableOfContents() {
+  const router = useRouter()
   const [headings, setHeadings] = useState<
     { id: string; text: string; level: number }[]
   >([])
 
-  useEffect(() => {
+  const generateHeadings = () => {
     const selector = 'h2, h3'
     const headingElements = Array.from(document.querySelectorAll(selector))
 
@@ -18,7 +20,23 @@ export default function TableOfContents() {
     }))
 
     setHeadings(newHeadings)
-  }, [])
+  }
+
+  useEffect(() => {
+    generateHeadings()
+
+    const handleRouteChange = () => {
+      setTimeout(() => {
+        generateHeadings()
+      }, 100) // wait for DOM to update
+    }
+
+    router.events.on('routeChangeComplete', handleRouteChange)
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router])
 
   if (!headings.length) return null
 

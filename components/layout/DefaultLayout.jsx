@@ -2,13 +2,13 @@ import AppHeader from '../shared/AppHeader';
 import AppFooter from '../shared/AppFooter';
 import PagesMetaHead from '../PagesMetaHead';
 
-const DefaultLayout = ({ children }) => {
+const DefaultLayout = ({ children , isBlog }) => {
 	return (
 		<>
 			<PagesMetaHead />
 			<AppHeader />
 			<div>{children}</div>
-			<AppFooter />
+			<AppFooter isBlog={isBlog} />
 		</>
 	);
 };

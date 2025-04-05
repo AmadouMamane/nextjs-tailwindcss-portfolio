@@ -38,10 +38,11 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 
-
 {/* Hero Section */}
  
-  <Section marginTop='mt-2'>
+  <Section >
+
+  
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
         <div className="text-2xl leading-relaxed font-light">
           There are books that entertain, books that educate—and then there are books that transform. These are the ones that found me at the right moment, cracked me open, and helped me evolve. 
@@ -50,6 +51,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
       </motion.div>
 
   </Section>
+
+
+<div className="w-24 h-1 mx-auto bg-gradient-to-r from-indigo-400 to-purple-400 mt-32 rounded-full" />
 
 
 <Section title="💼  Napoleon Hill – The Inner Architect of Wealth" marginTop = 'mt-4'>
@@ -84,12 +88,13 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
 
 
 
 
 
-<Section title="🧠 Dr. Joe Dispenza – Rerouting Reality from the Inside Out" marginTop = 'mt-4'>
+<Section title="🧠 Dr. Joe Dispenza – Rerouting Reality from the Inside Out" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Dispenza didn't ask me to believe — he asked me to become. His books weren’t just ideas to read, they were experiments to live. Through his lens, the mind wasn’t a mirror — it was a map.
@@ -133,7 +138,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
-<Section title="🧘‍♂️  Eckhart Tolle – A Quiet Revolution" marginTop = 'mt-20'>
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+
+<Section title="🧘‍♂️  Eckhart Tolle – A Quiet Revolution" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       His teachings didn’t shout — they whispered. They didn’t instruct — they revealed. Tolle didn’t just change what I knew, he changed how I *noticed*.
@@ -174,8 +181,10 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
 
-<Section title="🔥 Tony Robbins – Vitality as Strategy" marginTop = 'mt-4'>
+
+<Section title="🔥 Tony Robbins – Vitality as Strategy" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Robbins has always been about peak performance — but <em>Life Force</em> felt different. It wasn’t just about pushing harder; it was about upgrading the system. The book wasn’t hype — it was hope, backed by science and urgency.
@@ -206,8 +215,10 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
 
-<Section title="🕊️ Dr. David R. Hawkins – Mapping the Invisible Terrain" marginTop = 'mt-4'>
+
+<Section title="🕊️ Dr. David R. Hawkins – Mapping the Invisible Terrain" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Hawkins didn’t teach in steps — he revealed in frequencies. His words had the stillness of truth. With him, I stopped striving to understand everything — and started calibrating what felt real.
@@ -248,7 +259,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
-<Section title="🌍 Chimamanda Ngozi Adichie – Stories That Carry Home">
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+
+<Section title="🌍 Chimamanda Ngozi Adichie – Stories That Carry Home" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Adichie’s stories didn’t just move me — they relocated me. Her writing is memory and music, history and heartbeat. Through her characters, I remembered that the personal is always political, and love is never untouched by place.
@@ -288,8 +301,15 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   />
 </Section>
 
-<Section title="🌌 Deepak Chopra – Beyond the Known Self">
-  <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
+
+
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+
+
+
+
+<Section title="🌌 Deepak Chopra – Beyond the Known Self" marginTop = 'mt-0'>
+  <div className="text-center max-w-3xl mx-auto mb-10 mt-8" >
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Chopra doesn’t just explore the mind — he dissolves the idea of a separate self entirely. <em>Metahuman</em> wasn’t about self-improvement. It was about self-transcendence. He didn’t hand me answers — he questioned the one who’s asking.
     </p>
@@ -318,9 +338,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   />
 </Section>
 
+<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
 
-
-<Section title="🧘 Jay Shetty – Simplicity as Superpower">
+<Section title="🧘 Jay Shetty – Simplicity as Superpower" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Shetty translated silence into steps. In a world that rewards noise, <em>Think Like a Monk</em> was a quiet call to realign. He didn’t just share ancient teachings — he gave them a passport into everyday life.

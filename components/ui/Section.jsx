@@ -24,7 +24,10 @@ export const Section = ({ title, children,  marginTop = 'mt-4' }) => {
         </h2>
       )}
       <div className="space-y-12">{children}</div>
+      
     </motion.section>
+
+    
   )
 }
 

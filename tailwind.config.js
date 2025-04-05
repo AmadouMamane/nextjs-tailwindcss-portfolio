@@ -9,6 +9,10 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
+        sans: ['GeneralSans-Variable', 'sans-serif'],
+      },
       colors: {
         // Light colors
         'primary-light': '#F7F8FC',

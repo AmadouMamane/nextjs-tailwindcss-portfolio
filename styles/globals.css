@@ -268,3 +268,12 @@ a {
 	scroll-behavior: smooth;
   }
   
+  .typography {
+	@apply text-gray-800 dark:text-gray-300 leading-relaxed text-lg sm:text-xl tracking-tight;
+  }
+
+
+  .typography-modern {
+	@apply text-gray-900 dark:text-gray-100 text-base sm:text-lg leading-[1.8] tracking-normal;
+  }
+  
