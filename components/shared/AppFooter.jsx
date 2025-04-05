@@ -46,7 +46,7 @@ import {
 
 
           <p className="mt-7 text-base text-gray-500 dark:text-gray-400 max-w-xl">
-            I'm always learning, building, and sharing — come along for the journey
+            {"I'm always learning, building, and sharing — come along for the journey"}
           </p>
         </div>
 		  </div>
