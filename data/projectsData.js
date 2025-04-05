@@ -13,7 +13,7 @@ export const projectsData = [
 		title: '🧬 AI Skin Cancer Detection Challenge',
 		url: 'google-health-platform',
 		category: 'Data Science',
-		img: '/images/web-project-2.jpg',
+		img: '/images/kaggle-isic-2024.png',
 		type: "notebook",
 		Notebook: {
 			file: '/notebooks/isic-2024_kaggle.html',
@@ -32,7 +32,7 @@ export const projectsData = [
 			{
 				id: uuidv4(),
 				title: 'Skin Cancer Detection',
-				img: '/images/web-project-2.jpg',
+				img: '/images/kaggle-isic-2024.png',
 			},
 			{
 				id: uuidv4(),
@@ -120,7 +120,7 @@ export const projectsData = [
         title: '🎵 Music Recommendation System',
         url: 'music-recommendation',
         category: 'Data Science',
-        img: '/images/music-recommendation.jpg', // Thumbnail image
+        img: '/images/music-recommendation.webp', // Thumbnail image
         type: 'notebook', // Mark as a notebook project
         ProjectHeader: {
             title: '🎵 AI-Powered Music Recommendation System',
@@ -131,7 +131,7 @@ export const projectsData = [
             {
                 id: uuidv4(),
                 title: 'Music Recommendation System',
-                img: '/images/music-recommendation.jpg',
+                img: '/images/music-recommendation.webp',
             },
             {
                 id: uuidv4(),
