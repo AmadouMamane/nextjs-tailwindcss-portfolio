@@ -15,12 +15,15 @@ function RelatedProjects({ currentProject }) {
 	if (relatedProjects.length === 0) return null;
 
 	return (
-		<div className="mt-20 pt-10 sm:pt-14 sm:mt-32 border-t-2 border-primary-light dark:border-secondary-dark max-w-7xl mx-auto w-full px-4  text-center">
-			<p className="text-gray-800 dark:text-gray-200 text-[2.25rem] font-[500] mb-10 sm:mb-14">
+		<div className="mt-20 pt-10 sm:pt-14 sm:mt-32 border-t-2 border-primary-light dark:border-secondary-dark max-w-7xl mx-auto w-full px-4 text-center">
+<p className="text-gray-800 dark:text-gray-200 text-2xl sm:text-3xl md:text-4xl font-medium mb-10 sm:mb-14">
+
+
+
 				Related Projects
 			</p>
 
-			<div className="grid grid-cols-1 sm:grid-cols-3  w-full">
+			<div className="grid grid-cols-1 sm:grid-cols-3 w-full">
 				{relatedProjects.map((project) => (
 					<Link href={`/projects/${project.id}`} key={project.id} passHref>
 						<div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark">

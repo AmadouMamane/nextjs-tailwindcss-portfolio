@@ -8,14 +8,14 @@ export default function ProjectHeader({ project }) {
       </h1>
       <div className="flex justify-center mt-4 space-x-10">
         <div className="flex items-center">
-          <FiClock className="text-xl text-ternary-dark dark:text-gray-100" />
-          <span className="ml-2 text-secondary-dark  dark:text-gray-100">
+          <FiClock className="text-xl text-primary-dark dark:text-gray-100" />
+          <span className="ml-2 text-primary-dark  dark:text-gray-100">
             {project.ProjectHeader.publishDate}
           </span>
         </div>
         <div className="flex items-center">
-          <FiTag className="w-4 h-4 text-ternary-dark dark:text-gray-100" />
-          <span className="ml-2 text-secondary-dark  dark:text-gray-100">
+          <FiTag className="w-4 h-4 text-primary-dark dark:text-gray-100" />
+          <span className="ml-2 text-primary-dark  dark:text-gray-100">
             {project.ProjectHeader.tags}
           </span>
         </div>

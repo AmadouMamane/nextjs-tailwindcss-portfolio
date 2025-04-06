@@ -149,7 +149,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
       />
 
       {/* Floating TOC */}
-        <TableOfContents className="text-sm leading-relaxed space-y-2 dark:primary-light">
+        <TableOfContents className="hidden 2xl:block text-sm leading-relaxed space-y-2 dark:primary-light">
           {(toc) =>
             toc.map((item) => (
               <a
@@ -208,8 +208,10 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
       </div>
 
       {/* Article */}
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-20 max-w-screen-xl mx-auto">
       <motion.article
-        className="prose lg:prose-xl mx-auto"
+      className="prose sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert"
+
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -250,9 +252,9 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
           }}
         />
 
-
-
       </motion.article>
+
+      </div>
 
 
 <NextPrev prev={prevPost} next={nextPost} />
