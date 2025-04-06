@@ -40,7 +40,7 @@ export default function TableOfContents() {
   if (!headings.length) return null
 
   return (
-    <aside className="hidden xl:block fixed top-60 right-10 w-64 text-sm text-gray-500 dark:text-gray-400 z-40 max-h-[70vh] overflow-y-auto border-l border-gray-200 dark:border-gray-500 pl-4 mt-15 transition-colors duration-300">
+    <aside className="hidden 2xl:block fixed top-60 right-10 w-64 text-sm text-gray-500 dark:text-gray-400 z-40 max-h-[70vh] overflow-y-auto border-l border-gray-200 dark:border-gray-500 pl-4 mt-15 transition-colors duration-300">
       <p className="mb-3 text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">
         On this Article
       </p>

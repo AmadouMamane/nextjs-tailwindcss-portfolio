@@ -100,9 +100,7 @@ export async function getStaticProps({ params }) {
 export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
   const [showNav, setShowNav] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
-  
 
-  
 
   useEffect(() => {
     // prevent automatic scrolling if hash (#...) in URL
