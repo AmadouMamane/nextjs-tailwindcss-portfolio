@@ -11,7 +11,7 @@ export default function CleanNextPrev({ prev, next }) {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: 'easeOut' }}
         viewport={{ once: true }}
-        className="max-w-[1800px] mx-auto border-t border-gray-200 dark:border-gray-800 pt-14 px-8 md:px-20"
+        className="max-w-[1800px] mx-auto border-t border-gray-200 dark:border-gray-500 pt-14 px-8 md:px-20"
       >
         
         <div className="text-center uppercase text-2xl md:text-3xl font-semibold tracking-wide text-gray-900 dark:text-white mb-12">

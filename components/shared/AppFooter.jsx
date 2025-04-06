@@ -11,17 +11,17 @@ import {
   
   export default function AppFooter({ isBlog = false }) {
 	return (
-	  <div className="w-full bg-transparent text-center">
+	  <div className="w-full bg-transparent text-center ">
 		<div
-		  className={`mx-auto pt-20 sm:pt-30 pb-8 mt-20 border-t ${
+		  className={`mx-auto pt-20 sm:pt-30 pb-8 mt-20 border-t  ${
 			isBlog
-			  ? 'max-w-[1800px] border-gray-200 dark:border-gray-800'
-			  : 'max-w-screen-xl border-t-2 border-primary-light dark:border-secondary-dark'
+			  ? 'max-w-[1800px] border-gray-200 dark:border-gray-500'
+			  : 'max-w-screen-xl border-t-2 border-gray-200 dark:border-gray-500'
 		  } px-6 md:px-10`}
 		>
 		  <div className="font-general-regular flex flex-col justify-center items-center mb-6 sm:mb-24">
 
-			<p className="text-3xl sm:text-4xl text-primary-dark dark:text-primary-light mb-5 ">
+			<p className="text-3xl sm:text-4xl text-primary-dark dark:text-gray-100 mb-5 ">
 			  Follow me
 			</p>
 			<ul className="flex gap-4 sm:gap-8">
@@ -45,7 +45,7 @@ import {
 			<div className="flex flex-col justify-center items-center text-center font-general-regular">
 
 
-          <p className="mt-7 text-base text-gray-500 dark:text-gray-400 max-w-xl">
+          <p className="mt-7 text-ternary-dark dark:text-ternary-light max-w-xl">
             {"I'm always learning, building, and sharing — come along for the journey"}
           </p>
         </div>

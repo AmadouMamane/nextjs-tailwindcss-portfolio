@@ -14,7 +14,9 @@ defaultImageFolder: "/images/blog/readings/books-changed-my-life"
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareButtons, AuthorBox, GalleryLightbox, Gallery, ExplodedBookGallery} from '../../components/ui'
+import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareButtons, AuthorBox, GalleryLightbox, Gallery, ExplodedBookGallery, SectionDivider } from '../../components/ui'
+
+
 
 
 <script type="application/ld+json">{`
@@ -34,7 +36,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 }
 `}</script>
 
-<main className="min-h-screen w-full bg-white dark:bg-black text-gray-900 dark:text-gray-100 overflow-x-hidden">
+<main className="min-h-screen w-full bg-secondary-light dark:bg-primary-dark text-gray-900 dark:text-gray-50 overflow-x-hidden transition-colors duration-300">
+
+
 
 
 
@@ -52,8 +56,9 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
   </Section>
 
+<SectionDivider />
 
-<div className="w-24 h-1 mx-auto bg-gradient-to-r from-indigo-400 to-purple-400 mt-32 rounded-full" />
+<div className="w-24 h-1 mx-auto bg-gradient-to-r from-indigo-400 to-purple-400 mt-32 rounded-full dark:hidden" />
 
 
 <Section title="💼  Napoleon Hill – The Inner Architect of Wealth" marginTop = 'mt-4'>
@@ -88,7 +93,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+<SectionDivider />
+
 
 
 
@@ -137,8 +143,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   />
 </Section>
 
+<SectionDivider />
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
 
 <Section title="🧘‍♂️  Eckhart Tolle – A Quiet Revolution" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
@@ -181,7 +187,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+<SectionDivider />
+
 
 
 <Section title="🔥 Tony Robbins – Vitality as Strategy" marginTop = 'mt-0'>
@@ -202,7 +209,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
     books={[
       {
         title: "Life Force",
-        image: "life-force.png",
+        image: "life-force.jpg",
         description: (
           <>
             <em>Life Force</em> is part health guide, part call to action. Robbins brings the cutting edge of regenerative medicine, precision diagnostics, and energy optimization into one playbook. This book opened my eyes to what's possible in terms of vitality, longevity, and energy. It made me feel like I have agency over my health. It’s not just about living longer — it’s about living younger, with power and purpose.
@@ -215,7 +222,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+<SectionDivider />
+
 
 
 <Section title="🕊️ Dr. David R. Hawkins – Mapping the Invisible Terrain" marginTop = 'mt-0'>
@@ -259,7 +267,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 </Section>
 
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+<SectionDivider />
+
 
 <Section title="🌍 Chimamanda Ngozi Adichie – Stories That Carry Home" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
@@ -303,7 +312,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
 
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+<SectionDivider />
+
 
 
 
@@ -338,7 +348,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   />
 </Section>
 
-<hr className="mt-32 border-t border-gray-200 dark:border-gray-700" />
+<SectionDivider />
+
 
 <Section title="🧘 Jay Shetty – Simplicity as Superpower" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">

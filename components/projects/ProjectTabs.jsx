@@ -31,15 +31,15 @@ export default function ProjectTabs({ project }) {
   return (
      <div className="mt-7 max-w-45xl mx-auto w-full ">
       {/* Tab buttons */}
-      <div className="flex flex-wrap gap-4 border-b border-gray-300 dark:border-gray-700">
+      <div className="flex flex-wrap gap-2 border-b border-gray-300 dark:border-gray-700 ">
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`px-4 py-2 font-bold transition relative 
+            className={`px-2.5 py-2 font-semibold transition relative text-[1.35rem]  font-light
               ${
                 activeTab === tab
                   ? "text-indigo-500 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[2px] after:bg-indigo-500"
-                  : "text-gray-900 dark:text-gray-200"
+                  : "text-gray-800 dark:text-gray-200"
               }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -49,16 +49,16 @@ export default function ProjectTabs({ project }) {
       </div>
 
       {/* Tab content */}
-      <div className="mt-3 text-lg text-justify text-gray-900 dark:text-gray-200">
+      <div className="mt-3 text-lg text-justify text-gray-900 dark:text-gray-200 pl-2">
         {activeTab in project.ProjectInfo && (
           Array.isArray(project.ProjectInfo[activeTab]) ? (
             activeTab === "Tools & Technologies" ? (
               <p>{project.ProjectInfo[activeTab].join(", ")}</p>
             ) : (
-              <ul className="list-disc pl-5 space-y-3">
+              <ul className="list-disc pl-10 space-y-2">
                 {project.ProjectInfo[activeTab].map((item) => (
                   <li key={item.id || item.title}>
-                    <span className="font-bold text-gray-800 dark:text-gray-300">{item.title}</span>: {item.details}
+                    <span className="font-semibold text-gray-800 dark:text-gray-300">{item.title}</span>: {item.details}
                   </li>
                 ))}
               </ul>
@@ -71,7 +71,7 @@ export default function ProjectTabs({ project }) {
                   h1: ({ children }) => <h1 className="text-2xl font-bold my-4">{children}</h1>,
                   h2: ({ children }) => <h2 className="text-xl font-semibold my-3">{children}</h2>,
                   h3: ({ children }) => <h3 className="text-lg font-medium my-2">{children}</h3>,
-                  ul: ({ children }) => <ul className="list-disc pl-6 space-y-2">{children}</ul>,
+                  ul: ({ children }) => <ul className="list-disc pl-8 space-y-2">{children}</ul>,
                   ol: ({ children }) => <ol className="list-decimal pl-6 space-y-2">{children}</ol>,
                   li: ({ children }) => <li className="ml-4">{children}</li>,
                   a: ({ href, children }) => (

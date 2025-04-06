@@ -28,7 +28,7 @@ import GalleryLightbox from "../../components/ui/GalleryLightbox";
 import NextPrev from "../../components/ui/NextPrev";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection, ExplodedBookGallery } from '../../components/ui';
+import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection, ExplodedBookGallery, SectionDivider } from '../../components/ui';
 
 
 const blogDirectory = path.join(process.cwd(), "content/blog");
@@ -151,7 +151,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
       />
 
       {/* Floating TOC */}
-        <TableOfContents className="text-sm leading-relaxed space-y-2">
+        <TableOfContents className="text-sm leading-relaxed space-y-2 dark:primary-light">
           {(toc) =>
             toc.map((item) => (
               <a
@@ -167,7 +167,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
 
       {/* Scroll Indicator */}
       <div
-        className="fixed top-6 right-6 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
+        className="fixed top-8 right-8 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
         style={{
           background: `conic-gradient(from 0deg, #6366f1 ${scrollProgress}%, #f3f4f6 ${scrollProgress}%)`,
         }}
@@ -177,9 +177,14 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
 
       <div className="max-w-9xl mx-auto mt-28">
         <div className="prose lg:prose-xl mx-auto dark:prose-invert">
-          <h1 className="text-[2.25rem] sm:text-[3rem] lg:text-[3.75rem] leading-tight font-extrabold tracking-normal text-center bg-gradient-to-r from-gray-900 via-black to-gray-700 bg-clip-text text-transparent mt-1 mb-5 transition-all duration-700 ease-out">
-            {frontMatter.title}
-          </h1>
+
+        <h1 className="text-[2.25rem] sm:text-[3rem] lg:text-[3.75rem] leading-tight font-extrabold tracking-normal text-center 
+    bg-gradient-to-r from-gray-900 via-black to-gray-700 dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 
+    bg-clip-text text-transparent mt-1 mb-5 transition-all duration-700 ease-out">
+  {frontMatter.title}
+</h1>
+
+
 
           {/* Meta Info */}
           <div className="flex flex-wrap justify-center gap-10 text-sm sm:text-base text-primary-dark dark:text-primary-light">
@@ -206,7 +211,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
 
       {/* Article */}
       <motion.article
-        className="prose lg:prose-xl mx-auto dark:prose-invert"
+        className="prose lg:prose-xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -240,6 +245,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
             ImageGallery, 
             Section, 
             ExplodedBookGallery,
+            SectionDivider, 
             p: (props) => <>{props.children}</>
           
             

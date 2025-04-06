@@ -19,7 +19,7 @@ const BackButton = () => {
     <button
       onClick={() => router.back()}
       aria-label="Back"
-      className={`fixed top-4 left-4 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-opacity duration-300 ${
+      className={`fixed top-8 left-8 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-opacity duration-300 ${
         visible ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       style={{

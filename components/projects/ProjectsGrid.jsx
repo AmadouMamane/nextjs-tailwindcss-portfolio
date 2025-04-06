@@ -52,7 +52,7 @@ function ProjectsGrid() {
 					className="
                         flex
                         justify-between
-                        border-b border-primary-light
+                        border-b border-gray-100
                         dark:border-secondary-dark
                         pb-3
                         gap-3
@@ -84,7 +84,7 @@ function ProjectsGrid() {
                                 sm:px-4
                                 py-2
                                 border 
-                            	border-gray-200
+                            	border-gray-120
                                 dark:border-secondary-dark
                                 rounded-lg
                                 text-sm

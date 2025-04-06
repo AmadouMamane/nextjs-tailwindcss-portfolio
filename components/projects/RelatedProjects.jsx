@@ -15,8 +15,8 @@ function RelatedProjects({ currentProject }) {
 	if (relatedProjects.length === 0) return null;
 
 	return (
-		<div className="mt-10 pt-10 sm:pt-14 sm:mt-20 border-t-2 border-primary-light dark:border-secondary-dark max-w-7xl mx-auto w-full px-4">
-			<p className="font-general-regular text-primary-dark dark:text-primary-light text-3xl font-bold mb-10 sm:mb-14 text-left">
+		<div className="mt-20 pt-10 sm:pt-14 sm:mt-32 border-t-2 border-primary-light dark:border-secondary-dark max-w-7xl mx-auto w-full px-4  text-center">
+			<p className="text-gray-800 dark:text-gray-200 text-[2.25rem] font-[500] mb-10 sm:mb-14">
 				Related Projects
 			</p>
 

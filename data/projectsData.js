@@ -19,7 +19,7 @@ export const projectsData = [
 			file: '/notebooks/isic-2024_kaggle.html',
 		},
 		ProjectHeader: {
-			title: '🧬 AI Skin Cancer Detection Challenge (ISIC 2024)',
+			title: '🧬 AI Skin Cancer Detection Challenge - ISIC 2024',
 			publishDate: 'March 24, 2025',
 			tags: 'Deep Learning',
 		},
@@ -204,6 +204,45 @@ We plan to experiment with various recommendation approaches, including:
 			"Tools & Technologies": ["Python", "Pandas", "Surprise", "Scikit-learn", "LightFM"]
 		}
 	  
-    }
+    }, 
+	{
+		id: 3,
+		title: '💡 Building Agentic AI',
+		url: 'google-health-platform',
+		category: 'Generative AI',
+		img: '/images/projects/ai-agents/agentic-ai.jpg',
+		type: "notebook",
+		Notebook: {
+			file: '',
+		},
+		ProjectHeader: {
+			title: '💡 Building Agentic AI - Towards Autonomous and Goal-Directed Systems',
+			publishDate: 'April 06, 2025',
+			tags: '❗🛠️ Work in Progress,  Deep Learning',
+		},
+		ProjectImages: [
+			{
+				id: uuidv4(),
+				title: 'Building Agentic AI',
+				img: '/images/projects/ai-agents/agentic-ai.jpg',
+			}
+		],
+		ProjectInfo: {
+			Overview: `❗🛠️ 📝  Work in Progress
+
+We're currently writing up something we think you’ll love. Thanks for your patience — it’ll be live shortly!`,
+			Goal:'',
+			
+			"Tools & Technologies": [],
+			ProjectDetails: [
+				{
+					id: uuidv4(),
+					details:
+						'Lorem ipsum dolor, sit amet conse.',
+				},
+			],
+			SocialSharingHeading: 'Share This'
+		},
+	}, 
 ];
 
