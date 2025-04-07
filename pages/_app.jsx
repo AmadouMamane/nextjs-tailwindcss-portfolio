@@ -1,11 +1,9 @@
-// pages/_app.js
+import Script from 'next/script';
 import '../styles/globals.css';
 import { AnimatePresence } from 'framer-motion';
 import DefaultLayout from '../components/layout/DefaultLayout';
 import UseScrollToTop from '../hooks/useScrollToTop';
 import { ThemeProvider } from 'next-themes';
-import Script from 'next/script';
-
 import { Playfair_Display } from 'next/font/google';
 
 const playfair = Playfair_Display({
@@ -16,6 +14,7 @@ const playfair = Playfair_Display({
 });
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
+console.log('GA ID:', GA_TRACKING_ID);
 
 function MyApp({ Component, pageProps }) {
   const isBlog = pageProps?.isBlog || false;
@@ -34,19 +33,22 @@ function MyApp({ Component, pageProps }) {
       </AnimatePresence>
 
       {/* Google Analytics Script */}
-      <Script
-        strategy="afterInteractive"
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-      />
-      <Script strategy="afterInteractive" id="google-analytics">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-
-          gtag('config', '${GA_TRACKING_ID}');
-        `}
-      </Script>
+      {GA_TRACKING_ID && (
+        <>
+          <Script
+            strategy="afterInteractive"
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          />
+          <Script strategy="afterInteractive" id="google-analytics">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}');
+            `}
+          </Script>
+        </>
+      )}
     </ThemeProvider>
   );
 }
