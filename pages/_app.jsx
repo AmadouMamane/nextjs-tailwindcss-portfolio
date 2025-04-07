@@ -14,7 +14,6 @@ const playfair = Playfair_Display({
 });
 
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
-console.log('GA ID:', GA_TRACKING_ID);
 
 function MyApp({ Component, pageProps }) {
   const isBlog = pageProps?.isBlog || false;
