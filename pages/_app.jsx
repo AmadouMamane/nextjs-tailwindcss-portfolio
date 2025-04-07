@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import DefaultLayout from '../components/layout/DefaultLayout';
 import UseScrollToTop from '../hooks/useScrollToTop';
 import { ThemeProvider } from 'next-themes';
+import Script from 'next/script';
 
 import { Playfair_Display } from 'next/font/google';
 
@@ -13,6 +14,8 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
   display: 'swap',
 });
+
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
 
 function MyApp({ Component, pageProps }) {
   const isBlog = pageProps?.isBlog || false;
@@ -29,11 +32,24 @@ function MyApp({ Component, pageProps }) {
           <UseScrollToTop />
         </div>
       </AnimatePresence>
+
+      {/* Google Analytics Script */}
+      <Script
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+      />
+      <Script strategy="afterInteractive" id="google-analytics">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', '${GA_TRACKING_ID}');
+        `}
+      </Script>
     </ThemeProvider>
   );
 }
 
 export default MyApp;
-
-
-
+git 

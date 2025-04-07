@@ -1,6 +1,6 @@
 function AppFooterCopyright() {
 	return (
-		<div className="font-general-regular flex justify-center items-center text-center">
+		<div className="font-general-regular flex flex-col justify-center items-center text-center">
 			<div className="text-lg text-ternary-dark dark:text-ternary-light">
 				&copy; {new Date().getFullYear()}
 				<a
@@ -19,6 +19,9 @@ function AppFooterCopyright() {
 					AMADOU
 				</a>
 			</div>
+			<p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+				This site uses Google Analytics to anonymously track visits to enhance your experience. By continuing to browse, you accept this usage.
+			</p>
 		</div>
 	);
 }
