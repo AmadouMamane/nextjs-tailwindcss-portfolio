@@ -23,7 +23,7 @@ export const ExplodedBookGallery = ({
         viewport={{ once: true }}
         className="text-center mx-auto"
       >
-        <div className="relative mx-auto mb-10 w-42 h-42 sm:w-52 sm:h-52 rounded-full overflow-hidden border-4 border-gray-300 dark:border-gray-600 shadow-2xl">
+        <div className="relative mx-auto mb-10 w-40 h-40 sm:w-52 sm:h-52 rounded-full overflow-hidden border-4 border-gray-300 dark:border-gray-600 shadow-2xl">
           <Image
             src={`${folder}/${section}/${authorImage}`}
             alt={authorName}
