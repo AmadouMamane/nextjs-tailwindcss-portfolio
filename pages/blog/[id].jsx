@@ -14,7 +14,7 @@ import remarkSlug from "remark-slug";
 
 import Image from "next/image";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { FiClock, FiTag } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import readingTime from "reading-time";
@@ -98,6 +98,8 @@ export async function getStaticProps({ params }) {
 }
 
 export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
+
+  const nextPrevRef = useRef(null);
   const [showNav, setShowNav] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -140,6 +142,7 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
   };
 
   return (
+    <>
     <DefaultBlogLayout>
       <PagesMetaHead
         title={frontMatter.title}
@@ -149,23 +152,25 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
       />
 
       {/* Floating TOC */}
-        <TableOfContents className="hidden 2xl:block text-sm leading-relaxed space-y-2 dark:primary-light">
-          {(toc) =>
-            toc.map((item) => (
-              <a
-                key={item.url}
-                href={item.url}
-                className="block hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-              >
-                {item.text}
-              </a>
-            ))
-          }
-        </TableOfContents>
+
+      <TableOfContents>
+  {(toc) =>
+    toc.map((item) => (
+      <a
+        key={item.id}
+        href={`#${item.id}`}
+        className="block hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+      >
+        {item.text}
+      </a>
+    ))
+  }
+</TableOfContents>
+
 
       {/* Scroll Indicator */}
       <div
-        className="fixed top-8 right-8 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
+        className="fixed top-10 right-10 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
         style={{
           background: `conic-gradient(from 0deg, #6366f1 ${scrollProgress}%, #f3f4f6 ${scrollProgress}%)`,
         }}
@@ -257,9 +262,13 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
       </div>
 
 
-<NextPrev prev={prevPost} next={nextPost} />
-
 
     </DefaultBlogLayout>
+
+    <div ref={nextPrevRef}>
+        <NextPrev prev={prevPost} next={nextPost} />
+      </div>
+
+</>
   );
 }

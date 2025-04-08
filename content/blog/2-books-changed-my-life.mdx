@@ -48,7 +48,8 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
   
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
-        <div className="text-2xl leading-relaxed font-light">
+      <div className="text-xl sm:text-[1.35rem] md:text-[1.45rem] leading-snug sm:leading-normal font-light  mx-auto text-center text-gray-800 dark:text-gray-200">
+
           There are books that entertain, books that educate—and then there are books that transform. These are the ones that found me at the right moment, cracked me open, and helped me evolve. 
           Below is a collection of the most powerful books I've ever read, accompanied by images of their authors and covers, along with reflections on their impact.​
         </div>
@@ -56,12 +57,12 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
   </Section>
 
-<SectionDivider />
+<hr className={`border-t border-gray-200 dark:border-gray-500 transition-colors duration-300  mt-16 dark:mt-16`} />
 
-<div className="w-24 h-1 mx-auto bg-gradient-to-r from-indigo-400 to-purple-400 mt-32 rounded-full dark:hidden" />
+<div className="w-24 h-1 mx-auto bg-gradient-to-r from-indigo-400 to-purple-400 mt-16 rounded-full dark:hidden" />
 
 
-<Section title="💼  Napoleon Hill – The Inner Architect of Wealth" marginTop = 'mt-4'>
+<Section title="💼  Napoleon Hill – The Inner Architect of Wealth" marginTop = 'mt-0'>
   <div className="text-center max-w-3xl mx-auto mb-10 mt-8">
     <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
       Hill didn’t just write about success — he reverse-engineered it. His words weren’t formulas, they were frequencies. He helped me realize that wealth isn’t pursued — it’s magnetized by belief, clarity, and burning desire.

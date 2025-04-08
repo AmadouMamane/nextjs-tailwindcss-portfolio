@@ -5,12 +5,12 @@ import RelatedProjects from "../RelatedProjects";
 
 export default function NotebookProjectLayout({ project }) {
   return (
-    <div className="container mx-auto">
+    <div className="max-w-7xl mx-auto">
       <div>  
         <BackButton />
         <ProjectHeader project={project} />
         <ProjectTabs project={project} /> 
-        <RelatedProjects />
+        <RelatedProjects currentProject={project}/>
       </div>
     </div>
   );

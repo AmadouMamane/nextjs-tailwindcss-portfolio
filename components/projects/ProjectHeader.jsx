@@ -3,7 +3,7 @@ import { FiClock, FiTag } from "react-icons/fi";
 export default function ProjectHeader({ project }) {
   return (
     <div className="text-center mb-16">
-      <h1 className="text-[1.25rem] sm:text-[2rem] lg:text-[3rem] leading-tight font-semibold tracking-normal text-center mt-20 sm:mt-24 mb-6  text-secondary-dark dark:text-gray-100">
+      <h1 className="text-[1.5rem] sm:text-[2rem] lg:text-[2.5rem] leading-tight font-semibold tracking-normal text-center mt-20 sm:mt-24 mb-6  text-secondary-dark dark:text-gray-100">
         {project.ProjectHeader.title}
       </h1>
       <div className="flex justify-center mt-4 space-x-10">

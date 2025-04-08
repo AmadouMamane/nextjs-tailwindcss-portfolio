@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "components/ui/Callout.jsx"  ],
+, "components/ui/Callout.jsx", "components/TableOfContents.jsx"  ],
   "exclude": [
     "node_modules"
   ]

@@ -3,7 +3,7 @@ import BackButton from '../../reusable/BackButton';
 
 export default function DefaultBlogLayout({ children }) {
   return (
-    <div className="container mx-auto">
+    <div className="max-w-7xl mx-auto">
       <PagesMetaHead title="Blog" />
       <BackButton />
       <div>  

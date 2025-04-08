@@ -5,7 +5,7 @@ import RelatedProjects from "../RelatedProjects";
 
 export default function WebAppProjectLayout({ project }) {
   return (
-    <div className="container mx-auto">
+    <div className="max-w-7xl mx-auto px-4">
       <BackButton />
       <ProjectHeader project={project} />
       

@@ -1,22 +1,22 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-export default function CleanNextPrev({ prev, next }) {
+export default function NextPrev({ prev, next }) {
   if (!prev && !next) return null
 
   return (
-    <section className="relative w-screen left-1/2 -translate-x-1/2 mt-32 overflow-hidden bg-transparent mb-30">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-        viewport={{ once: true }}
-        className="max-w-[1800px] mx-auto border-t border-gray-200 dark:border-gray-500 pt-14 px-8 md:px-20"
-      >
+    <section className="relative w-full mt-32 mb-30 px-4 sm:px-10 lg:px-20">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: 'easeOut' }}
+      viewport={{ once: true }}
+      className="mx-auto max-w-[1800px] border-t border-gray-200 dark:border-gray-500 pt-8"
+    >
         
-        <div className="text-center uppercase text-2xl md:text-3xl font-semibold tracking-wide text-gray-900 dark:text-white mb-12">
+        <div className="text-center uppercase text-xl md:text-2xl font-semibold tracking-wide text-gray-900 dark:text-white mb-8">
 
-        <div className="w-16 h-1 bg-indigo-500 mx-auto mb-5  rounded-full" />
+        <div className="w-16 h-1 bg-indigo-500 mx-auto mb-3  rounded-full" />
   Continue Reading 
 </div>
 
@@ -32,7 +32,7 @@ export default function CleanNextPrev({ prev, next }) {
               </div>
               <Link
                 href={`/blog/${prev.slug}`}
-                className="block text-xl md:text-2xl font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="block text-md md:text-xl font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 ← {prev.title}
               </Link>
@@ -50,7 +50,7 @@ export default function CleanNextPrev({ prev, next }) {
               </div>
               <Link
                 href={`/blog/${next.slug}`}
-                className="block text-xl md:text-2xl font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="block text-md md:text-xl font-medium text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 {next.title} →
               </Link>
