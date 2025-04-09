@@ -19,9 +19,11 @@ function AppFooterCopyright() {
 					AMADOU
 				</a>
 			</div>
+		
 			<p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
 				This site uses Google Analytics to anonymously track visits to enhance your experience. By continuing to browse, you accept this usage.
 			</p>
+
 		</div>
 	);
 }

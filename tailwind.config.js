@@ -23,6 +23,7 @@ module.exports = {
         'primary-dark': '#0D2438',
         'secondary-dark': '#102D44',
         'ternary-dark': '#1E3851',
+        'gray-75': '#f8fafb', // Subtle gray between gray-50 and #f3f4f6,
 
         // Tailwind's gray neutral scale
         gray: colors.neutral,

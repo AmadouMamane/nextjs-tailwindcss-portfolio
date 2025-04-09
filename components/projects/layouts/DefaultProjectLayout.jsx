@@ -1,15 +1,18 @@
+// components/projects/layouts/DefaultProjectLayout.jsx
+
 import ProjectHeader from "../ProjectHeader";
 import ProjectTabs from "../ProjectTabs";
 import BackButton from "../../reusable/BackButton";
 import RelatedProjects from "../RelatedProjects";
+import Container from "../../layout/Container";
 
 export default function DefaultProjectLayout({ project }) {
   return (
-    <div className="max-w-7xl mx-auto">
+    <Container>
       <BackButton />
       <ProjectHeader project={project} />
       <ProjectTabs project={project} />
-      <RelatedProjects currentProject={project}/>
-    </div>
+      <RelatedProjects currentProject={project} />
+    </Container>
   );
 }

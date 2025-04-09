@@ -11,20 +11,23 @@ import {
 	const maxWidth = isBlog ? 'max-w-[1800px]' : 'max-w-7xl';
   
 	return (
+		
 	  <div className="w-full bg-transparent text-center">
-		<div className="relative w-full px-4 sm:px-10 lg:px-20 mt-20">
-		  <div className={`mx-auto ${maxWidth} border-t border-gray-200 dark:border-gray-600 pt-20 sm:pt-30 pb-8`}>
+				
+		<div className="relative w-full mt-20">
+		  <div className={`mx-auto ${maxWidth} border-t border-gray-200 dark:border-gray-600 pt-20 sm:pt-30 pb-8 `}>
 			<div className="font-general-regular flex flex-col justify-center items-center mb-6 sm:mb-24">
 			  <p className="text-3xl sm:text-4xl text-primary-dark dark:text-gray-100 mb-5">
 				Follow me
 			  </p>
 			  <ul className="flex gap-4 sm:gap-8">
 				{[
-				  { id: 1, icon: <FiGlobe />, url: '' },
-				  { id: 2, icon: <FiGithub />, url: 'https://github.com/AmadouMamane' },
-				  { id: 3, icon: <FiTwitter />, url: '' },
-				  { id: 4, icon: <FiLinkedin />, url: 'https://fr.linkedin.com/in/amadoumamane' },
-				  { id: 5, icon: <FiYoutube />, url: '' },
+				  
+				  { id: 1, icon: <FiGithub />, url: 'https://github.com/AmadouMamane' },
+				  { id: 2, icon: <FiLinkedin />, url: 'https://fr.linkedin.com/in/amadoumamane' },
+				  { id: 3, icon: <FiTwitter />, url: 'https://x.com/AmadouMamaneX' },
+				  { id: 6, icon: <FiGlobe />, url: '' },
+				  { id: 7, icon: <FiYoutube />, url: '' },
 				].map((link) => (
 				  <a
 					href={link.url}
@@ -47,7 +50,10 @@ import {
 			<AppFooterCopyright />
 		  </div>
 		</div>
+
 	  </div>
+
+
 	);
   }
   

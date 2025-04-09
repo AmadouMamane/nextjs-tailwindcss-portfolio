@@ -1,14 +1,21 @@
+// pages/projects/index.jsx
+
+import Container from '../../components/layout/Container';
 import PagesMetaHead from '../../components/PagesMetaHead';
 import ProjectsGrid from '../../components/projects/ProjectsGrid';
+import DefaultLayout from '../../components/layout/DefaultLayout';
 
-function index() {
-	return (
-		<div className="container mx-auto">
-			<PagesMetaHead title="Projects" />
-
-			<ProjectsGrid />
-		</div>
-	);
+function ProjectsIndex() {
+  return (
+    <Container>
+      <PagesMetaHead title="Projects" />
+      <ProjectsGrid />
+    </Container>
+  );
 }
 
-export default index;
+ProjectsIndex.getLayout = function getLayout(page) {
+  return <DefaultLayout>{page}</DefaultLayout>;
+};
+
+export default ProjectsIndex;

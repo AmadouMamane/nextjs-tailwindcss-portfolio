@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import Container from '../layout/Container';
 
-export default function NextPrev({ prev, next }) {
+export default function NextPrev({ prev, next, isBlog=true}) {
   if (!prev && !next) return null
 
   return (
-    <section className="relative w-full mt-32 mb-30 px-4 sm:px-10 lg:px-20">
+
+    <section className="relative w-full mt-32 mb-30">
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -59,5 +61,6 @@ export default function NextPrev({ prev, next }) {
         </div>
       </motion.div>
     </section>
+
   )
 }

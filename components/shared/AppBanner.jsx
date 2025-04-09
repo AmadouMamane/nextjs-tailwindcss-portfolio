@@ -2,18 +2,21 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { FiArrowDownCircle } from 'react-icons/fi';
 import useThemeSwitcher from '../../hooks/useThemeSwitcher';
+import Container from '../layout/Container';
 
 function AppBanner() {
 	const [activeTheme] = useThemeSwitcher();
 
 	return (
+
+
+
 		<motion.section
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ ease: 'easeInOut', duration: 0.9, delay: 0.2 }}
-			className="flex flex-col sm:justify-between items-center sm:flex-row mt-5 md:mt-2"
-		>
-			<div className="w-full md:w-1/3 text-left">
+			className="flex flex-col sm:justify-between items-center sm:flex-row mt-5 md:mt-2">
+			<div className="w-full md:w-1/3 text-left pl-4">
 				<motion.h1
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
@@ -65,7 +68,7 @@ function AppBanner() {
 				initial={{ opacity: 0, y: -180 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ ease: 'easeInOut', duration: 0.9, delay: 0.2 }}
-				className="w-full sm:w-2/3 text-right float-right mt-8 sm:mt-0"
+				className="w-full sm:w-2/3 text-right float-right mt-8 sm:mt-2"
 			>
 			<Image
 				src={
@@ -76,10 +79,12 @@ function AppBanner() {
 				alt="Developer"
 				width={100} 
 				height={0}
-				className="w-full sm:w-3/3 h-auto object-contain"
+				className="w-full sm:w-3/3 h-auto object-cover"
 			/>
 			</motion.div>
 		</motion.section>
+
+	
 	);
 }
 

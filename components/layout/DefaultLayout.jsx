@@ -1,16 +1,26 @@
+// components/layout/DefaultLayout.jsx
+
 import AppHeader from '../shared/AppHeader';
 import AppFooter from '../shared/AppFooter';
 import PagesMetaHead from '../PagesMetaHead';
+import Container from './Container';
 
-const DefaultLayout = ({ children , isBlog }) => {
+
+const DefaultLayout = ({ children }) => {
 	return (
-		<>
-			<PagesMetaHead />
-			<AppHeader />
-			<div>{children}</div>
-			<AppFooter isBlog={isBlog} />
-		</>
+	
+	  <div>
+		<PagesMetaHead />
+		<AppHeader />
+		{children}
+
+		<Container>
+			<AppFooter/>
+		</Container>
+	  </div>
+
 	);
-};
+  };
+  
 
 export default DefaultLayout;

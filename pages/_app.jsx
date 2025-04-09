@@ -16,22 +16,20 @@ const playfair = Playfair_Display({
 const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID;
 
 function MyApp({ Component, pageProps }) {
-  const isBlog = pageProps?.isBlog || false;
+  const getLayout = Component.getLayout || ((page) => (
+    <DefaultLayout isBlog={pageProps?.isBlog}>{page}</DefaultLayout>
+  ));
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true}>
       <AnimatePresence>
-        <div
-          className={`${playfair.variable} bg-secondary-light dark:bg-primary-dark transition duration-300 font-sans`}
-        >
-          <DefaultLayout isBlog={isBlog}>
-            <Component {...pageProps} />
-          </DefaultLayout>
+        <div className={`${playfair.variable} bg-secondary-light dark:bg-primary-dark transition duration-300 font-sans`}>
+          {getLayout(<Component {...pageProps} />)}
           <UseScrollToTop />
         </div>
       </AnimatePresence>
 
-      {/* Google Analytics Script */}
+      {/* Google Analytics */}
       {GA_TRACKING_ID && (
         <>
           <Script
@@ -51,5 +49,6 @@ function MyApp({ Component, pageProps }) {
     </ThemeProvider>
   );
 }
+
 
 export default MyApp;

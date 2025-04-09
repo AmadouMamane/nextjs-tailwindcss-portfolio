@@ -3,6 +3,7 @@ import path from "path";
 import matter from "gray-matter";
 import BlogGrid from "../../components/blog/BlogGrid";
 import DefaultBlogLayout from "../../components/blog/layouts/DefaultBlogLayout";
+import Container from "../../components/layout/Container";
 
 export async function getStaticProps() {
   const blogDir = path.join(process.cwd(), "content/blog");
@@ -31,10 +32,16 @@ export async function getStaticProps() {
   };
 }
 
-export default function BlogPage({ blogs }) {
-  return (
-    <DefaultBlogLayout>
-      <BlogGrid blogs={blogs} />
-    </DefaultBlogLayout>
-  );
+
+
+function BlogPage({ blogs }) {
+  return <BlogGrid blogs={blogs} />
 }
+
+BlogPage.getLayout = (page) => (
+  <DefaultBlogLayout  isBlog={false}>
+    {page}
+    </DefaultBlogLayout>
+);
+
+export default BlogPage;

@@ -31,9 +31,9 @@ export const ExplodedBookGallery = ({
           />
         </div>
 
-        <p className="mt-4 text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-light max-w-3xl mx-auto">
+        <div className="mt-4 text-lg sm:text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-light max-w-3xl mx-auto">
           {authorDescription}
-        </p>
+        </div>
       </motion.div>
 
       {/* Books */}

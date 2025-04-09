@@ -6,7 +6,7 @@ export const slugify = (text) =>
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '-')
 
-export const Section = ({ title, children, marginTop = 'mt-0' }) => {
+export const Section = ({ title, children, marginTop = 'mt-16' }) => {
   const id = title ? slugify(title) : null
 
   return (
@@ -15,7 +15,7 @@ export const Section = ({ title, children, marginTop = 'mt-0' }) => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
-      className={`relative px-4 sm:px-6 lg:px-10 xl:px-16 py-12 bg-gradient-to-b from-white to-gray-50 dark:from-primary-dark dark:to-primary-dark ${marginTop}`}
+      className={`relative px-4 sm:px-6 lg:px-10 xl:px-16 py-12 bg-gradient-to-b from-white to-gray-75 dark:from-primary-dark dark:to-primary-dark ${marginTop}`}
     >
       {title && (
         <h2

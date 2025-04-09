@@ -13,23 +13,31 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkSlug from "remark-slug";
 
 import Image from "next/image";
-import Head from "next/head";
 import { useEffect, useState, useRef } from "react";
 import { FiClock, FiTag } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import readingTime from "reading-time";
 
-import DefaultBlogLayout from "../../components/blog/layouts/DefaultBlogLayout";
 import PagesMetaHead from "../../components/PagesMetaHead";
+import DefaultBlogLayout from "../../components/blog/layouts/DefaultBlogLayout";
+import Container from "../../components/layout/Container";
+
 import TableOfContents from "../../components/TableOfContents";
-
 import GalleryLightbox from "../../components/ui/GalleryLightbox";
-
 import NextPrev from "../../components/ui/NextPrev";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Section, ImageGallery, Callout, FadeInSection, AuthorBox, ShareButtons, AnimatedSection, ExplodedBookGallery, SectionDivider } from '../../components/ui';
 
+import {
+  Section,
+  ImageGallery,
+  Callout,
+  FadeInSection,
+  AuthorBox,
+  ShareButtons,
+  AnimatedSection,
+  ExplodedBookGallery,
+  SectionDivider,
+} from "../../components/ui";
 
 const blogDirectory = path.join(process.cwd(), "content/blog");
 
@@ -40,7 +48,6 @@ export async function getStaticPaths() {
   }));
   return { paths, fallback: false };
 }
-
 
 export async function getStaticProps({ params }) {
   const filePathMdx = path.join(blogDirectory, `${params.id}.mdx`);
@@ -61,9 +68,7 @@ export async function getStaticProps({ params }) {
 
   const getPostMeta = (slug) => {
     if (!slug) return null;
-    const fullPath = fs.existsSync(path.join(blogDirectory, `${slug}.mdx`))
-      ? path.join(blogDirectory, `${slug}.mdx`)
-      : path.join(blogDirectory, `${slug}.qmd`);
+    const fullPath = path.join(blogDirectory, `${slug}.mdx`);
     const fileContent = fs.readFileSync(fullPath, "utf8");
     const { data } = matter(fileContent);
     return { slug, title: data.title || slug };
@@ -71,8 +76,6 @@ export async function getStaticProps({ params }) {
 
   const prevPost = getPostMeta(slugs[currentIndex - 1]);
   const nextPost = getPostMeta(slugs[currentIndex + 1]);
-
-
 
   const mdxSource = await serialize(content, {
     scope: data,
@@ -97,40 +100,22 @@ export async function getStaticProps({ params }) {
   };
 }
 
-export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
+function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
+
+
 
   const nextPrevRef = useRef(null);
-  const [showNav, setShowNav] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-
   useEffect(() => {
-    // prevent automatic scrolling if hash (#...) in URL
-    if (typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      if (hash) {
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'auto' });
-          history.replaceState(null, '', window.location.pathname);
-        }, 0);
-      }
-    }
-  
-    // Scroll tracking logic
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const pageHeight = document.documentElement.scrollHeight;
-      const viewportHeight = window.innerHeight;
-      const scrolledToBottom = scrollY + viewportHeight >= pageHeight - 200;
-      setShowNav(scrolledToBottom);
-  
       const scrollTop = window.scrollY;
       const height = document.body.scrollHeight - window.innerHeight;
       setScrollProgress((scrollTop / height) * 100);
     };
-  
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLightbox = (src) => {
@@ -143,29 +128,24 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
 
   return (
     <>
-    <DefaultBlogLayout>
+      <Container isBlog={false}>
       <PagesMetaHead
         title={frontMatter.title}
         description={frontMatter.description}
         image={frontMatter.image}
-        keywords={frontMatter.keywords?.join(", ")}
+        keywords={frontMatter.tags?.join(", ")}
       />
 
-      {/* Floating TOC */}
+      <TableOfContents />
 
-      <TableOfContents>
-  {(toc) =>
-    toc.map((item) => (
-      <a
-        key={item.id}
-        href={`#${item.id}`}
-        className="block hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+      <div
+        className="fixed top-10 right-10 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
+        style={{
+          background: `conic-gradient(from 0deg, #6366f1 ${scrollProgress}%, #f3f4f6 ${scrollProgress}%)`,
+        }}
       >
-        {item.text}
-      </a>
-    ))
-  }
-</TableOfContents>
+        {Math.round(scrollProgress)}%
+      </div>
 
 
       {/* Scroll Indicator */}
@@ -212,63 +192,67 @@ export default function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost 
         </div>
       </div>
 
-      {/* Article */}
-      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-20 max-w-screen-xl mx-auto">
-      <motion.article
-      className="prose sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert"
+        {/* Actual content */}
+        <motion.article
+          className="prose sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <MDXRemote
+            {...mdxSource}
+            components={{
+              h1: (props) => <h1 className="scroll-mt-24" {...props} />,
+              h2: (props) => <h2 className="scroll-mt-24" {...props} />,
+              h3: (props) => <h3 className="scroll-mt-24" {...props} />,
+              p: (props) => <div className="mt-3 leading-relaxed text-gray-800 dark:text-gray-300" {...props} />,
+              a: (props) => <a className="text-indigo-600 hover:underline" {...props} />,
+              blockquote: (props) => (
+                <blockquote
+                  className="border-l-4 border-indigo-500 pl-4 italic text-gray-600 dark:text-gray-400"
+                  {...props}
+                />
+              ),
+              img: (props) => (
+                <img
+                  {...props}
+                  className="rounded-lg shadow-md cursor-pointer hover:scale-105 transition-transform duration-300"
+                  onClick={() => handleLightbox(props.src)}
+                />
+              ),
+              Image,
+              motion,
+              AnimatedSection,
+              Callout,
+              FadeInSection,
+              AuthorBox,
+              ShareButtons,
+              TableOfContents,
+              GalleryLightbox,
+              NextPrev,
+              ImageGallery,
+              Section,
+              ExplodedBookGallery,
+              SectionDivider,
+            }}
+          />
+        </motion.article>
+        </Container>
 
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <MDXRemote
-          {...mdxSource}
-          components={{
-            h1: (props) => <h1 className="text-4xl font-bold mt-8 scroll-mt-24 relative group" {...props} />,
-            h2: (props) => <h2 className="text-3xl font-semibold mt-6 scroll-mt-24 relative group" {...props} />,
-            h3: (props) => <h3 className="text-2xl font-medium mt-5 scroll-mt-24 relative group" {...props} />,
-            p: (props) => <p className="mt-3 leading-relaxed text-gray-800 dark:text-gray-300" {...props} />,
-            a: (props) => <a className="text-indigo-600 hover:underline" {...props} />,
-            blockquote: (props) => <blockquote className="border-l-4 border-indigo-500 pl-4 italic text-gray-600 dark:text-gray-400" {...props} />,
-            img: (props) => (
-              <img
-                {...props}
-                className="rounded-lg shadow-md cursor-pointer transition-transform duration-300 hover:scale-105"
-                onClick={() => handleLightbox(props.src)}
-              />
-            ),
-            Image,
-            motion,
-            AnimatedSection, 
-            Callout,
-            FadeInSection,
-            AuthorBox,
-            ShareButtons,
-            TableOfContents,
-            GalleryLightbox,
-            NextPrev, 
-            ImageGallery, 
-            Section, 
-            ExplodedBookGallery,
-            SectionDivider, 
-            p: (props) => <>{props.children}</>
-          
-            
-          }}
-        />
-
-      </motion.article>
-
-      </div>
+    
+        <div ref={nextPrevRef}>
+          <NextPrev prev={prevPost} next={nextPost} />
+        </div>
 
 
-
-    </DefaultBlogLayout>
-
-    <div ref={nextPrevRef}>
-        <NextPrev prev={prevPost} next={nextPost} />
-      </div>
-
-</>
+    </>
   );
 }
+
+
+BlogSingle.getLayout = (page) => (
+  <DefaultBlogLayout>{page}</DefaultBlogLayout>
+  
+);
+
+export default BlogSingle;
