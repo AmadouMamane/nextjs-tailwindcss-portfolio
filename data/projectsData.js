@@ -230,7 +230,7 @@ We plan to experiment with various recommendation approaches, including:
 		ProjectInfo: {
 			Overview: `❗🛠️ 📝  Work in Progress
 
-We're currently writing up something we think you’ll love. Thanks for your patience — it’ll be live shortly!`,
+I'm currently writing up something I think you’ll love. Thanks for your patience — it’ll be live shortly!`,
 			Goal:'',
 			
 			"Tools & Technologies": [],
