@@ -26,15 +26,15 @@ function ProjectsGrid() {
   });
 
   return (
-    <section className="mt-20">
+    <section className="mt-16">
       <div className="text-center">
         <p className="font-general-medium text-2xl sm:text-4xl mb-1 text-ternary-dark dark:text-ternary-light">
           Projects Portfolio
         </p>
       </div>
 
-      <div className="mt-10">
-        <h3 className="font-general-regular text-center text-secondary-dark dark:text-ternary-light text-md sm:text-xl mb-4">
+      <div className="mt-12">
+        <h3 className="font-general-regular text-center text-secondary-dark dark:text-ternary-light text-md sm:text-xl mb-6">
           Search projects by title or filter by category
         </h3>
 
