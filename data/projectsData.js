@@ -207,7 +207,7 @@ We plan to experiment with various recommendation approaches, including:
     }, 
 	{
 		id: 3,
-		title: '💡 Building Agentic AI',
+		title: '💡 Building Autonomous Agentic AI',
 		url: 'google-health-platform',
 		category: 'Generative AI',
 		img: '/images/projects/ai-agents/agentic-ai.jpg',
@@ -223,7 +223,7 @@ We plan to experiment with various recommendation approaches, including:
 		ProjectImages: [
 			{
 				id: uuidv4(),
-				title: 'Building Agentic AI',
+				title: 'Building Agentic AI Systems',
 				img: '/images/projects/ai-agents/agentic-ai.jpg',
 			}
 		],
