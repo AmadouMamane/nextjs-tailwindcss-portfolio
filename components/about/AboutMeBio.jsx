@@ -49,7 +49,7 @@ function AboutMeBio() {
 								className="relative"
 							>
 								{/* Timeline dot */}
-								<span className="absolute -left-[1.15rem] top-2 w-3 h-3 rounded-full bg-indigo-500 border-4 border-white dark:border-gray-800 shadow-sm z-10"></span>
+                                <span className="absolute -left-[1.15rem] top-[0.95rem] -translate-y-1/2 w-3 h-3 rounded-full bg-indigo-500 border-2 border-white dark:border-gray-800 shadow-sm z-10"></span>
 
 								{/* Text block */}
 								<p className="text-ternary-dark dark:text-ternary-light text-base md:text-lg bg-white/10 dark:bg-white/5 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 shadow-sm leading-relaxed">
