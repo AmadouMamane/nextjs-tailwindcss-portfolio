@@ -1,4 +1,5 @@
 import Script from 'next/script';
+import 'basiclightbox/dist/basiclightbox.min.css';
 import '../styles/globals.css';
 import { AnimatePresence } from 'framer-motion';
 import DefaultLayout from '../components/layout/DefaultLayout';

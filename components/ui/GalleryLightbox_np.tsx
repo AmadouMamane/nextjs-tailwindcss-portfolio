@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import basicLightbox from 'basiclightbox'
-import 'basiclightbox/dist/basicLightbox.min.css'
 
 export default function GalleryLightbox({ children }: { children: React.ReactNode }) {
   useEffect(() => {
