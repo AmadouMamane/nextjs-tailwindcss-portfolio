@@ -7,7 +7,7 @@ export const aboutMeData = [
   },
   {
     id: uuidv4(),
-    bio: "I'm a passionate Data Scientist with over 9 years of experience navigating the world of Big Data. My journey began at Altran, where I spent 4 impactful years helping clients architect robust data ingestion pipelines and scalable analytical solutions.",
+    bio: "I'm a passionate Data Scientist with over 10 years of experience navigating the world of Big Data. My journey began at Altran, where I spent 4 impactful years helping clients architect robust data ingestion pipelines and scalable analytical solutions.",
   },
   {
     id: uuidv4(),
