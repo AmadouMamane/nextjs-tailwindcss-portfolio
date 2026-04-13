@@ -3,23 +3,22 @@ import { v4 as uuidv4 } from 'uuid';
 export const aboutMeData = [
   {
     id: uuidv4(),
-    bio: "Hey there! I'm thrilled to have you here — thanks for stopping by.",
+    bio: "Hi, and welcome — I’m glad you’re here.",
   },
   {
     id: uuidv4(),
-    bio: "I'm a passionate Data Scientist with over 10 years of experience navigating the world of Big Data. My journey began at Altran, where I spent 4 impactful years helping clients architect robust data ingestion pipelines and scalable analytical solutions.",
+    bio: "I’m an AI Engineer / Data Scientist with over 10 years of experience designing and delivering data and AI systems, from large-scale platforms to production-grade machine learning and generative AI solutions.",
   },
   {
     id: uuidv4(),
-    bio: "I then joined RCI Bank & Services, where for more than 4 years, I led initiatives ranging from building a Customer Master Data Management platform to designing segmentation and scoring systems. I also played a key role in the migration of our on-premise infrastructure to Google Cloud Platform (GCP).",
+    bio: "My background spans both consulting and enterprise environments, where I’ve worked on data engineering, analytics, cloud architectures, and machine learning initiatives in business-critical contexts.",
   },
   {
     id: uuidv4(),
-    bio: "For the past 2 years, I've been working independently, diving deep into cutting-edge topics like fraud detection, computer vision, recommender systems, prompt engineering, Retrieval-Augmented Generation (RAG) systems, and LLM agents.",
+    bio: "In recent years, I’ve developed a strong focus on modern AI architectures, including generative AI, multimodal pipelines, retrieval-based systems, and multi-agent platforms, with particular interest in scalability, observability, governance, and production readiness.",
   },
   {
     id: uuidv4(),
-    bio: "I thrive on transforming complex data into actionable insights, and I'm always exploring new ways to push the boundaries of AI and machine learning.",
+    bio: "I’m especially motivated by building robust AI systems that are not only technically sound, but also useful, reusable, and aligned with real business needs.",
   },
 ];
-
