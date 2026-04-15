@@ -10,7 +10,7 @@ description: "A deep-dive into the Berlin Marathon experience — from race day 
 
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareButtons, AuthorBox, GalleryLightbox} from '@/components/ui'
+import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareButtons, AuthorBox, GalleryLightbox, BlogImageGallery} from '@/components/ui'
 
 <script type="application/ld+json">{`
 {
@@ -82,7 +82,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
     </ul>
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-  
+
       <div  className="p-6 rounded-xl shadow-md bg-gray-100 dark:bg-gray-800">
         <h3 id="My stay" className="text-xl font-semibold mb-2"> 🏨  My stay: Smartment Business Berlin City West</h3>
           <p className="text-gray-700 dark:text-gray-300 text-justify">
@@ -117,7 +117,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
   </div>
  
   {/* Hero Image */}
-  <div className="relative w-full h-[600px]">
+  <div className="relative w-full h-[660px]">
     <Image
       src="/images/blog/sports/berlin-marathon/behind_the_team.jpg"
       alt="Babylon Cinema"
@@ -323,44 +323,11 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
 
   {/* Gallery */}
   <div className="max-w-6xl mx-auto">
-    <ImageGallery
-      images={[
-        { src: "/images/blog/sports/berlin-marathon/east-side-galery-2.png", alt: "East side gallery 1" },
-        { src: "/images/blog/sports/berlin-marathon/east-side-galery-3.png", alt: "East side gallery 2" },
-        { src: "/images/blog/sports/berlin-marathon/hollocost-memeorial.png", alt: "Holocaust memorial" },
-        { src: "/images/blog/sports/berlin-marathon/east-side-galery-4.png", alt: "East side gallery 3" }
-      ]}
-    />
+      <BlogImageGallery galleryId="berlin-post-race" />
   </div>
 
   {/* Food Memories */}
-  <div className="text-center space-y-10 max-w-3xl mx-auto">
-    <h3 id="My Final Bites in Berlin" className="text-3xl font-bold">🍽️ My Final Bites in Berlin</h3>
-    <div className="grid md:grid-cols-3 gap-6 text-left">
-      {[
-        {
-          emoji: "🥙",
-          name: "Mustafa’s Kebab",
-          desc: "The myth is real is real. Juicy, crunchy, explosive - I’d queue again without hesitation."
-        },
-        {
-          emoji: "🐟",
-          name: "FunkyFisch",
-          desc: "Refined and radiant, one of Berlin’s top-rated seafood spots - with a hefty price tag but divine flavors."
-        },
-        {
-          emoji: "🍜",
-          name: "Ni’s Thai",
-          desc: " Comfort food, depth of flavor, and the best dumplings I’ve had."
-        }
-      ].map(({ emoji, name, desc }, i) => (
-        <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 rounded-xl shadow-md">
-          <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{emoji} {name}</h4>
-          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-justify">{desc}</p>
-        </div>
-      ))}
-    </div>
-  </div>
+  <BerlinFoodMemories />
 </Section>
 
 
@@ -408,49 +375,7 @@ import { Section, ImageGallery, AnimatedSection, FadeInSection, Callout, ShareBu
     From iconic monuments to candid moments, here’s a visual love letter to Berlin — one frame at a time.
   </p>
 
-  <ImageGallery
-    images={[
-      { src: "/images/blog/sports/berlin-marathon/altes-musueum-3.png", alt: "Altes Museum 3" },
-      { src: "/images/blog/sports/berlin-marathon/altes-musueum-1.png", alt: "Altes Museum 1" },
-      { src: "/images/blog/sports/berlin-marathon/altes-musueum-2.png", alt: "Altes Museum 2" },
-      { src: "/images/blog/sports/berlin-marathon/altes-musueum-4.png", alt: "Altes Museum 4" },
-      { src: "/images/blog/sports/berlin-marathon/babylon-cinema-2.png", alt: "Babylon Cinema 2" },
-      { src: "/images/blog/sports/berlin-marathon/behind_the_team_large.jpg", alt: "Behind the Team Large" },
-      { src: "/images/blog/sports/berlin-marathon/patrick_sang.png", alt: "Patrick Sang Speaking" },
-      { src: "/images/blog/sports/berlin-marathon/patrick_sang_questions.png", alt: "Patrick Sang Q&A" },
-
-      { src: "/images/blog/sports/berlin-marathon/behind_the_team-questions.png", alt: "Behind the Team Q&A" },
-      { src: "/images/blog/sports/berlin-marathon/pack-collection.png", alt: "Race Pack Collection" },
-      { src: "/images/blog/sports/berlin-marathon/pack-collection-2.png", alt: "Race Pack 2" },
-      { src: "/images/blog/sports/berlin-marathon/pack-collection-3.png", alt: "Race Pack 3" },
-      { src: "/images/blog/sports/berlin-marathon/race-start-3.png", alt: "Race Start 3" },
-      { src: "/images/blog/sports/berlin-marathon/race-start-2.png", alt: "Race Start 2" },
-
-      { src: "/images/blog/sports/berlin-marathon/race-start-1.png", alt: "Race Start 1" },
-
-      { src: "/images/blog/sports/berlin-marathon/berlin-marathon-1.png", alt: "Berlin Marathon Start" },
-
-      { src: "/images/blog/sports/berlin-marathon/brendenbourg-race-1.png", alt: "Running to Brandenburg" },
-      { src: "/images/blog/sports/berlin-marathon/berlin-marathon-arrival.png", alt: "Arrival in Berlin" },
-      { src: "/images/blog/sports/berlin-marathon/east-side-galery-1.png", alt: "East Side Gallery 1" },
-      { src: "/images/blog/sports/berlin-marathon/east-side-galery-2.png", alt: "East Side Gallery 2" },
-      { src: "/images/blog/sports/berlin-marathon/east-side-galery-3.png", alt: "East Side Gallery 3" },
-      { src: "/images/blog/sports/berlin-marathon/east-side-galery-4.png", alt: "East Side Gallery 4" },
-      { src: "/images/blog/sports/berlin-marathon/fernsehturm-inside.png", alt: "Inside Fernsehturm" },
-      { src: "/images/blog/sports/berlin-marathon/fernsehturm.png", alt: "Fernsehturm Tower" },
-      { src: "/images/blog/sports/berlin-marathon/hollocost-memeorial.png", alt: "Holocaust Memorial" },
-      { src: "/images/blog/sports/berlin-marathon/mustapha-kebab-1.png", alt: "Mustafa’s Kebab 1" },
-      { src: "/images/blog/sports/berlin-marathon/mustapha-kebab-2.png", alt: "Mustafa’s Kebab 2" },
-      { src: "/images/blog/sports/berlin-marathon/neues-museim.png", alt: "Neues Museum" },
-      { src: "/images/blog/sports/berlin-marathon/neues-museim-2.png", alt: "Neues Museum 2" },
-      { src: "/images/blog/sports/berlin-marathon/neues-museim-3.png", alt: "Neues Museum 3" },
-
-
-      { src: "/images/blog/sports/berlin-marathon/pergamon-museum-2.png", alt: "Pergamon Museum 2" },
-      { src: "/images/blog/sports/berlin-marathon/pergamum-meusum.png", alt: "Pergamon Museum 1" },
-
-    ]}
-  />
+  <BlogImageGallery galleryId="berlin-snapshots" />
 </Section>
 
 <AuthorBox name="Amadou" bio="Paris-based AI Engineer, Runner and Dancer. Sharing stories from the Track and the Terminal — Race Recaps and AI Deep Dives." avatar="/images/profile.jpeg" />

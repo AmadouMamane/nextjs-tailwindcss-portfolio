@@ -8,6 +8,8 @@ export { SectionDivider } from './SectionDivider';
 
 
 
-
 export { default as AuthorBox } from '../../components/ui/AuthorBox';
 export { default as ShareButtons } from '../../components/ui/ShareButtons';
+export { default as BlogImageGallery } from '../../components/ui/BlogImageGallery';
+export { default as BerlinFoodMemories } from '../../components/ui/BerlinFoodMemories';
+

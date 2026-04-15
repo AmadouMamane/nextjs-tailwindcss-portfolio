@@ -27,6 +27,7 @@ import GalleryLightbox from "../../components/ui/GalleryLightbox";
 import NextPrev from "../../components/ui/NextPrev";
 
 
+
 import {
   Section,
   ImageGallery,
@@ -37,6 +38,8 @@ import {
   AnimatedSection,
   ExplodedBookGallery,
   SectionDivider,
+  BlogImageGallery,
+  BerlinFoodMemories
 } from "../../components/ui";
 
 const blogDirectory = path.join(process.cwd(), "content/blog");
@@ -205,7 +208,14 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
               h1: (props) => <h1 className="scroll-mt-24" {...props} />,
               h2: (props) => <h2 className="scroll-mt-24" {...props} />,
               h3: (props) => <h3 className="scroll-mt-24" {...props} />,
-              p: (props) => <div className="mt-3 leading-relaxed text-gray-800 dark:text-gray-300" {...props} />,
+  p: ({ children, ...props }) => (
+  <p
+    className="mt-3 leading-relaxed text-gray-800 dark:text-gray-300"
+    {...props}
+  >
+    {children}
+  </p>
+),
               a: (props) => <a className="text-indigo-600 hover:underline" {...props} />,
               blockquote: (props) => (
                 <blockquote
@@ -234,6 +244,8 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
               Section,
               ExplodedBookGallery,
               SectionDivider,
+              BlogImageGallery,
+              BerlinFoodMemories,
             }}
           />
         </motion.article>

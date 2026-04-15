@@ -53,7 +53,7 @@ export default function GalleryLightbox({ children }: Props) {
         slides={slides}
         index={index}
         on={{ view: ({ index }) => setIndex(index) }}
-        plugins={[Thumbnails]} 
+        plugins={[Thumbnails]}
         carousel={{ finite: true }}
         thumbnails={{
           position: 'start',
