@@ -7,7 +7,7 @@ export const aboutMeData = [
   },
   {
     id: uuidv4(),
-    bio: "I’m an AI Engineer / Data Scientist with over 10 years of experience designing and delivering data and AI systems, from large-scale platforms to production-grade machine learning and generative AI solutions.",
+    bio: "I’m an AI Engineer / Data Scientist with over 10 years of experience designing, building, and industrializing data and AI systems, from large-scale data platforms to production-grade machine learning and generative AI solutions.",
   },
   {
     id: uuidv4(),
@@ -15,10 +15,11 @@ export const aboutMeData = [
   },
   {
     id: uuidv4(),
-    bio: "In recent years, I’ve developed a strong focus on modern AI architectures, including generative AI, multimodal pipelines, retrieval-based systems, and multi-agent platforms, with particular interest in scalability, observability, governance, and production readiness.",
+    bio: "In recent years, I’ve developed a strong focus on modern AI architectures, including generative AI, multimodal pipelines, retrieval-based systems, and multi-agent platforms, with particular interest in scalability, observability, governance, and production readiness. I’m especially motivated by building robust AI systems that are not only technically sound, but also useful, reusable, and aligned with real business needs.",
   },
+
   {
-    id: uuidv4(),
-    bio: "I’m especially motivated by building robust AI systems that are not only technically sound, but also useful, reusable, and aligned with real business needs.",
+  id: uuidv4(),
+  bio: "Outside of work, I’m a marathon runner, a passionate hiker, and an experienced Latin dancer. These disciplines have strengthened qualities that matter just as much in engineering and teamwork: resilience, consistency, creativity, and the ability to move with both structure and flow.",
   },
 ];
