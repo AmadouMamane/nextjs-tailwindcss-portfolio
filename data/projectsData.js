@@ -23,6 +23,8 @@ export const projectsData = [
 			github: 'https://github.com/AmadouMamane/tessera',
 			design: 'https://github.com/AmadouMamane/tessera/blob/main/docs/design.md',
 			safety: 'https://github.com/AmadouMamane/tessera/blob/main/docs/safety.md',
+			demo: '',
+			video: '',
 		},
 		ProjectHeader: {
 			title: '🏛️ Tessera — Multilingual EU Banking Support Agent',
@@ -41,109 +43,7 @@ export const projectsData = [
 				img: '/images/projects/tessera/eval-flow.svg',
 			},
 		],
-		ProjectTabs: [
-			'Overview',
-			'Problem',
-			'Architecture',
-			'Safety & Evaluation',
-			'Stack',
-			'Roadmap',
-		],
-		ProjectInfo: {
-			Overview: `**Tessera** is my flagship open-source project: a reference implementation of a **production-shaped LLM agent** for European retail banking customer support in **French, German, and English**.
 
-> Tessera is neither a new firewall, nor a new test framework, nor a new safety methodology. It is a complete assembly of four quality layers — runtime guard, offline regression harness, structured audit trail, and human-in-the-loop escalation — wired end to end for one regulated use case.
-
-The agent serves a fictional retail bank (**Crédit Aurore**) and grounds answers in public EU regulatory corpora: **DORA, CNIL, BaFin, and GDPR**. The contribution is the **assembly and EU business semantics**, not reinventing infrastructure.
-
-**What makes it different from a chatbot demo:** every sensitive tool call is guarded, every guard decision is audited, and ~40 real-world failure modes are machine-checked in CI — with passing *and* failing tests documented openly in the README.`,
-
-			Problem: `Banking and regulated industries need more than a conversational UI. They need systems that can be **operated, audited, and regression-tested** like any other production service.
-
-Most agent demos fail on at least one of these:
-
-| Gap | What Tessera does |
-| --- | --- |
-| Unguarded tool calls | \`mcp-firewall\` + YAML policy on every invocation |
-| No replay evidence | Structured audit trail (JSON) with rule, rationale, redactions |
-| "We tested it manually" | 40 JSON failure cases, three languages, CI-gated |
-| English-only compliance | Cross-lingual RAG over FR / DE / EN regulatory corpora |
-| Cloud-only or local-only | Same agent on Vertex AI + Cloud Run *and* Ollama 70B on Apple Silicon |
-
-Tessera is the answer I would show a hiring manager, a compliance reviewer, or a technical lead who asks: *"How would you actually ship this?"*`,
-
-			Architecture: `The agent graph is orchestrated with **LangGraph**:
-
-\`\`\`
-router → planner → parallel workers → reviewer → reporter / escalation
-\`\`\`
-
-**Workers** (orchestration nodes): \`product_lookup\`, \`regulation_lookup\`, \`account_lookup\`, \`simulator\`, \`escalation\`.
-
-**Tools** (LLM-callable): \`account_balance\`, \`card_block\`, \`transaction_search\`, \`loan_simulate\`, \`ticket_escalate\` — each passes through the guard adapter before execution.
-
-**Retrieval layer:** PostgreSQL + **pgvector** hybrid search. Cross-lingual regulation search lets a French question match a German BaFin chunk.
-
-**HTTP API:** FastAPI with streaming \`/chat\` (SSE) and read-only \`/audit\`.
-
-**Dashboard:** Next.js app — chat, audit trail viewer, eval scorecard, health dashboard.
-
-![System architecture — LangGraph orchestration, guard layer, dual LLM paths](/images/projects/tessera/architecture.svg)`,
-
-			'Safety & Evaluation': `Safety is **layered**, not bolted on after the fact.
-
-**Runtime guard** — [\`mcp-firewall\`](https://github.com/ressl/mcp-firewall) as a pinned dependency. Pre-flight allow/deny/transform, per-argument validation, PII redaction, post-flight audit emission via \`policy.yaml\`.
-
-**Reviewer node** — deterministic confidence from grounding score, plan coverage, and guard signals. Low confidence → escalation, not silent guessing.
-
-**Audit trail** — versioned JSON envelope (\`tessera.guard.audit\`) with target, outcome, redacted arguments, and per-decision rationale. Sinks: stdout, file, Cloud Logging.
-
-**Non-regression harness** — failure catalogue under \`eval/failures/\`:
-
-- Prompt injection (direct, obfuscated, multilingual)
-- PII exfiltration and correlation attacks
-- Hallucination (products, rates, laws)
-- Overconfidence on high-stakes actions
-- Citation fabrication (CJUE, CNIL, DORA)
-- Tool misuse (block without auth, third-party balance)
-- Policy violations, regulatory misstatements, language mixing, escalation failure
-
-![Non-regression eval flow — 40 failure cases gating CI](/images/projects/tessera/eval-flow.svg)
-
-The README lists **tests that pass and tests that fail**, with root causes. No zombie green checks.`,
-
-			Stack: `**Core:** Python 3.12 · \`uv\` · LangGraph · FastAPI · PostgreSQL + pgvector
-
-**Quality:** \`ruff\` · \`mypy --strict\` · \`pytest\` · pre-commit hooks
-
-**LLM paths:** Vertex AI (frontier, Cloud Run) · Llama 3.3 70B via Ollama (on-prem Apple Silicon)
-
-**Guard & ops:** mcp-firewall · structured audit · Cloud Logging · Terraform
-
-**Frontend & CI:** Next.js dashboard · GitHub Actions (ci, eval, deploy, security)`,
-
-			Roadmap: `**Shipped**
-
-- LangGraph agent with FR / DE / EN prompts in YAML
-- Guard adapter + audit trail + policy YAML
-- ~40-case eval harness with JSON schema validation
-- Next.js dashboard (chat, audit, eval, health)
-- Terraform scaffold for Cloud Run + Cloud SQL
-- Dual LLM path (frontier + on-prem)
-
-**In progress (documented honestly)**
-
-- Public Cloud Run demo URL
-- Upstream PR on \`mcp-firewall\` (positioning commitment)
-- German escalation calibration (reviewer confidence prior tuned on FR)
-- BaFin corpus depth vs FR/CNIL for fact-grounding eval cases
-
-**Links**
-
-- [GitHub repository](https://github.com/AmadouMamane/tessera)
-- [Differentiation doc](https://github.com/AmadouMamane/tessera/blob/main/docs/differentiation.md) — honest positioning vs inspirations
-- [Threat model](https://github.com/AmadouMamane/tessera/blob/main/docs/threat-model.md)`,
-		},
 	},
 	{
 		id: 2,

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   ArrowRight,
@@ -14,16 +14,20 @@ import {
   Landmark,
   Layers3,
   LockKeyhole,
+  Maximize2,
   MessageSquareText,
+  PlayCircle,
   Route,
   ShieldCheck,
   TerminalSquare,
   UserRoundCheck,
+  X,
 } from 'lucide-react';
-import BackButton from '../../reusable/BackButton';
 import Container from '../../layout/Container';
-import ProjectMarkdown from '../ProjectMarkdown';
 import RelatedProjects from '../RelatedProjects';
+import AppHeader from '../../shared/AppHeader';
+import AppFooter from '../../shared/AppFooter';
+import PagesMetaHead from '../../PagesMetaHead';
 
 const TESSERA_STATS = [
   { icon: Languages, value: '3', label: 'Languages', detail: 'French, German, English' },
@@ -117,13 +121,37 @@ const EXECUTION_FLOW = [
   },
 ];
 
-const HERO_TRACE_ROWS = [
-  ['language', 'fr-FR'],
-  ['intent', 'urgent_card'],
-  ['policy', 'identity_required'],
-  ['tool', 'account_lookup'],
-  ['decision', 'blocked'],
-  ['next', 'human_escalation'],
+const HERO_TRACE_STEPS = [
+  {
+    icon: MessageSquareText,
+    label: 'User message',
+    detail: 'Unknown payments detected',
+    tone: 'sky',
+  },
+  {
+    icon: ShieldCheck,
+    label: 'Intent & policy check',
+    detail: 'identity_required',
+    tone: 'green',
+  },
+  {
+    icon: TerminalSquare,
+    label: 'Tool authorization',
+    detail: 'account_lookup requested',
+    tone: 'amber',
+  },
+  {
+    icon: LockKeyhole,
+    label: 'Decision: blocked',
+    detail: 'identity not verified',
+    tone: 'rose',
+  },
+  {
+    icon: UserRoundCheck,
+    label: 'Escalate to human',
+    detail: 'reviewer handoff',
+    tone: 'violet',
+  },
 ];
 
 const SCENARIO_SIGNALS = [
@@ -158,24 +186,32 @@ const ROUTE_COMPARISON = [
 
 const EVIDENCE_ITEMS = [
   {
+    icon: ShieldCheck,
     label: 'Runtime',
     value: 'Pre-flight',
     detail: 'Tool arguments checked before execution',
+    tone: 'violet',
   },
   {
+    icon: GitBranch,
     label: 'Regression',
     value: 'Replayable',
     detail: 'Failure catalogue lives as JSON fixtures',
+    tone: 'green',
   },
   {
+    icon: FileText,
     label: 'Audit',
     value: 'Structured',
     detail: 'Every guard decision is inspectable',
+    tone: 'sky',
   },
   {
+    icon: UserRoundCheck,
     label: 'Escalation',
     value: 'Explicit',
     detail: 'Low confidence becomes a handoff',
+    tone: 'amber',
   },
 ];
 
@@ -203,6 +239,78 @@ const ASSURANCE_ITEMS = [
     label: 'Local path',
     value: 'Ollama on Apple Silicon',
     detail: 'The on-prem mode keeps the banking story credible when data cannot leave the perimeter.',
+  },
+];
+
+const SYSTEM_UI_SURFACES = [
+  {
+    icon: MessageSquareText,
+    label: 'Chat workbench',
+    detail: 'Test the multilingual banking-support flow with guarded tool calls.',
+  },
+  {
+    icon: FileText,
+    label: 'Audit trail',
+    detail: 'Inspect policy decisions, redactions, rule ids, and reviewer evidence.',
+  },
+  {
+    icon: GitBranch,
+    label: 'Eval scorecard',
+    detail: 'Replay known failure cases and see what still needs work.',
+  },
+];
+
+const SYSTEM_PREVIEW_TABS = [
+  { label: 'Chat', status: 'guarded' },
+  { label: 'Audit', status: 'live' },
+  { label: 'Eval', status: '40 cases' },
+];
+
+const SYSTEM_PREVIEW_EVENTS = [
+  ['classify', 'urgent_card', 'sky'],
+  ['guard', 'identity_required', 'amber'],
+  ['decision', 'block account_lookup', 'rose'],
+  ['handoff', 'human_escalation', 'green'],
+];
+
+const PROOF_NAV_ITEMS = [
+  {
+    key: 'demo',
+    label: 'Live demo',
+    detail: 'Try the UI',
+    icon: TerminalSquare,
+    fallbackHref: '#demo-system-ui',
+    linkKeys: ['demo', 'systemUi'],
+    accent: 'primary',
+  },
+  {
+    key: 'video',
+    label: 'Video',
+    detail: 'Watch flow',
+    icon: PlayCircle,
+    fallbackHref: '#demo-video',
+    linkKeys: ['video', 'demoVideo'],
+  },
+  {
+    key: 'scenario',
+    label: 'Risk case',
+    detail: 'Card theft',
+    icon: ShieldCheck,
+    fallbackHref: '#risk-scenario',
+  },
+  {
+    key: 'eval',
+    label: 'Eval',
+    detail: '40 failures',
+    icon: GitBranch,
+    fallbackHref: '#eval-scorecard',
+  },
+  {
+    key: 'architecture',
+    label: 'Diagrams',
+    detail: 'Zoomable',
+    icon: Layers3,
+    fallbackHref: '#architecture-diagrams',
   },
 ];
 
@@ -291,21 +399,61 @@ function iconClass(tone) {
   return tones[tone] || tones.slate;
 }
 
-function ActionLink({ href, children, variant = 'primary', icon: Icon = ArrowUpRight }) {
-  const base =
-    'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-primary-dark';
-  const variants = {
-    primary:
-      'bg-white text-slate-950 hover:bg-slate-200 focus:ring-white dark:bg-white dark:text-primary-dark dark:hover:bg-slate-200',
-    secondary:
-      'border border-white/20 bg-white/10 text-white hover:border-white/40 hover:bg-white/15 focus:ring-white/40 dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
-  };
+function resolveProjectLink(links, item) {
+  const projectLink = item.linkKeys?.map((key) => links[key]).find(Boolean);
+  return projectLink || item.fallbackHref;
+}
 
+function ProofNavigation({ links = {} }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={`${base} ${variants[variant]}`}>
-      <Icon className="h-4 w-4" aria-hidden="true" />
-      {children}
-    </a>
+    <nav
+      aria-label="Tessera page shortcuts"
+      className="sticky top-0 z-30 border-y border-white/10 bg-[#020611]/95 shadow-lg shadow-slate-950/20 backdrop-blur"
+    >
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-3 sm:px-10 lg:px-14">
+        <div className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-violet-300 lg:block">
+          Jump to proof
+        </div>
+        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
+          {PROOF_NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const href = resolveProjectLink(links, item);
+            const isExternal = !href.startsWith('#');
+            const isPrimary = item.accent === 'primary';
+
+            return (
+              <a
+                key={item.key}
+                href={href}
+                {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                className={`group flex min-h-14 min-w-[154px] shrink-0 items-center gap-3 rounded-lg border px-3 text-left transition focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-primary-dark ${
+                  isPrimary
+                    ? 'border-violet-400/50 bg-violet-500 text-white shadow-lg shadow-violet-950/30 hover:bg-violet-400'
+                    : 'border-white/10 bg-white/[0.04] text-slate-200 hover:border-sky-300/30 hover:bg-white/[0.08] hover:text-sky-100'
+                }`}
+              >
+                <span
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border ${
+                    isPrimary
+                      ? 'border-white/20 bg-white/10 text-white'
+                      : 'border-white/10 bg-white/5 text-slate-200 group-hover:text-sky-200'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold leading-tight">{item.label}</span>
+                  <span className={`mt-0.5 block text-xs leading-tight ${isPrimary ? 'text-white/75' : 'text-slate-400'}`}>
+                    {item.detail}
+                  </span>
+                </span>
+                {isExternal && <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 opacity-70" aria-hidden="true" />}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
   );
 }
 
@@ -323,56 +471,65 @@ function HeroMetric({ icon: Icon, label, value }) {
   );
 }
 
+function heroTraceToneClasses(tone) {
+  const tones = {
+    sky: 'border-sky-400/30 bg-sky-400/10 text-sky-300',
+    green: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
+    amber: 'border-amber-400/30 bg-amber-400/10 text-amber-300',
+    rose: 'border-rose-400 bg-rose-500/10 text-rose-300',
+    violet: 'border-violet-400/30 bg-violet-400/10 text-violet-300',
+  };
+
+  return tones[tone] || tones.sky;
+}
+
 function HeroTrace() {
   return (
-    <aside className="hidden rounded-lg border border-white/15 bg-slate-950/70 p-5 shadow-2xl shadow-black/30 backdrop-blur-xl lg:block">
-      <div className="mb-5 flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+    <aside className="hidden rounded-[24px] border border-violet-400/45 bg-[#050b18]/80 p-6 shadow-2xl shadow-violet-950/40 backdrop-blur-xl lg:block">
+      <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-200">Live guard trace</p>
-          <h2 className="mt-2 text-xl font-semibold text-white">Fraud turn pre-flight</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-300">Live guard trace</p>
+          <h2 className="mt-3 text-2xl font-semibold leading-tight text-white">Fraud turn pre-flight</h2>
         </div>
-        <div className="flex gap-1.5" aria-hidden="true">
-          <span className="h-2.5 w-2.5 rounded-full bg-rose-300" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
-        </div>
+        <span className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-sm font-semibold text-emerald-300">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.9)]" />
+          LIVE
+        </span>
       </div>
 
-      <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/40">Customer signal</p>
+      <div className="rounded-xl border border-white/10 bg-[#071323]/80 p-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/45">Customer signal</p>
         <p className="mt-3 text-sm leading-6 text-slate-200">
           Stolen card, unknown payments, immediate account verification requested.
         </p>
       </div>
 
-      <dl className="mt-4 space-y-2">
-        {HERO_TRACE_ROWS.map(([label, value]) => {
-          const isBlocked = value === 'blocked';
-          const isEscalation = value === 'human_escalation';
+      <ol className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-[#071323]/70">
+        {HERO_TRACE_STEPS.map((step, index) => {
+          const Icon = step.icon;
+          const isBlocked = step.tone === 'rose';
 
           return (
-            <div
-              key={label}
-              className="grid grid-cols-[112px_1fr] items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm"
+            <li
+              key={step.label}
+              className={`grid grid-cols-[44px_1fr_auto] items-center gap-3 border-b border-white/10 px-3 py-3 last:border-b-0 ${
+                isBlocked ? 'bg-rose-500/5 ring-1 ring-inset ring-rose-500' : ''
+              }`}
             >
-              <dt className="font-mono text-white/40">{label}</dt>
-              <dd
-                className={`font-mono ${
-                  isBlocked
-                    ? 'text-amber-200'
-                    : isEscalation
-                      ? 'text-emerald-200'
-                      : 'text-slate-100'
-                }`}
-              >
-                {value}
-              </dd>
-            </div>
+              <span className={`flex h-9 w-9 items-center justify-center rounded-lg border ${heroTraceToneClasses(step.tone)}`}>
+                <Icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-semibold text-white">{step.label}</span>
+                <span className="mt-0.5 block font-mono text-xs text-slate-400">{step.detail}</span>
+              </span>
+              <span className={`h-2.5 w-2.5 rounded-full ${toneDotClass(step.tone)}`} aria-hidden="true" />
+            </li>
           );
         })}
-      </dl>
+      </ol>
 
-      <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-lg border border-white/10">
+      <div className="mt-4 grid grid-cols-3 overflow-hidden rounded-xl border border-white/10 bg-[#071323]/80">
         {[
           ['PII', 'redacted'],
           ['Audit', 'emitted'],
@@ -390,16 +547,35 @@ function HeroTrace() {
 
 function EvidenceStrip() {
   return (
-    <div className="grid overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-white/[0.03] sm:grid-cols-2 lg:grid-cols-4">
-      {EVIDENCE_ITEMS.map((item) => (
-        <div key={item.label} className="border-b border-slate-200 p-5 last:border-b-0 dark:border-white/10 sm:odd:border-r lg:border-b-0 lg:border-r lg:last:border-r-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
-            {item.label}
-          </p>
-          <p className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">{item.value}</p>
-          <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{item.detail}</p>
-        </div>
-      ))}
+    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#040a16] p-5 shadow-2xl shadow-slate-950/20">
+      <div className="absolute left-8 right-8 top-5 hidden h-px bg-[linear-gradient(90deg,#a855f7,#22c55e,#0ea5e9,#f59e0b)] lg:block" />
+      <div className="grid gap-4 lg:grid-cols-4">
+        {EVIDENCE_ITEMS.map((item, index) => {
+          const Icon = item.icon;
+          const toneClasses = {
+            violet: 'text-violet-300 border-violet-400/30 bg-violet-400/10',
+            green: 'text-emerald-300 border-emerald-400/30 bg-emerald-400/10',
+            sky: 'text-sky-300 border-sky-400/30 bg-sky-400/10',
+            amber: 'text-amber-300 border-amber-400/30 bg-amber-400/10',
+          };
+
+          return (
+            <article key={item.label} className="relative rounded-xl border border-white/10 bg-white/[0.035] p-5">
+              {index < EVIDENCE_ITEMS.length - 1 && (
+                <ArrowRight className="absolute -right-5 top-1/2 hidden h-5 w-5 -translate-y-1/2 text-white/35 lg:block" aria-hidden="true" />
+              )}
+              <span className={`flex h-12 w-12 items-center justify-center rounded-xl border ${toneClasses[item.tone]}`}>
+                <Icon className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                {item.value}
+              </p>
+              <h3 className="mt-2 text-lg font-semibold text-white">{item.label}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">{item.detail}</p>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -505,7 +681,7 @@ function LanguageCaseCard({ item }) {
 
 function MultilingualSurface() {
   return (
-    <section className="border-b border-slate-200 bg-white dark:border-white/10 dark:bg-primary-dark">
+    <section id="language-routes" className="scroll-mt-24 border-b border-white/10 bg-[#020611]">
       <div className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-14">
         <div className="mb-8 grid gap-4 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
           <div>
@@ -534,7 +710,7 @@ function MultilingualSurface() {
 
 function RegressionScorecard() {
   return (
-    <section className="bg-[#071927] text-white">
+    <section id="eval-scorecard" className="scroll-mt-24 bg-[#050b18] text-white">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 sm:px-10 lg:grid-cols-[0.78fr_1.22fr] lg:px-14">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-200">
@@ -659,7 +835,7 @@ function RouteComparisonCard({ route }) {
 
 function AssuranceBand() {
   return (
-    <section className="border-b border-slate-200 bg-white dark:border-white/10 dark:bg-primary-dark">
+    <section className="border-b border-white/10 bg-[#050b18]">
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-12 sm:px-10 lg:grid-cols-[0.72fr_1.28fr] lg:px-14">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -705,9 +881,251 @@ function AssuranceBand() {
   );
 }
 
+function DemoVideoSection({ links = {} }) {
+  const videoHref = links.video || links.demoVideo;
+  const demoHref = links.demo || links.systemUi || '#demo-system-ui';
+  const resolvedVideoHref = videoHref || '#demo-video';
+
+  return (
+    <section id="demo-video" className="scroll-mt-24 bg-[#020611] text-white">
+      <div className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-14">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="flex items-center justify-center gap-4 text-violet-300">
+            <span className="h-px w-20 bg-violet-400/40" />
+            <p className="text-sm font-semibold uppercase tracking-[0.22em]">Demo & agent UI</p>
+            <span className="h-px w-20 bg-violet-400/40" />
+          </div>
+          <p className="mt-4 text-base leading-7 text-slate-300">
+            Start with the guided walkthrough, then open the agent interface to inspect live traces, guarded
+            tools and escalation logic.
+          </p>
+        </div>
+
+        <div className="mt-9 grid gap-5 lg:grid-cols-[0.48fr_0.52fr]">
+          <a
+            href={resolvedVideoHref}
+            {...(resolvedVideoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+            className="group relative min-h-[280px] overflow-hidden rounded-2xl border border-violet-400/30 bg-[#080f22] p-6 shadow-2xl shadow-violet-950/30 transition hover:-translate-y-0.5 hover:border-violet-300/60"
+          >
+            <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(124,58,237,0.36),transparent_32%),linear-gradient(135deg,rgba(14,165,233,0.14),transparent_42%)]" />
+            <span className="relative flex h-full min-h-[232px] flex-col justify-end">
+              <span className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-violet-300/50 bg-violet-500 text-white shadow-[0_0_48px_rgba(139,92,246,0.65)] transition group-hover:scale-105">
+                <PlayCircle className="h-10 w-10" aria-hidden="true" />
+              </span>
+              <span className="absolute right-4 top-4 rounded-lg border border-white/15 bg-black/35 px-3 py-1 text-sm font-semibold text-white backdrop-blur">
+                2:00
+              </span>
+              <span className="block text-2xl font-semibold">Watch demo video</span>
+              <span className="mt-2 block max-w-sm text-sm leading-6 text-slate-300">
+                A guided fraud-support scenario showing guard decisions, audit evidence and escalation.
+              </span>
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-violet-200">
+                Play video
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
+              </span>
+            </span>
+          </a>
+
+          <div className="rounded-2xl border border-sky-400/20 bg-[#071323] p-4 shadow-2xl shadow-sky-950/20">
+            <SystemPreviewPanel compact />
+            <div className="mt-4 flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xl font-semibold">Try agent UI</h3>
+                <p className="mt-2 max-w-lg text-sm leading-6 text-slate-300">
+                  Open the interactive interface to explore live traces and guarded execution.
+                </p>
+              </div>
+              <a
+                href={demoHref}
+                {...(demoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-emerald-300 transition hover:text-emerald-200"
+              >
+                Open interface
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function toneDotClass(tone) {
+  const tones = {
+    sky: 'bg-sky-400',
+    amber: 'bg-amber-400',
+    rose: 'bg-rose-400',
+    green: 'bg-emerald-400',
+    violet: 'bg-violet-400',
+  };
+
+  return tones[tone] || tones.sky;
+}
+
+function SystemPreviewPanel({ compact = false }) {
+  return (
+    <article className={`overflow-hidden rounded-lg border border-white/10 bg-slate-950 text-white ${compact ? 'shadow-none' : 'shadow-xl shadow-slate-950/10'}`}>
+      <div className="flex items-center justify-between gap-4 border-b border-white/10 bg-white/5 px-4 py-3">
+        <div className="flex items-center gap-2" aria-hidden="true">
+          <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+        </div>
+        <div className="min-w-0 rounded-md border border-white/10 bg-slate-900 px-3 py-1 text-xs font-medium text-slate-300">
+          tessera.ui/session/urgent-card
+        </div>
+      </div>
+
+      <div className={`grid gap-0 ${compact ? 'lg:grid-cols-[1fr_0.9fr]' : 'lg:grid-cols-[0.98fr_1.02fr]'}`}>
+        <div className={`${compact ? 'p-4' : 'p-5'} border-b border-white/10 lg:border-b-0 lg:border-r`}>
+          <div className="flex flex-wrap gap-2">
+            {SYSTEM_PREVIEW_TABS.map((tab, index) => (
+              <span
+                key={tab.label}
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold ${
+                  index === 0
+                    ? 'bg-white text-slate-950'
+                    : 'border border-white/10 bg-white/5 text-slate-300'
+                }`}
+              >
+                {tab.label}
+                <span className={`rounded-full px-2 py-0.5 text-[11px] ${index === 0 ? 'bg-slate-100 text-slate-600' : 'bg-white/10 text-slate-300'}`}>
+                  {tab.status}
+                </span>
+              </span>
+            ))}
+          </div>
+
+          <div className="mt-5 space-y-3">
+            <div className="max-w-[86%] rounded-lg rounded-tl-sm border border-white/10 bg-white/10 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Customer</p>
+              <p className="mt-2 text-sm leading-6 text-slate-100">
+                Ma carte a ete volee. Peux-tu verifier mon compte ?
+              </p>
+            </div>
+            <div className="ml-auto max-w-[88%] rounded-lg rounded-tr-sm bg-sky-500/15 p-3 ring-1 ring-sky-300/20">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200">Tessera</p>
+              <p className="mt-2 text-sm leading-6 text-slate-100">
+                I can help, but account lookup is blocked until identity is verified. I am escalating this with
+                redacted evidence.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className={compact ? 'p-4' : 'p-5'}>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Live guard trace</p>
+              <h3 className="mt-1 text-lg font-semibold">Reviewer-ready evidence</h3>
+            </div>
+            <span className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+              SAFE HANDOFF
+            </span>
+          </div>
+
+          <ol className="mt-5 space-y-3">
+            {SYSTEM_PREVIEW_EVENTS.map(([label, value, tone]) => (
+              <li key={`${label}-${value}`} className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+                <span className={`mt-1 h-2.5 w-2.5 shrink-0 rounded-full ${toneDotClass(tone)}`} />
+                <span className="min-w-0">
+                  <span className="block text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+                    {label}
+                  </span>
+                  <span className="mt-0.5 block break-words text-sm font-medium text-slate-100">{value}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            {['FR', 'DE', 'EN'].map((locale) => (
+              <span
+                key={locale}
+                className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-center text-xs font-semibold text-slate-200"
+              >
+                {locale}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function SystemUiCta({ links = {} }) {
+  const demoHref = links.demo || links.systemUi;
+
+  return (
+    <section id="demo-system-ui" className="scroll-mt-24 border-b border-white/10 bg-[#020611]">
+      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 sm:px-10 lg:grid-cols-[0.72fr_1.28fr] lg:px-14">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+            Try the system
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
+            A dedicated slot for the public UI demo.
+          </h2>
+          <p className="mt-5 text-base leading-8 text-slate-700 dark:text-slate-300">
+            Visitors should be able to leave the case study and test Tessera for themselves. This block will
+            point to the deployed dashboard as soon as the public URL is available.
+          </p>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            {demoHref ? (
+              <a
+                href={demoHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:bg-white dark:text-primary-dark dark:hover:bg-slate-200 dark:focus:ring-offset-primary-dark"
+              >
+                <TerminalSquare className="h-4 w-4" aria-hidden="true" />
+                Open system UI
+              </a>
+            ) : (
+              <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 dark:border-white/15 dark:bg-white/5 dark:text-slate-200">
+                <TerminalSquare className="h-4 w-4" aria-hidden="true" />
+                Public demo URL pending
+              </span>
+            )}
+            <span className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 dark:border-white/10 dark:bg-white/[0.03] dark:text-slate-300">
+              Chat · audit · eval
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <SystemPreviewPanel />
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            {SYSTEM_UI_SURFACES.map((surface) => {
+              const Icon = surface.icon;
+
+              return (
+                <article
+                  key={surface.label}
+                  className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-sky-100 bg-sky-50 text-sky-700 dark:border-sky-300/20 dark:bg-sky-300/10 dark:text-sky-200">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-4 text-base font-semibold text-slate-950 dark:text-white">{surface.label}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{surface.detail}</p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ScenarioSpotlight() {
   return (
-    <section className="border-y border-slate-200 bg-white dark:border-white/10 dark:bg-primary-dark">
+    <section id="risk-scenario" className="scroll-mt-24 border-y border-white/10 bg-[#050b18]">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-14">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -865,73 +1283,161 @@ function StackGroup({ title, items }) {
   );
 }
 
-function DiagramPanel({ title, description, img, alt, orientation = 'wide' }) {
+function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOpen }) {
+  const diagram = { title, description, img, alt };
+
   return (
-    <figure className="rounded-lg border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-white/[0.03]">
+    <figure className="group rounded-lg border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.03]">
       <div className="border-b border-slate-200 p-5 dark:border-white/10">
-        <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{description}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{description}</p>
+          </div>
+          <span className="hidden shrink-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600 transition group-hover:border-sky-200 group-hover:text-sky-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:group-hover:border-sky-300/30 dark:group-hover:text-sky-200 sm:inline-flex">
+            <Maximize2 className="h-4 w-4" aria-hidden="true" />
+            Expand
+          </span>
+        </div>
       </div>
       <div className="bg-slate-50 p-3 dark:bg-primary-dark/50">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={img}
-          alt={alt}
-          className={`mx-auto w-full rounded-md object-contain ${orientation === 'tall' ? 'max-h-[620px]' : 'max-h-[440px]'}`}
-          loading="lazy"
-        />
+        <button
+          type="button"
+          onClick={() => onOpen?.(diagram)}
+          aria-label={`Expand ${title} diagram`}
+          className="relative block w-full cursor-zoom-in rounded-md border border-slate-200 bg-white p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:border-white/10 dark:bg-white/[0.03] dark:focus:ring-offset-primary-dark"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={img}
+            alt={alt}
+            className={`mx-auto w-full rounded object-contain ${orientation === 'tall' ? 'max-h-[620px]' : 'max-h-[440px]'}`}
+            loading="lazy"
+          />
+          <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-lg bg-slate-950/90 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white shadow-lg shadow-black/20 backdrop-blur transition group-hover:bg-sky-600">
+            <Maximize2 className="h-4 w-4" aria-hidden="true" />
+            Click to enlarge
+          </span>
+        </button>
       </div>
     </figure>
   );
 }
 
-function TesseraTabs({ project }) {
-  const tabs = useMemo(() => project.ProjectTabs || [], [project]);
-  const [activeTab, setActiveTab] = useState(tabs[0]);
+function DiagramLightbox({ diagram, onClose }) {
+  useEffect(() => {
+    if (!diagram) {
+      return undefined;
+    }
 
-  if (!tabs.length) {
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [diagram, onClose]);
+
+  if (!diagram) {
     return null;
   }
 
   return (
-    <section className="border-y border-slate-200 bg-white dark:border-white/10 dark:bg-primary-dark">
-      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 sm:px-10 lg:grid-cols-[250px_1fr] lg:px-14">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-            Case notes
-          </p>
-          <h2 className="mt-3 text-2xl font-semibold text-slate-950 dark:text-white">
-            How the project holds together
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-            A compact read of the product, architecture, safety posture, and shipping status.
-          </p>
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${diagram.title} enlarged diagram`}
+      className="fixed inset-0 z-50 bg-slate-950/95 p-4 text-white backdrop-blur-sm sm:p-6"
+    >
+      <button
+        type="button"
+        aria-label="Close enlarged diagram"
+        className="absolute inset-0 cursor-zoom-out"
+        onClick={onClose}
+      />
+      <div className="relative mx-auto flex h-full max-w-7xl flex-col rounded-lg border border-white/15 bg-slate-950 shadow-2xl shadow-black/40">
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 p-4 sm:p-5">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-200">Expanded diagram</p>
+            <h2 className="mt-2 text-xl font-semibold leading-tight sm:text-2xl">{diagram.title}</h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">{diagram.description}</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            data-testid="diagram-lightbox-close"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-white/10 text-white transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Close enlarged diagram"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
         </div>
+        <div className="min-h-0 flex-1 p-3 sm:p-5">
+          <div className="flex h-full min-h-[320px] items-center justify-center rounded-lg bg-white p-3 dark:bg-white">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={diagram.img} alt={diagram.alt} className="h-full max-h-full w-full object-contain" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="min-w-0">
-          <div className="flex max-w-full gap-2 overflow-x-auto border-b border-slate-200 pb-2 dark:border-white/10" role="tablist">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                role="tab"
-                aria-selected={activeTab === tab}
-                onClick={() => setActiveTab(tab)}
-                className={`min-h-10 shrink-0 rounded-lg px-3 text-sm font-semibold transition ${
-                  activeTab === tab
-                    ? 'bg-slate-950 text-white dark:bg-white dark:text-primary-dark'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white'
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+function FinalOpenSourceCta({ links = {} }) {
+  const actions = [
+    { label: 'View on GitHub', href: links.github, icon: Github },
+    { label: 'Read Architecture', href: links.design, icon: FileText },
+    { label: 'Safety Notes', href: links.safety, icon: ShieldCheck },
+  ].filter((action) => action.href);
+
+  return (
+    <section className="bg-[#020611] px-6 py-12 text-white sm:px-10 lg:px-14">
+      <div className="mx-auto max-w-7xl rounded-2xl border border-white/15 bg-white/[0.035] shadow-2xl shadow-slate-950/30">
+        <div className="grid gap-0 lg:grid-cols-[1fr_auto]">
+          <div className="flex gap-4 border-b border-white/10 p-6 lg:border-b-0 lg:border-r lg:p-7">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-white">
+              <TerminalSquare className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
+                Open-source & transparent
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold leading-tight">Inspect the assembly, not a black box.</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
+                Tessera stays honest about what it contributes: an end-to-end regulated assembly with reusable
+                dependencies, visible guardrails and documented failures.
+              </p>
+            </div>
           </div>
 
-          <div className="mt-7 text-base leading-relaxed text-slate-800 dark:text-slate-200">
-            {activeTab in project.ProjectInfo && (
-              <ProjectMarkdown>{project.ProjectInfo[activeTab]}</ProjectMarkdown>
-            )}
+          <div className="grid min-w-0 divide-y divide-white/10 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+            {actions.map((action) => {
+              const Icon = action.icon;
+
+              return (
+                <a
+                  key={action.label}
+                  href={action.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex min-h-24 items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-white transition hover:bg-white/[0.06] lg:min-w-[190px]"
+                >
+                  <span className="inline-flex items-center gap-3">
+                    <Icon className="h-5 w-5 text-slate-300 transition group-hover:text-white" aria-hidden="true" />
+                    {action.label}
+                  </span>
+                  <ArrowUpRight className="h-4 w-4 text-slate-400 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" aria-hidden="true" />
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -939,84 +1445,355 @@ function TesseraTabs({ project }) {
   );
 }
 
-export default function TesseraProjectLayout({ project }) {
-  const links = project.links || {};
+function ScrollProgressDial() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const nextProgress =
+        scrollableHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollableHeight) * 100)) : 0;
+
+      setProgress(nextProgress);
+    };
+
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+
+    return () => {
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+    };
+  }, []);
+
+  const roundedProgress = Math.round(progress);
 
   return (
-    <Container fullWidth>
-      <div className="bg-white text-slate-900 dark:bg-primary-dark dark:text-slate-100">
-        <section className="relative overflow-hidden bg-[#071927] text-white">
+    <div className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
+      <div
+        className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 p-1 text-xs font-semibold text-white shadow-2xl shadow-violet-950/40 backdrop-blur"
+        style={{
+          background: `conic-gradient(from 0deg, #8b5cf6 ${roundedProgress}%, rgba(255,255,255,0.10) ${roundedProgress}%)`,
+        }}
+        aria-label={`Reading progress ${roundedProgress} percent`}
+      >
+        <div className="flex h-full w-full items-center justify-center rounded-full bg-[#020611]/95">
+          {roundedProgress}%
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TesseraHistoryControls() {
+  return (
+    <div className="flex w-fit items-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] p-1 shadow-2xl shadow-slate-950/30 backdrop-blur">
+      <button
+        type="button"
+        onClick={() => window.history.back()}
+        aria-label="Back to previous page"
+        title="Back"
+        className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-white transition hover:border-violet-300/40 hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-violet-300"
+      >
+        <ArrowRight className="h-4 w-4 rotate-180" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        onClick={() => window.history.forward()}
+        aria-label="Forward to next page"
+        title="Forward"
+        className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-white transition hover:border-violet-300/40 hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-violet-300"
+      >
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
+function TesseraStory() {
+  const comparison = [
+    {
+      title: 'Most agent demos',
+      tone: 'risk',
+      icon: AlertTriangle,
+      items: ['Unguarded tool calls', 'No replay evidence', 'Manual-only validation', 'English-only compliance'],
+    },
+    {
+      title: 'What Tessera makes visible',
+      tone: 'safe',
+      icon: ShieldCheck,
+      items: ['mcp-firewall + YAML policy', 'Structured JSON audit trail', '40 failure cases, CI-gated', 'FR / DE / EN regulatory routing'],
+    },
+  ];
+  const architectureCards = [
+    {
+      icon: Route,
+      title: 'Graph orchestration',
+      detail: 'Router, planner, reviewer and workers are separated so useful work and controlled action remain distinct.',
+    },
+    {
+      icon: LockKeyhole,
+      title: 'Guarded tool boundary',
+      detail: 'Account lookup, card blocking and transaction search stay behind policy checks and auditable decisions.',
+    },
+    {
+      icon: Cloud,
+      title: 'Cloud and on-prem paths',
+      detail: 'Vertex AI and Cloud Run cover the frontier path; Ollama and Llama 3.3 70B keep an on-prem option explicit.',
+    },
+  ];
+  const roadmap = [
+    ['Shipped', 'LangGraph agent, FR / DE / EN prompts, audit trail, guard adapter, JSON eval fixtures.'],
+    ['Hardening', 'Public demo URL, mcp-firewall upstream contribution, German escalation calibration.'],
+  ];
+
+  return (
+    <section className="border-t border-white/10 bg-[#020611]">
+      <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10 lg:px-14">
+        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-300">
+              Banking engineering story
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              The page now reads like an operated system, not a visual demo.
+            </h2>
+          </div>
+          <p className="text-sm leading-7 text-slate-300">
+            Tessera is a reference implementation for regulated banking support. The important part is not a
+            new framework claim; it is the full chain from language routing to guard checks, replayable failures,
+            audit evidence and human escalation.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+          {comparison.map((card) => {
+            const Icon = card.icon;
+            const isSafe = card.tone === 'safe';
+
+            return (
+              <article
+                key={card.title}
+                className={`rounded-2xl border p-6 shadow-2xl shadow-slate-950/20 ${
+                  isSafe
+                    ? 'border-emerald-300/25 bg-emerald-300/[0.07]'
+                    : 'border-rose-300/15 bg-white/[0.035]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl border ${
+                      isSafe
+                        ? 'border-emerald-300/30 bg-emerald-300/10 text-emerald-200'
+                        : 'border-rose-300/20 bg-rose-300/10 text-rose-200'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h3 className="text-xl font-semibold text-white">{card.title}</h3>
+                </div>
+                <ul className="mt-6 grid gap-3 text-sm text-slate-300 sm:grid-cols-2">
+                  {card.items.map((item) => (
+                    <li key={item} className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.035] px-3 py-3">
+                      <CheckCircle2
+                        className={`mt-0.5 h-4 w-4 shrink-0 ${isSafe ? 'text-emerald-300' : 'text-slate-500'}`}
+                        aria-hidden="true"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-white/10 bg-[#050b18] p-6 shadow-2xl shadow-slate-950/25 sm:p-8">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-200">
+                Architecture summary
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold text-white">
+                Router, planner, guarded tools and reviewer remain explicit.
+              </h3>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+              {['Router', 'Planner', 'Workers', 'Reviewer'].map((step, index) => (
+                <span key={step} className="inline-flex items-center gap-2">
+                  <span className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-slate-200">
+                    {step}
+                  </span>
+                  {index < 3 && <ArrowRight className="h-4 w-4 text-white/35" aria-hidden="true" />}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-7 grid gap-4 md:grid-cols-3">
+            {architectureCards.map((card) => {
+              const Icon = card.icon;
+
+              return (
+                <article key={card.title} className="rounded-xl border border-white/10 bg-white/[0.035] p-5">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-300/25 bg-violet-300/10 text-violet-200">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <h4 className="mt-5 text-lg font-semibold text-white">{card.title}</h4>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">{card.detail}</p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {roadmap.map(([label, detail], index) => (
+            <article key={label} className="rounded-2xl border border-white/10 bg-white/[0.035] p-6">
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-xl font-semibold text-white">{label}</h3>
+                <span
+                  className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] ${
+                    index === 0
+                      ? 'border-emerald-300/25 bg-emerald-300/10 text-emerald-200'
+                      : 'border-sky-300/25 bg-sky-300/10 text-sky-200'
+                  }`}
+                >
+                  {index === 0 ? 'validated' : 'next'}
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-7 text-slate-300">{detail}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function TesseraProjectLayout({ project, isBlog=false }) {
+  const links = project.links || {};
+  const demoHref = links.demo || links.systemUi || '#demo-system-ui';
+  const videoHref = links.video || links.demoVideo || '#demo-video';
+  const [expandedDiagram, setExpandedDiagram] = useState(null);
+
+  return (
+    <>
+      <PagesMetaHead />
+      <AppHeader />
+      <Container fullWidth>
+      <div className="dark bg-[#020611] text-slate-300 min-h-screen">
+        <ScrollProgressDial />
+        <section className="relative overflow-hidden bg-[#020611] text-white">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={project.heroImg || project.img}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-45"
+            className="absolute inset-0 h-full w-full object-cover opacity-25"
             loading="eager"
             aria-hidden="true"
             style={{
-              objectPosition: '72% center',
+              objectPosition: '78% center',
               WebkitMaskImage:
-                'linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0,0,0,0.28) 48%, black 78%)',
+                'linear-gradient(90deg, transparent 0%, transparent 46%, rgba(0,0,0,0.24) 64%, black 100%)',
               maskImage:
-                'linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0,0,0,0.28) 48%, black 78%)',
+                'linear-gradient(90deg, transparent 0%, transparent 46%, rgba(0,0,0,0.24) 64%, black 100%)',
             }}
           />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,#071927_0%,rgba(7,25,39,0.99)_42%,rgba(7,25,39,0.82)_66%,rgba(7,25,39,0.58)_100%)]" />
-          <div className="absolute inset-y-0 left-0 w-full bg-[radial-gradient(circle_at_28%_48%,rgba(14,165,233,0.10),transparent_34%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#071927] to-transparent" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,#020611_0%,rgba(2,6,17,0.98)_42%,rgba(2,6,17,0.76)_72%,rgba(2,6,17,0.96)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_45%,rgba(124,58,237,0.30),transparent_26%),radial-gradient(circle_at_72%_22%,rgba(14,165,233,0.12),transparent_22%),radial-gradient(circle_at_84%_72%,rgba(16,185,129,0.10),transparent_20%)]" />
+          <div className="absolute left-[42%] top-[18%] hidden h-[520px] w-[520px] rounded-full border border-violet-400/25 shadow-[0_0_90px_rgba(124,58,237,0.28)] lg:block" aria-hidden="true" />
+          <div className="absolute left-[48%] top-[23%] hidden h-[420px] w-[420px] rounded-full border border-sky-400/10 lg:block" aria-hidden="true" />
+          <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#020611] to-transparent" />
 
           <div className="relative mx-auto flex min-h-[760px] max-w-7xl flex-col px-6 pb-10 pt-8 sm:px-10 lg:px-14">
-            <div className="w-fit rounded-full bg-white/10 shadow-lg shadow-black/20 backdrop-blur">
-              <BackButton />
-            </div>
+            <TesseraHistoryControls />
 
             <div className="flex flex-1 items-center py-8 sm:py-16">
-              <div className="grid w-full gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(320px,0.55fr)] lg:items-center">
+              <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(360px,0.56fr)] lg:items-center">
                 <div className="max-w-4xl">
                   <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-white/85">
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur">
+                    <span className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-sky-400/30 bg-white/5 px-3 py-1 backdrop-blur">
                       <Landmark className="h-4 w-4 text-sky-300" aria-hidden="true" />
                       EU retail banking
                     </span>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur">
+                    <span className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-emerald-400/30 bg-white/5 px-3 py-1 backdrop-blur">
                       <ShieldCheck className="h-4 w-4 text-emerald-300" aria-hidden="true" />
                       Guarded agent
                     </span>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur">
+                    <span className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-amber-400/30 bg-white/5 px-3 py-1 backdrop-blur">
                       <Cloud className="h-4 w-4 text-amber-300" aria-hidden="true" />
                       Cloud + on-prem
                     </span>
                   </div>
 
-                  <p className="mt-6 text-sm font-semibold uppercase tracking-[0.24em] text-white/55 sm:mt-8">
-                    Flagship open-source project
+                  <p className="mt-7 text-sm font-semibold uppercase tracking-[0.24em] text-violet-300 sm:mt-9">
+                    Flagship open-source AI engineering project
                   </p>
-                  <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-none text-white sm:text-6xl lg:text-7xl">
+                  <h1 className="mt-4 max-w-3xl text-6xl font-semibold leading-[0.88] text-white sm:text-7xl lg:text-8xl">
                     Tessera
                   </h1>
-                  <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-100 sm:mt-6 sm:text-xl">
-                    {project.tagline}
+                  <p className="mt-5 max-w-2xl text-2xl font-semibold leading-tight text-slate-300 sm:text-3xl">
+                    A guarded agentic AI system for regulated banking support.
+                  </p>
+                  <p className="mt-5 max-w-3xl text-base leading-8 text-slate-200 sm:text-lg">
+                    Built with LangGraph, retrieval, guarded tool execution, audit envelopes and a multilingual
+                    regression harness across French, German and English.
                   </p>
 
-                  <div className="mt-7 flex flex-wrap gap-3 sm:mt-9">
+                  <div className="mt-7 flex flex-wrap gap-4 sm:mt-8">
+                    <a
+                      href={videoHref}
+                      {...(videoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+                      className="group inline-flex min-h-16 items-center gap-3 rounded-xl bg-violet-500 px-5 text-left text-white shadow-2xl shadow-violet-500/30 transition hover:bg-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 focus:ring-offset-[#020611]"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-violet-600 transition group-hover:scale-105">
+                        <PlayCircle className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <span>
+                        <span className="block text-lg font-semibold leading-tight">Watch 2-min demo</span>
+                        <span className="mt-0.5 block text-sm text-violet-100">Video walkthrough</span>
+                      </span>
+                    </a>
+                    <a
+                      href={demoHref}
+                      {...(demoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+                      className="group inline-flex min-h-16 items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-5 text-left text-white shadow-xl shadow-black/20 backdrop-blur transition hover:border-emerald-300/40 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-[#020611]"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-300/30 bg-emerald-300/10 text-emerald-300">
+                        <TerminalSquare className="h-6 w-6" aria-hidden="true" />
+                      </span>
+                      <span>
+                        <span className="block text-lg font-semibold leading-tight">Try agent UI</span>
+                        <span className="mt-0.5 block text-sm text-slate-300">Open interactive interface</span>
+                      </span>
+                    </a>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 text-sm font-medium text-slate-200">
                     {links.github && (
-                      <ActionLink href={links.github} icon={Github}>
-                        GitHub repository
-                      </ActionLink>
+                      <a href={links.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition hover:text-white">
+                        <Github className="h-5 w-5" aria-hidden="true" />
+                        View on GitHub
+                      </a>
                     )}
                     {links.design && (
-                      <ActionLink href={links.design} icon={FileText} variant="secondary">
-                        Design document
-                      </ActionLink>
+                      <a href={links.design} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition hover:text-white">
+                        <FileText className="h-5 w-5" aria-hidden="true" />
+                        Read Architecture
+                      </a>
                     )}
                     {links.safety && (
-                      <ActionLink href={links.safety} icon={ShieldCheck} variant="secondary">
-                        Safety document
-                      </ActionLink>
+                      <a href={links.safety} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 transition hover:text-white">
+                        <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+                        Safety Notes
+                      </a>
                     )}
                   </div>
 
-                  <div className="mt-6 grid max-w-4xl grid-cols-2 gap-x-4 gap-y-2 sm:mt-10 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="mt-7 grid max-w-4xl grid-cols-2 gap-x-4 gap-y-2 border-t border-white/10 pt-5 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
                     <HeroMetric icon={Languages} label="Languages" value="FR / DE / EN" />
                     <HeroMetric icon={ShieldCheck} label="Eval set" value="40 failure cases" />
                     <HeroMetric icon={Euro} label="Domain" value="EU banking" />
@@ -1028,6 +1805,10 @@ export default function TesseraProjectLayout({ project }) {
             </div>
           </div>
         </section>
+
+        <ProofNavigation links={links} />
+
+        <DemoVideoSection links={links} />
 
         <section className="mx-auto max-w-7xl px-6 py-10 sm:px-10 lg:px-14">
           <div className="mb-8">
@@ -1062,7 +1843,7 @@ export default function TesseraProjectLayout({ project }) {
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-[#0a2032]">
+        <section className="border-y border-white/10 bg-[#050b18]">
           <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-14">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -1108,7 +1889,7 @@ export default function TesseraProjectLayout({ project }) {
 
         <ScenarioSpotlight />
 
-        <section className="bg-[#071927] text-white">
+        <section id="execution-path" className="scroll-mt-24 bg-[#020611] text-white">
           <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:px-10 lg:grid-cols-[1fr_380px] lg:px-14">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-200">
@@ -1143,7 +1924,9 @@ export default function TesseraProjectLayout({ project }) {
 
         <AssuranceBand />
 
-        <section className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-14">
+        <SystemUiCta links={links} />
+
+        <section id="architecture-diagrams" className="scroll-mt-24 mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-14">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -1155,6 +1938,7 @@ export default function TesseraProjectLayout({ project }) {
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-300">
               The page keeps the project anchored in diagrams and constraints instead of vague AI claims.
+              Click any diagram to inspect it full-screen.
             </p>
           </div>
 
@@ -1164,6 +1948,7 @@ export default function TesseraProjectLayout({ project }) {
               description="LangGraph orchestration, retrieval, guarded tools, audit sinks, and dual LLM deployment paths."
               img="/images/projects/tessera/architecture.svg"
               alt="Tessera system architecture"
+              onOpen={setExpandedDiagram}
             />
             <DiagramPanel
               title="Non-regression harness"
@@ -1171,11 +1956,12 @@ export default function TesseraProjectLayout({ project }) {
               img="/images/projects/tessera/eval-flow.svg"
               alt="Tessera evaluation harness flow"
               orientation="tall"
+              onOpen={setExpandedDiagram}
             />
           </div>
         </section>
 
-        <section className="border-y border-slate-200 bg-slate-50 dark:border-white/10 dark:bg-[#071927]">
+        <section id="stack-snapshot" className="scroll-mt-24 border-y border-white/10 bg-[#050b18]">
           <div className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-14">
             <div className="mb-7 flex items-center gap-3">
               <TerminalSquare className="h-6 w-6 text-sky-600 dark:text-sky-300" aria-hidden="true" />
@@ -1189,12 +1975,18 @@ export default function TesseraProjectLayout({ project }) {
           </div>
         </section>
 
-        <TesseraTabs project={project} />
+        <TesseraStory />
+
+        <FinalOpenSourceCta links={links} />
 
         <section className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-14">
           <RelatedProjects currentProject={project} />
         </section>
+
+        <DiagramLightbox diagram={expandedDiagram} onClose={() => setExpandedDiagram(null)} />
       </div>
     </Container>
+    <AppFooter isBlog={isBlog} />
+    </>
   );
 }
