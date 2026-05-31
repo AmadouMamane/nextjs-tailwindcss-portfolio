@@ -3,11 +3,13 @@
 import { projectsData } from "../../data/projectsData";
 import NotebookProjectLayout from "../../components/projects/layouts/NotebookProjectLayout";
 import DefaultProjectLayout from "../../components/projects/layouts/DefaultProjectLayout";
+import TesseraProjectLayout from "../../components/projects/layouts/TesseraProjectLayout";
 
 // Mapping layouts based on project type
 const layoutMap = {
   notebook: NotebookProjectLayout,
   default: DefaultProjectLayout,
+  tessera: TesseraProjectLayout,
 };
 
 function ProjectSingle({ project }) {

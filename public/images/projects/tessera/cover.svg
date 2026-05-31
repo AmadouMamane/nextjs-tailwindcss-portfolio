@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D2438"/>
+      <stop offset="55%" stop-color="#102D44"/>
+      <stop offset="100%" stop-color="#1E3851"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#ffffff" stroke-opacity="0.06"/>
+    </pattern>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+
+  <!-- Tessera tile motif -->
+  <g opacity="0.18" transform="translate(860 120)">
+    <rect x="0" y="0" width="72" height="72" rx="8" fill="#6366f1"/>
+    <rect x="88" y="0" width="72" height="72" rx="8" fill="#ffffff"/>
+    <rect x="0" y="88" width="72" height="72" rx="8" fill="#ffffff"/>
+    <rect x="88" y="88" width="72" height="72" rx="8" fill="#6366f1"/>
+  </g>
+
+  <circle cx="980" cy="520" r="140" fill="#6366f1" opacity="0.12" filter="url(#glow)"/>
+
+  <text x="72" y="120" fill="#94a3b8" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="22" letter-spacing="0.18em">OPEN SOURCE &#183; APACHE-2.0</text>
+
+  <text x="72" y="220" fill="#ffffff" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="86" font-weight="700">Tessera</text>
+
+  <text x="72" y="285" fill="#cbd5e1" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="30" font-weight="500">Multilingual EU Banking Support Agent</text>
+
+  <rect x="72" y="330" width="420" height="4" fill="url(#accent)" rx="2"/>
+
+  <text x="72" y="390" fill="#e2e8f0" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24">FR &#183; DE &#183; EN  &#183;  DORA &#183; CNIL &#183; BaFin &#183; GDPR</text>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <rect x="72" y="440" width="190" height="56" rx="28" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14"/>
+    <text x="167" y="475" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="600">40 eval cases</text>
+
+    <rect x="282" y="440" width="190" height="56" rx="28" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14"/>
+    <text x="377" y="475" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="600">mcp-firewall</text>
+
+    <rect x="492" y="440" width="190" height="56" rx="28" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.14"/>
+    <text x="587" y="475" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="600">LangGraph</text>
+
+    <rect x="702" y="440" width="190" height="56" rx="28" fill="#6366f1" fill-opacity="0.25" stroke="#818cf8" stroke-opacity="0.5"/>
+    <text x="797" y="475" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="600">Audit trail</text>
+  </g>
+
+  <text x="72" y="590" fill="#64748b" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="18">Runtime guard &#183; Offline harness &#183; Structured audit &#183; Human escalation</text>
+</svg>

@@ -24,13 +24,14 @@ function RelatedProjects({ currentProject, isBlog = false  }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProjects.map((project) => (
               <Link href={`/projects/${project.id}`} key={project.id} passHref>
-                <div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer bg-secondary-light dark:bg-ternary-dark transition-transform duration-300 hover:scale-[1.015]">
-                  <div className="relative w-full h-72">
+                <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-xl cursor-pointer bg-secondary-light dark:bg-ternary-dark transition-transform duration-300 hover:scale-[1.015]">
+                  <div className="relative w-full h-72 overflow-hidden">
                     <Image
                       src={project.img}
                       alt={project.title}
-                      layout="fill"
-                      className="object-cover rounded-t-xl"
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
                     />
                   </div>
 

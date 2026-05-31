@@ -1,15 +1,9 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
 import { FiTag } from 'react-icons/fi';
 
-const imageStyle = { maxWidth: '100%', height: 'auto' };
-
 const ProjectSingle = (props) => {
-	const iframeRef = useRef(null);
-	const [isFullscreen, setIsFullscreen] = useState(false);
-
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}
@@ -23,41 +17,50 @@ const ProjectSingle = (props) => {
 			<Link
 				href="/projects/[id]"
 				as={'/projects/' + props.id}
-				aria-label="Single Project"
+				aria-label={`View project: ${props.title}`}
 				passHref
 			>
-				<div className="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark">
-					<div className="relative w-full h-80">
+				<div className="group rounded-lg shadow-lg hover:shadow-2xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark overflow-hidden transition-shadow duration-300">
+					<div className="relative w-full h-80 overflow-hidden">
 						<Image
 							src={props.img}
-		
 							alt={props.title}
-					            layout="fill"
-            				className="object-fill rounded-t-xl border-none"
+							fill
+							sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+							className="object-cover border-none group-hover:scale-[1.02] transition-transform duration-500"
 						/>
+						{props.id === 1 && (
+							<div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500 text-white shadow-md">
+								Flagship
+							</div>
+						)}
 					</div>
 
 					<div className="text-center px-4 py-6">
-						<p className="text-xl md:text-xl text-ternary-dark dark:text-ternary-light mb-2">{props.title}</p>
-						<div className="flex flex-wrap justify-center items-center gap-1 mt-3">
-
-			
-						<FiTag className="text-ternary-dark dark:text-ternary-light" />
-						<span className="text-xs px-2 py-1 bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-ternary-light rounded-full">
-
-							{props.ProjectHeader.tags}
-						</span>
+						<p className="text-xl md:text-xl text-ternary-dark dark:text-ternary-light mb-2 font-medium">
+							{props.title}
+						</p>
+						{props.tagline && (
+							<p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3 leading-relaxed">
+								{props.tagline}
+							</p>
+						)}
+						<div className="flex flex-wrap justify-center items-center gap-2 mt-3">
+							<FiTag className="text-ternary-dark dark:text-ternary-light shrink-0" aria-hidden="true" />
+							<span className="text-xs px-2 py-1 bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-ternary-light rounded-full">
+								{props.ProjectHeader.tags}
+							</span>
+							{props.secondaryCategory && (
+								<span className="text-xs px-2 py-1 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 rounded-full border border-indigo-100 dark:border-indigo-900">
+									{props.secondaryCategory}
+								</span>
+							)}
+						</div>
 					</div>
-		
-				</div>
-
-	
 				</div>
 			</Link>
 		</motion.div>
 	);
 };
-
-
 
 export default ProjectSingle;
