@@ -43,28 +43,28 @@ const QUALITY_LAYERS = [
     title: 'Runtime guard',
     eyebrow: 'mcp-firewall',
     description:
-      'Sensitive tool calls are checked before execution with allow, deny, transform, and redaction decisions.',
+      'Sensitive tool calls are checked before execution with allow, deny, transform, and redaction decisions',
   },
   {
     icon: GitBranch,
-    title: 'Offline harness',
-    eyebrow: 'Promptfoo-style regression',
+    title: 'Offline tests',
+    eyebrow: 'Regression suite',
     description:
-      'Documented failure cases are replayed against the agent graph so safety behavior can regress loudly.',
+      'Documented failure cases are replayed against the agent graph so safety behavior can regress loudly',
   },
   {
     icon: FileText,
     title: 'Structured audit',
     eyebrow: 'JSON evidence',
     description:
-      'Guard outcomes keep rule ids, rationale, target tool, redacted arguments, and operational timestamps.',
+      'Each guard decision records the policy rule, rationale, target tool, redacted arguments, and operational timestamps',
   },
   {
     icon: Route,
     title: 'Human escalation',
     eyebrow: 'Reviewer node',
     description:
-      'Low-confidence or high-stakes turns route to escalation instead of pretending the answer is certain.',
+      'Low-confidence or high-stakes turns route to escalation instead of pretending the answer is certain',
   },
 ];
 
@@ -98,27 +98,27 @@ const EXECUTION_FLOW = [
   {
     icon: Route,
     title: 'Route',
-    detail: 'Classify language, intent, and urgency before planning.',
+    detail: 'Classify language, intent, and urgency before planning',
   },
   {
     icon: Database,
     title: 'Retrieve',
-    detail: 'Pull product and regulation context from pgvector.',
+    detail: 'Pull product and regulation context from pgvector',
   },
   {
     icon: LockKeyhole,
     title: 'Guard',
-    detail: 'Check sensitive tool calls through policy before execution.',
+    detail: 'Check sensitive tool calls through policy before execution',
   },
   {
     icon: FileText,
     title: 'Audit',
-    detail: 'Emit structured evidence for reviewer and operator views.',
+    detail: 'Emit structured evidence for reviewer and operator views',
   },
   {
     icon: CheckCircle2,
     title: 'Respond',
-    detail: 'Answer, decline, or escalate with confidence signals.',
+    detail: 'Answer, decline, or escalate with confidence signals',
   },
 ];
 
@@ -170,18 +170,18 @@ const SCENARIO_CHECKS = [
 
 const ROUTE_COMPARISON = [
   {
-    title: 'Naive demo route',
+    title: 'Naive agent route',
     status: 'Looks helpful, leaks context',
     tone: 'risk',
     steps: ['Fetch account data', 'Show suspicious payments', 'Try to block the card late'],
-    note: 'The assistant optimizes for an answer before ownership, urgency, and disclosure risk are resolved.',
+    note: 'The assistant optimizes for an answer before ownership, urgency, and disclosure risk are resolved',
   },
   {
     title: 'Tessera route',
     status: 'Guarded, auditable handoff',
     tone: 'safe',
     steps: ['Classify fraud urgency', 'Block unsafe lookup path', 'Escalate with redacted evidence'],
-    note: 'The system keeps the user moving toward help while preserving a reviewer-ready trail.',
+    note: 'The system keeps the user moving toward help while preserving a reviewer-ready trail',
   },
 ];
 
@@ -189,7 +189,7 @@ const EVIDENCE_ITEMS = [
   {
     icon: ShieldCheck,
     label: 'Runtime',
-    value: 'Pre-flight',
+    value: 'Before action',
     detail: 'Tool arguments checked before execution',
     tone: 'violet',
   },
@@ -197,7 +197,7 @@ const EVIDENCE_ITEMS = [
     icon: GitBranch,
     label: 'Regression',
     value: 'Replayable',
-    detail: 'Failure catalogue lives as JSON fixtures',
+    detail: 'Failure catalogue lives as JSON test cases',
     tone: 'green',
   },
   {
@@ -221,25 +221,25 @@ const ASSURANCE_ITEMS = [
     icon: CheckCircle2,
     label: 'Build gate',
     value: 'ruff, mypy, pytest',
-    detail: 'The demo is framed as software that must keep compiling, typing, and replaying.',
+    detail: 'The system is framed as software that must keep compiling, typing, and replaying',
   },
   {
     icon: ShieldCheck,
     label: 'Safety gate',
     value: '40 failure replays',
-    detail: 'Known agent failures are catalogued as fixtures instead of left as anecdotes.',
+    detail: 'Known agent failures are catalogued as JSON test cases instead of left as anecdotes',
   },
   {
     icon: Cloud,
     label: 'Hosted path',
     value: 'Cloud Run + Cloud SQL',
-    detail: 'The frontier path is deployable with managed runtime, secrets, logs, and monitoring.',
+    detail: 'The frontier path is deployable with managed runtime, secrets, logs, and monitoring',
   },
   {
     icon: TerminalSquare,
     label: 'Local path',
     value: 'Ollama on Apple Silicon',
-    detail: 'The on-prem mode keeps the banking story credible when data cannot leave the perimeter.',
+    detail: 'The on-prem mode keeps the banking story credible when data cannot leave the perimeter',
   },
 ];
 
@@ -247,17 +247,17 @@ const SYSTEM_UI_SURFACES = [
   {
     icon: MessageSquareText,
     label: 'Chat workbench',
-    detail: 'Test the multilingual banking-support flow with guarded tool calls.',
+    detail: 'Test the multilingual banking-support flow with guarded tool calls',
   },
   {
     icon: FileText,
     label: 'Audit trail',
-    detail: 'Inspect policy decisions, redactions, rule ids, and reviewer evidence.',
+    detail: 'Inspect policy decisions, redactions, policy rules, and reviewer evidence',
   },
   {
     icon: GitBranch,
     label: 'Eval scorecard',
-    detail: 'Replay known failure cases and see what still needs work.',
+    detail: 'Replay known failure cases and see what still needs work',
   },
 ];
 
@@ -320,7 +320,7 @@ const LANGUAGE_CASES = [
     locale: 'FR',
     market: 'France',
     regulator: 'CNIL + GDPR',
-    customer: 'Je veux contester un paiement carte visible depuis hier.',
+    customer: 'Je veux contester un paiement carte visible depuis hier',
     route: 'transaction_search -> reviewer',
     decision: 'verify identity first',
     answer: 'French, bounded, cited',
@@ -501,7 +501,7 @@ function HeroTrace() {
       <div className="rounded-xl border border-white/10 bg-[#071323]/80 p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/45">Customer signal</p>
         <p className="mt-3 text-sm leading-6 text-slate-200">
-          Stolen card, unknown payments, immediate account verification requested.
+          Stolen card, unknown payments, immediate account verification requested
         </p>
       </div>
 
@@ -641,7 +641,7 @@ function AuditPreview() {
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
           <div className="h-full w-[78%] rounded-full bg-emerald-300" />
         </div>
-        <p className="mt-2 text-sm text-slate-300">Grounding, guard, and coverage remain visible after the turn.</p>
+        <p className="mt-2 text-sm text-slate-300">Grounding, guard, and coverage remain visible after the turn</p>
       </div>
     </aside>
   );
@@ -701,12 +701,12 @@ function MultilingualSurface() {
               Multilingual operating surface
             </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
-              Same banking product, three language and regulator contexts.
+              Same banking product, three language and regulator contexts
             </h2>
           </div>
           <p className="text-sm leading-7 text-slate-600 dark:text-slate-300">
-            Each locale carries its own regulator context, routing decision, guard outcome, and bounded
-            customer reply.
+            Each language path shows how Tessera routes the request, applies the relevant regulator context,
+            checks the guard, and keeps the customer reply controlled
           </p>
         </div>
 
@@ -729,11 +729,11 @@ function RegressionScorecard() {
             Regression scorecard
           </p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight text-white">
-            The safety claim is backed by replayable failures.
+            The safety claim is backed by replayable failures
           </h2>
           <p className="mt-5 text-sm leading-7 text-slate-300">
-            Tessera treats known agent failures as product fixtures. Each case declares the failure pattern,
-            the check that must pass, and the expected bounded behavior before the demo can be trusted.
+            Tessera treats known agent failures as JSON test cases. Each case declares the failure pattern,
+            the check that must pass, and the expected bounded behavior before the demo can be trusted
           </p>
 
           <div className="mt-8 grid grid-cols-2 gap-3">
@@ -854,11 +854,11 @@ function AssuranceBand() {
             Delivery assurance
           </p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
-            Trust comes from the delivery chain, not a single screen.
+            Trust comes from the delivery chain, not from a polished interface
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-300">
             The strongest signal is not a single UI screen. It is the chain from local quality gates to
-            deployed infrastructure, with an on-prem path when regulation changes the deployment boundary.
+            deployed infrastructure, with an on-prem path when regulation changes the deployment boundary
           </p>
         </div>
 
@@ -908,7 +908,7 @@ function DemoVideoSection({ links = {} }) {
             <span className="h-px w-20 bg-[#6366f9]/50" />
           </div>
           <p className="mt-4 text-base leading-7 text-slate-300">
-            Start with the guided walkthrough, then open the interface to chat, inspect live traces, guarded execution and escalation flows in action.
+            Start with the guided walkthrough, then open the interface to chat, inspect live traces, guarded execution and escalation flows in action
           </p>
         </div>
 
@@ -928,7 +928,7 @@ function DemoVideoSection({ links = {} }) {
               </span>
               <span className="block text-2xl font-semibold">Watch demo video</span>
               <span className="mt-2 block max-w-sm text-sm leading-6 text-slate-300">
-                A guided fraud-support scenario showing guard decisions, audit evidence and escalation.
+                A guided fraud-support scenario showing guard decisions, audit evidence and escalation
               </span>
               <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-200">
                 Play video
@@ -943,7 +943,7 @@ function DemoVideoSection({ links = {} }) {
               <div>
                 <h3 className="text-xl font-semibold">Try agent UI</h3>
                 <p className="mt-2 max-w-lg text-sm leading-6 text-slate-300">
-                  Open the interactive interface to explore live traces and guarded execution.
+                  Open the interactive interface to explore live traces and guarded execution
                 </p>
               </div>
               <a
@@ -1019,7 +1019,7 @@ function SystemPreviewPanel({ compact = false }) {
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-200">Tessera</p>
               <p className="mt-2 text-sm leading-6 text-slate-100">
                 I can help, but account lookup is blocked until identity is verified. I am escalating this with
-                redacted evidence.
+                redacted evidence
               </p>
             </div>
           </div>
@@ -1077,11 +1077,11 @@ function SystemUiCta({ links = {} }) {
             Try the system
           </p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
-            A dedicated slot for the public UI demo.
+            A dedicated slot for the public agent UI
           </h2>
           <p className="mt-5 text-base leading-8 text-slate-700 dark:text-slate-300">
             Visitors should be able to leave the case study and test Tessera for themselves. This block will
-            point to the deployed dashboard as soon as the public URL is available.
+            point to the deployed dashboard as soon as the public URL is available
           </p>
 
           <div className="mt-7 flex flex-wrap gap-3">
@@ -1143,12 +1143,12 @@ function ScenarioSpotlight() {
             Scenario spotlight
           </p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
-            The difference is visible when the request is risky.
+            The difference is visible when the request is risky
           </h2>
           <p className="mt-5 text-base leading-8 text-slate-700 dark:text-slate-300">
-            A normal demo might answer with whatever tool result is easiest to fetch. Tessera treats the
+            An unguided agent might answer with whatever tool result is easiest to fetch. Tessera treats the
             banking situation as the product surface: urgency, ownership, disclosure risk, and escalation all
-            change the route before a tool is allowed to run.
+            change the route before a tool is allowed to run
           </p>
 
           <div className="mt-7 space-y-3">
@@ -1184,7 +1184,7 @@ function ScenarioSpotlight() {
               <div className="flex gap-3">
                 <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700 dark:text-amber-200" aria-hidden="true" />
                 <p className="text-sm leading-6 text-amber-900 dark:text-amber-100">
-                  The request combines urgency and fraud. The account lookup path is no longer the right default.
+                  The request combines urgency and fraud. The account lookup path is no longer the right default
                 </p>
               </div>
             </div>
@@ -1219,7 +1219,7 @@ function ScenarioSpotlight() {
                 Route contrast
               </p>
               <h3 className="mt-2 text-2xl font-semibold text-slate-950 dark:text-white">
-                Same customer message, different operating discipline.
+                Same customer message, different operating discipline
               </h3>
             </div>
           </div>
@@ -1414,10 +1414,10 @@ function FinalOpenSourceCta({ links = {} }) {
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-200">
                 Open-source & transparent
               </p>
-              <h2 className="mt-2 text-2xl font-semibold leading-tight">Inspect the assembly, not a black box.</h2>
+              <h2 className="mt-2 text-2xl font-semibold leading-tight">Inspect the assembly, not a black box</h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
                 Tessera stays honest about what it contributes: an end-to-end regulated assembly with reusable
-                dependencies, visible guardrails and documented failures.
+                dependencies, visible guardrails and documented failures
               </p>
             </div>
           </div>
@@ -1494,7 +1494,7 @@ function ScrollProgressDial() {
 function TesseraStory() {
   const comparison = [
     {
-      title: 'Most agent demos',
+      title: 'Most agent systems',
       tone: 'risk',
       icon: AlertTriangle,
       items: ['Unguarded tool calls', 'No replay evidence', 'Manual-only validation', 'English-only compliance'],
@@ -1510,22 +1510,22 @@ function TesseraStory() {
     {
       icon: Route,
       title: 'Graph orchestration',
-      detail: 'Router, planner, reviewer and workers are separated so useful work and controlled action remain distinct.',
+      detail: 'Router, planner, reviewer and workers are separated so useful work and controlled action remain distinct',
     },
     {
       icon: LockKeyhole,
       title: 'Guarded tool boundary',
-      detail: 'Account lookup, card blocking and transaction search stay behind policy checks and auditable decisions.',
+      detail: 'Account lookup, card blocking and transaction search stay behind policy checks and auditable decisions',
     },
     {
       icon: Cloud,
       title: 'Cloud and on-prem paths',
-      detail: 'Vertex AI and Cloud Run cover the frontier path; Ollama and Llama 3.3 70B keep an on-prem option explicit.',
+      detail: 'Vertex AI and Cloud Run cover the frontier path; Ollama and Llama 3.3 70B keep an on-prem option explicit',
     },
   ];
   const roadmap = [
-    ['Shipped', 'LangGraph agent, FR / DE / EN prompts, audit trail, guard adapter, JSON eval fixtures.'],
-    ['Hardening', 'Public demo URL, mcp-firewall upstream contribution, German escalation calibration.'],
+    ['Shipped', 'LangGraph agent, FR / DE / EN prompts, audit trail, guard adapter, JSON eval test cases'],
+    ['Hardening', 'Public demo URL, mcp-firewall upstream contribution, German escalation calibration'],
   ];
 
   return (
@@ -1537,12 +1537,12 @@ function TesseraStory() {
               Operating model
             </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
-              From customer signal to reviewer-ready evidence.
+              From customer signal to reviewer-ready evidence
             </h2>
           </div>
           <p className="text-sm leading-7 text-slate-300">
             Tessera treats banking support as a controlled workflow: language, intent, policy, tool permission,
-            audit evidence, and escalation stay visible from the first message to the final handoff.
+            audit evidence, and escalation remain visible from the first message to the final handoff
           </p>
         </div>
 
@@ -1595,7 +1595,7 @@ function TesseraStory() {
                 Architecture summary
               </p>
               <h3 className="mt-2 text-2xl font-semibold text-white">
-                Router, planner, guarded tools and reviewer remain explicit.
+                Router, planner, guarded tools and reviewer remain explicit
               </h3>
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
@@ -1713,11 +1713,11 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                     Tessera
                   </h1>
                   <p className="mt-8 max-w-2xl text-2xl font-semibold leading-tight text-slate-300 sm:text-3xl">
-                    A guarded agentic AI system for regulated banking support.
+                    A guarded agentic AI system for regulated banking support
                   </p>
                   <p className="mt-7 max-w-3xl text-base leading-8 text-slate-200 sm:text-lg sm:leading-9">
                     Built with LangGraph, retrieval, guarded tool execution, audit envelopes and a multilingual
-                    regression harness across French, German and English.
+                    regression tests across French, German and English
                   </p>
 
                   <div className="mt-9 flex flex-wrap gap-4 sm:mt-10">
@@ -1799,14 +1799,14 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
           <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
             <article className="rounded-lg border border-slate-200 bg-slate-950 p-6 text-white shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-200">
-                Honest positioning
+                Scope
               </p>
               <h2 className="mt-4 text-2xl font-semibold leading-tight">
-                Not a new firewall. Not a new benchmark. A complete regulated assembly.
+                Not a new firewall, not a new benchmark, a complete regulated assembly
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-300">
-                The value is the end-to-end wiring: runtime guard, regression harness, audit evidence,
-                and escalation semantics for one specific European banking support workflow.
+                Runtime guard, regression tests, audit evidence, and escalation paths are wired end to end for
+                one European banking support workflow
               </p>
             </article>
 
@@ -1834,12 +1834,12 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                 What it proves
               </p>
               <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
-                A bank-support agent that is built to be inspected.
+                A bank-support agent that can be inspected, tested, and safely handed off
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-700 dark:text-slate-300">
                 Tessera is intentionally not framed as a new framework. The work is the production assembly:
                 guarded tool calls, reproducible failure tests, audit evidence, and escalation paths for a
-                multilingual European banking workflow.
+                multilingual European banking workflow
               </p>
 
               <div className="mt-8 space-y-3">
@@ -1889,11 +1889,11 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
               </p>
               <div className="mt-3 grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
                 <h2 className="text-3xl font-semibold leading-tight text-white">
-                  Every useful action leaves a trail.
+                  Every useful action leaves a trail
                 </h2>
                 <p className="text-sm leading-7 text-slate-300">
                   Each customer turn moves through routing, retrieval, guard checks, audit emission, and a final
-                  response or escalation path.
+                  response or escalation path
                 </p>
               </div>
 
@@ -1933,22 +1933,22 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-300">
-              The diagrams expose the system boundary: agent orchestration, guarded tools, audit sinks, dual
-              deployment paths, and CI-gated evaluation.
+              The diagrams show how Tessera is assembled: agent orchestration, guarded tools, audit evidence,
+              cloud and on-prem paths, and evaluation checks
             </p>
           </div>
 
           <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
             <DiagramPanel
               title="System architecture"
-              description="LangGraph orchestration, retrieval, guarded tools, audit sinks, and dual LLM deployment paths."
+              description="LangGraph orchestration, retrieval, guarded tools, audit sinks, and dual LLM deployment paths"
               img="/images/projects/tessera/architecture.svg"
               alt="Tessera system architecture"
               onOpen={setExpandedDiagram}
             />
             <DiagramPanel
-              title="Non-regression harness"
-              description="Failure cases move through schema validation, multilingual replay, scoring, and CI gates."
+              title="Non-regression tests"
+              description="Failure cases move through schema validation, multilingual replay, scoring, and CI gates"
               img="/images/projects/tessera/eval-flow.svg"
               alt="Tessera evaluation harness flow"
               orientation="tall"

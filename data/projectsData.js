@@ -22,9 +22,9 @@ export const projectsData = [
 		cardTitle: 'Tessera',
 		cardIcon: 'shield',
 		cardAccent: 'indigo',
-		cardSummary: 'A guarded agentic AI system for regulated banking support.',
+		cardSummary: 'A guarded agentic AI system for regulated banking support',
 		cardHighlights: ['AI Engineering', 'LangGraph', 'Guardrails', 'Audit'],
-		tagline: 'Guarded EU banking support agent with policy checks, evals, audit trail and FR / DE / EN grounding.',
+		tagline: 'Guarded EU banking support agent with policy checks, evals, audit trail and FR / DE / EN grounding',
 		links: {
 			github: 'https://github.com/AmadouMamane/tessera',
 			design: 'https://github.com/AmadouMamane/tessera/blob/main/docs/design.md',
@@ -61,7 +61,7 @@ export const projectsData = [
 		cardTitle: 'AI Skin Cancer Detection Challenge',
 		cardLogo: '🧬',
 		cardAccent: 'rose',
-		cardSummary: 'Detects skin cancer from 3D total-body images with a high-sensitivity model.',
+		cardSummary: 'Detects skin cancer from 3D total-body images with a high-sensitivity model',
 		cardHighlights: ['TensorFlow', 'CNN', 'pAUC', 'Medical AI'],
 		Notebook: {
 			file: '/notebooks/isic-2024_kaggle.html',
@@ -152,7 +152,7 @@ export const projectsData = [
 		cardTitle: 'Music Recommendation System',
 		cardIcon: 'music',
 		cardAccent: 'blue',
-		cardSummary: 'Ranks songs from listening behavior to generate personalized recommendations.',
+		cardSummary: 'Ranks songs from listening behavior to generate personalized recommendations',
 		cardHighlights: ['Surprise', 'Scikit-learn', 'LightFM', 'Ranking'],
 		ProjectHeader: {
 			title: '🎵 AI-Powered Music Recommendation System',
