@@ -1476,9 +1476,9 @@ function ScrollProgressDial() {
   const roundedProgress = Math.round(progress);
 
   return (
-    <div className="fixed right-[35px] top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
+    <div className="fixed right-[23px] top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
       <div
-        className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 p-1 text-xs font-semibold text-white shadow-[0_0_36px_rgba(99,102,249,0.30)] backdrop-blur"
+        className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 p-1 text-xs font-semibold text-white"
         style={{
           background: `conic-gradient(from 0deg, #6366f9 ${roundedProgress}%, rgba(255,255,255,0.10) ${roundedProgress}%)`,
         }}
