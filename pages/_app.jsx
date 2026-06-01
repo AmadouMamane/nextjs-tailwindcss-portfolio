@@ -24,7 +24,7 @@ function MyApp({ Component, pageProps }) {
   ));
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true}>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <AnimatePresence>
         <div className={`${playfair.variable} bg-secondary-light dark:bg-primary-dark transition duration-300 font-sans`}>
           {getLayout(<Component {...pageProps} />)}
