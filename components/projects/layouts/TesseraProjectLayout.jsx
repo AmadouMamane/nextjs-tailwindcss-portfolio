@@ -1314,7 +1314,12 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
         </div>
       </div>
       <div className="bg-slate-50 p-3 dark:bg-primary-dark/50">
-        <div className="rounded-md border border-slate-200 bg-white p-2 dark:border-white/10 dark:bg-white/[0.03]">
+        <button
+          type="button"
+          onClick={() => onOpen?.(diagram)}
+          aria-label={`Expand ${title} diagram`}
+          className="block w-full cursor-zoom-in rounded-md border border-slate-200 bg-white p-2 text-left transition hover:border-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-sky-300/30 dark:focus:ring-offset-primary-dark"
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={img}
@@ -1322,7 +1327,7 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
             className={`mx-auto w-full rounded object-contain ${orientation === 'tall' ? 'max-h-[620px]' : 'max-h-[440px]'}`}
             loading="lazy"
           />
-        </div>
+        </button>
       </div>
     </figure>
   );
@@ -1802,11 +1807,10 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                 Scope
               </p>
               <h2 className="mt-4 text-2xl font-semibold leading-tight">
-                Not a new firewall, not a new benchmark, a complete regulated assembly
+                Not a new firewall, not a new benchmark
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-300">
-                Runtime guard, regression tests, audit evidence, and escalation paths are wired end to end for
-                one European banking support workflow
+                A concrete assembly for one regulated European banking support workflow
               </p>
             </article>
 
@@ -1837,9 +1841,8 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                 A bank-support agent that can be inspected, tested, and safely handed off
               </h2>
               <p className="mt-5 text-base leading-8 text-slate-700 dark:text-slate-300">
-                Tessera is intentionally not framed as a new framework. The work is the production assembly:
-                guarded tool calls, reproducible failure tests, audit evidence, and escalation paths for a
-                multilingual European banking workflow
+                Tessera shows that guarded tool calls, multilingual grounding, audit evidence, and escalation
+                paths can work together in one concrete banking support flow
               </p>
 
               <div className="mt-8 space-y-3">
