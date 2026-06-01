@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { FiArrowDownCircle } from 'react-icons/fi';
 
 function HeroAtmosphere() {
@@ -89,48 +88,16 @@ function PremiumSystemVisual() {
 
 function AppBanner() {
 	return (
-		<motion.section
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ ease: 'easeInOut', duration: 0.9, delay: 0.2 }}
-			className="relative mt-10 grid items-center gap-8 md:grid-cols-[0.92fr_1.08fr] lg:gap-12"
-		>
+		<section className="relative mt-10 grid items-center gap-8 md:grid-cols-[0.92fr_1.08fr] lg:gap-12">
 			<HeroAtmosphere />
 			<div className="w-full max-w-[430px] justify-self-center pl-0 text-left md:justify-self-start md:pl-4">
-				<motion.h1
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{
-						ease: 'easeInOut',
-						duration: 0.9,
-						delay: 0.1,
-					}}
-					className="font-general-semibold text-center text-2xl uppercase text-ternary-dark dark:text-primary-light sm:text-left lg:text-3xl xl:text-4xl"
-				>
+				<h1 className="font-general-semibold text-center text-2xl uppercase text-ternary-dark dark:text-primary-light sm:text-left lg:text-3xl xl:text-4xl">
 					{"Hi, I'm Amadou"}
-				</motion.h1>
-				<motion.p
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{
-						ease: 'easeInOut',
-						duration: 0.9,
-						delay: 0.2,
-					}}
-					className="font-general-medium mt-4 text-center text-lg leading-normal text-gray-500 dark:text-gray-200 sm:text-left md:text-xl lg:text-2xl xl:text-3xl"
-				>
+				</h1>
+				<p className="font-general-medium mt-4 text-center text-lg leading-normal text-gray-500 dark:text-gray-200 sm:text-left md:text-xl lg:text-2xl xl:text-3xl">
 					A Data Scientist, AI Engineer, Data Engineer & Open Source Enthusiast
-				</motion.p>
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{
-						ease: 'easeInOut',
-						duration: 0.9,
-						delay: 0.3,
-					}}
-					className="flex justify-center sm:block"
-				>
+				</p>
+				<div className="flex justify-center sm:block">
 					<a
 						download="CV_Amadou_MAMANE.pdf"
 						href="/files/CV_Amadou_MAMANE.pdf"
@@ -140,17 +107,12 @@ function AppBanner() {
 						<FiArrowDownCircle className="ml-0 mr-2 h-5 w-5 duration-100 sm:ml-1 sm:mr-3 sm:h-6 sm:w-6" />
 						<span className="text-sm duration-100 sm:text-lg">Download CV</span>
 					</a>
-				</motion.div>
+				</div>
 			</div>
-			<motion.div
-				initial={{ opacity: 0, y: -60 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ ease: 'easeInOut', duration: 0.9, delay: 0.2 }}
-				className="w-full justify-self-center md:justify-self-end"
-			>
+			<div className="w-full justify-self-center md:justify-self-end">
 				<PremiumSystemVisual />
-			</motion.div>
-		</motion.section>
+			</div>
+		</section>
 	);
 }
 
