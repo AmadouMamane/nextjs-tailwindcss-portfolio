@@ -64,12 +64,12 @@ function AppHeader() {
 						<Link
 							href="/"
 							aria-label="Amadou Mamane home"
-							className="group relative flex h-12 shrink-0 items-center rounded-full border border-slate-200/70 bg-white/70 px-3 shadow-sm transition duration-300 hover:border-indigo-200 hover:bg-white hover:shadow-md dark:border-white/[0.08] dark:bg-white/[0.045] dark:hover:border-indigo-300/30 dark:hover:bg-white/[0.07]"
+							className="group relative flex h-10 w-[146px] shrink-0 items-center justify-center rounded-full border border-slate-200/70 bg-white/70 shadow-sm transition duration-300 hover:border-indigo-200 hover:bg-white hover:shadow-md dark:border-white/[0.08] dark:bg-white/[0.045] dark:hover:border-indigo-300/30 dark:hover:bg-white/[0.07]"
 						>
 							<span className="pointer-events-none absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent dark:via-white/30" />
 							<Image
 								src={logoSrc}
-								className="h-auto w-[122px] cursor-pointer object-contain transition duration-300 group-hover:opacity-90 sm:w-[132px]"
+								className="h-auto w-[118px] cursor-pointer object-contain transition duration-300 group-hover:opacity-90"
 								alt="Amadou Mamane"
 								width={1500}
 								height={1400}
@@ -77,7 +77,7 @@ function AppHeader() {
 							/>
 						</Link>
 
-						<div className="font-general-medium hidden h-12 items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.68] p-1 shadow-[0_12px_34px_rgba(15,23,42,0.08)] ring-1 ring-white/70 backdrop-blur-xl dark:border-white/[0.08] dark:bg-white/[0.045] dark:shadow-[0_14px_42px_rgba(0,0,0,0.36)] dark:ring-white/[0.04] lg:flex">
+						<div className="font-general-medium hidden h-[50px] w-[600px] items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.68] p-1 shadow-[0_12px_34px_rgba(15,23,42,0.08)] ring-1 ring-white/70 backdrop-blur-xl dark:border-white/[0.08] dark:bg-white/[0.045] dark:shadow-[0_14px_42px_rgba(0,0,0,0.36)] dark:ring-white/[0.04] xl:flex">
 							{navItems.map((item) => {
 								const isActive =
 									router.pathname === item.href ||
@@ -88,7 +88,7 @@ function AppHeader() {
 										key={item.href}
 										href={item.href}
 										aria-current={isActive ? 'page' : undefined}
-										className={`relative inline-flex h-10 items-center rounded-full px-4 text-sm font-medium transition duration-300 ${
+										className={`relative inline-flex h-[42px] flex-1 items-center justify-center rounded-full px-3 text-sm font-medium transition duration-300 ${
 											isActive
 												? 'bg-slate-950 text-white shadow-[0_10px_28px_rgba(79,70,229,0.22)] dark:bg-white dark:text-slate-950 dark:shadow-[0_10px_30px_rgba(129,140,248,0.18)]'
 												: 'text-slate-600 hover:bg-slate-950/[0.045] hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.075] dark:hover:text-white'
@@ -106,7 +106,7 @@ function AppHeader() {
 						<div className="flex items-center gap-2 sm:gap-3">
 							<button
 								onClick={showHireMeModal}
-								className="font-general-medium group hidden h-10 items-center justify-center gap-2 rounded-full bg-slate-950 px-4 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(15,23,42,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-indigo-600 hover:shadow-[0_16px_38px_rgba(99,102,249,0.28)] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:bg-white dark:text-slate-950 dark:shadow-[0_14px_34px_rgba(0,0,0,0.32)] dark:hover:bg-indigo-100 dark:focus:ring-offset-[#020611] sm:inline-flex"
+								className="font-general-medium group hidden h-10 items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white/[0.72] px-4 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-white/60 transition duration-300 hover:-translate-y-0.5 hover:border-indigo-300/70 hover:bg-white hover:text-indigo-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.10] dark:bg-white/[0.055] dark:text-slate-100 dark:ring-white/[0.04] dark:hover:border-indigo-300/45 dark:hover:bg-white/[0.085] dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] sm:inline-flex"
 								aria-label="Work with me button"
 							>
 								<span>Work with me</span>
@@ -128,7 +128,7 @@ function AppHeader() {
 							<button
 								onClick={toggleMenu}
 								type="button"
-								className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.78] text-slate-800 shadow-sm ring-1 ring-white/60 transition duration-300 hover:border-indigo-200 hover:text-indigo-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.09] dark:bg-white/[0.055] dark:text-slate-100 dark:ring-white/[0.04] dark:hover:border-indigo-300/40 dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] lg:hidden"
+								className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.78] text-slate-800 shadow-sm ring-1 ring-white/60 transition duration-300 hover:border-indigo-200 hover:text-indigo-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.09] dark:bg-white/[0.055] dark:text-slate-100 dark:ring-white/[0.04] dark:hover:border-indigo-300/40 dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] xl:hidden"
 								aria-label="Toggle navigation menu"
 								aria-expanded={showMenu}
 							>
@@ -144,7 +144,7 @@ function AppHeader() {
 					<div
 						className={
 							showMenu
-								? 'mt-4 grid gap-1.5 rounded-2xl border border-slate-200/80 bg-white/[0.96] p-2 shadow-[0_22px_60px_rgba(15,23,42,0.16)] ring-1 ring-white/80 backdrop-blur-2xl dark:border-white/[0.08] dark:bg-[#050b18]/[0.96] dark:ring-white/[0.04] lg:hidden'
+								? 'mt-4 grid gap-1.5 rounded-2xl border border-slate-200/80 bg-white/[0.96] p-2 shadow-[0_22px_60px_rgba(15,23,42,0.16)] ring-1 ring-white/80 backdrop-blur-2xl dark:border-white/[0.08] dark:bg-[#050b18]/[0.96] dark:ring-white/[0.04] xl:hidden'
 								: 'hidden'
 						}
 					>
@@ -175,7 +175,7 @@ function AppHeader() {
 
 						<button
 							onClick={showHireMeModal}
-							className="font-general-medium mt-1 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-indigo-600 dark:bg-white dark:text-slate-950 dark:hover:bg-indigo-100"
+							className="font-general-medium mt-1 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-white/[0.74] px-4 text-sm font-semibold text-slate-800 transition hover:border-indigo-300/70 hover:bg-white hover:text-indigo-700 dark:border-white/[0.10] dark:bg-white/[0.06] dark:text-slate-100 dark:hover:border-indigo-300/45 dark:hover:bg-white/[0.09] dark:hover:text-indigo-200"
 							aria-label="Work with me button"
 						>
 							<span>Work with me</span>
