@@ -122,8 +122,7 @@ df = pd.merge(count_df, song_df.drop_duplicates('song_id'), how='left')
   # Already named df
 ```
 
-**Think About It:** As the user_id and song_id are encrypted. Can they be encoded to numeric features?
-  - **Yes**, in this case encoding categorical feature **increase the execution performance** of the models although it does not impact the qualiy of the predictions
+**Identifier encoding:** User and song identifiers are label-encoded into numeric ids, improving model runtime without changing the underlying interaction signal.
 
 ```{python}
 # Apply label encoding for "user_id" and "song_id"
@@ -142,8 +141,7 @@ for col in categorical_columns:
   label_object[col] = labelencoder
 ```
 
-**Think About It:** As the data also contains users who have listened to very few songs and vice versa, is it required to filter the data so that it contains users who have listened to a good count of songs and vice versa?
-  - **Yes**, filtering the data will indeed **reduce the sparcity** in the matrices used for modelling. Hence **increasing the performance of the computation** as well as the **quality of the recommendations**
+**Interaction filtering:** The matrix retains active users and frequently listened songs to reduce sparsity, keep computation manageable, and improve recommendation quality.
 
 A dataset of size 2000000 rows x 7 columns can be quite large and may require a lot of computing resources to process. This can lead to long processing times and can make it difficult to train and evaluate your model efficiently.
 In order to address this issue, it may be necessary to trim down your dataset to a more manageable size.
@@ -326,8 +324,7 @@ plt.show()
 *   **[1999 - 2010]** : in this segment, the **number of titles played vary beetween 8 and 79**, 1999 having the lowest and 2007 having the maximum.
 
 
-**Think About It:** What other insights can be drawn using exploratory data analysis?
-  - We can also **visualize the distribution of the play counts:**
+**Distribution check:** The play-count distribution is inspected to understand interaction imbalance before modeling.
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/, height: 471}
@@ -446,7 +443,7 @@ from surprise import CoClustering
 
 Below is the function to calculate precision@k and recall@k, RMSE, and F1_Score@k to evaluate the model performance.
 
-**Think About It:** Which metric should be used for this problem to compare different models?
+**Evaluation frame:** Models are compared with RMSE, precision@k, recall@k and F1@k, covering both rating error and recommendation relevance.
 
 ```{python}
 def precision_recall_at_k(model, k=30, threshold=1.5, testset=None):
@@ -500,17 +497,7 @@ def precision_recall_at_k(model, k=30, threshold=1.5, testset=None):
     print('F_1 score: ', round((2*precision*recall)/(precision+recall),3)) # Formula to compute the F-1 score.
 ```
 
-**Think About It:** In the function precision_recall_at_k above the threshold value used is 1.5. How precision and recall are affected by changing the threshold? What is the intuition behind using the threshold value of 1.5?
-- Impact of the threshold on recall and precision
- - If we decrease the threshold, most of the predictions would be above the threshold, hence many of the items would be recommended. As the data is imbalanced (many  low playcounts), The TP rate would increase and Precision and Recall would increase.  
- - If we **increase the threshold**, most of the prediction would be below the threshold, hence few songs would be recommended. As the data is imbalanced (very few high playcounts), the TP rate would decrease. **So Precision and Recall would decrease**.
- - So a good threshold is a medium threshold but in the present case most of the predictions are around 1, so 1.5 is a good threshold. Moreover 1 playcount is not enough to say a user like a song. The higher the the threshold, the higher the likely hood the user would love the song.
-
-- Evaluation parameters
- - To compute **precision and recall**, a **threshold of 1.5 and k value of 30 will be considered for the recommended and relevant ratings**.
-
-- Performance metrice selection
- - FP and FN costs are high in the present case. If the FP rate is high (precision is low), we recommend products that the user might not buy. And, if FN rate is high (recall is low) we fail to recommend relevant products that the user might purchase. Therefore, precision and recall need to be optimized. So the **correct performance measure is the F_1 score**.
+**Threshold rationale:** A 1.5 threshold separates weak listening signals from relevant recommendations. Lower values over-recommend low-signal songs; higher values make the system too conservative. F1 balances precision and recall.
 
 Below we are loading the **dataset**, which is a **pandas dataframe**, into a **different format called `surprise.dataset.DatasetAutoFolds`** which is required by this library. To do this we will be **using the classes `Reader` and `Dataset`**
 
@@ -531,12 +518,7 @@ data = Dataset.load_from_df(df_final[['user_id',	'song_id', 'play_count']],
 trainset, testset = train_test_split(data, test_size=0.4, random_state=42)
 ```
 
-**Think About It:** How changing the test size would change the results and outputs?
-
-As the data is imbalanced :
- - If we increase the test size, the performance of the model increase, as more diversity will appear in the testset
- - And conversely, if we decrease, the test size, the performance  decrease.
-
+**Split sensitivity:** Because interactions are imbalanced, the test split affects how much listening diversity appears in evaluation. A larger test set can expose more diverse behavior, while a smaller one may make metrics less representative.
 
 ```{python}
 #| scrolled: false
@@ -701,8 +683,7 @@ sim_user_user_tuned_model.predict(user_id_no_interaction, song_id_no_interaction
 
 **The predicted play count** the for the **user-song pair with no interaciton is 1.53**
 
-**Think About It:** Along with making predictions on listened and unknown songs can we get 5 nearest neighbors (most similar) to a certain song?
-  - Yes, we can get the list of the songs similar to a song
+**Similarity inspection:** The tuned model returns nearest-neighbor songs, making item similarity easier to inspect qualitatively.
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/}
@@ -786,9 +767,7 @@ def ranking_songs(recommendations, playing_count):
   return ranked_songs
 ```
 
-**Think About It:** In the above function to correct the predicted play_count a quantity 1/np.sqrt(n) is subtracted. What is the intuition behind it? Is it also possible to add this quantity instead of subtracting?
- - we can correct the predictions of the songs by using the total play_count of the song. The intuition behind is the higher the playcount the higher the likely hood the song will be liked. So we can add the quantity 1/np.sqrt(n) to have optimistic predictions or in contrario we can substract that quantity to have play count below 5.
- - So the confidence interval of the predictions could be seen as : predicted_prediction - 1/np.sqrt(n), predicted_prediction + 1/np.sqrt(n)
+**Ranking correction:** The `1 / sqrt(n)` adjustment tempers overconfidence on very frequent songs. Subtracting it produces a conservative score; adding it would be more optimistic.
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/, height: 206}
@@ -875,9 +854,7 @@ print("Best RMSE score:", gs.best_score['rmse'])
 print("best_params:", gs.best_params['rmse'])
 ```
 
-**Think About It:** How do the parameters affect the performance of the model? Can we improve the performance of the model further? Check the list of hyperparameters [here](https://surprise.readthedocs.io/en/stable/knn_inspired.html).
-  - Choosing the right set of parameters is critical to some algorithms.
-  - In this case, the similarity options and the number of neighbors enhance the performance of the models
+**KNN tuning:** Similarity options and neighbor count drive KNN performance. Grid search selects the strongest configuration.
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/}
@@ -1003,9 +980,7 @@ print(gs.best_score['rmse'])
 print(gs.best_params['rmse'])
 ```
 
-**Think About It**: How do the parameters affect the performance of the model? Can we improve the performance of the model further? Check the available hyperparameters [here](https://surprise.readthedocs.io/en/stable/matrix_factorization.html).
- - This svd algorithm has a lot of tunnable parameters.
- - Tweeking theses parameters might improve the predictions.
+**SVD tuning:** Latent-factor settings such as learning rate, regularization and epochs can improve prediction quality compared with the default model.
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/}
@@ -1116,9 +1091,7 @@ print(gs.best_score['rmse'])
 print(gs.best_params['rmse'])
 ```
 
-**Think About It**: How do the parameters affect the performance of the model? Can we improve the performance of the model further? Check the available hyperparameters [here](https://surprise.readthedocs.io/en/stable/co_clustering.html).
- - The coclustering algorithm has some tunnable parameters.
- - Tweeking theses parameters might improve the predictions.
+**CoClustering tuning:** Cluster counts and training epochs affect CoClustering quality. Grid search is used to improve the baseline configuration.
 
 ```{python}
 #| colab: {base_uri: https://localhost:8080/}
@@ -1186,8 +1159,7 @@ ranking_songs(recommendations, df_songs_count_freq)
 
 ### Content Based Recommendation Systems
 
-**Think About It:** So far we have only used the play_count of songs to find recommendations but we have other information/features on songs as well. Can we take those song features into account?
- - Yes we can recommend songs which features are similar to a target song
+**Content features:** Song metadata extends the signal beyond play counts, enabling recommendations based on similar titles, releases and artists.
 
 ```{python}
 # Concatenate the "title", "release", "artist_name" columns to create a different column named "text"
@@ -2286,4 +2258,3 @@ The results can be improved provided:
 - more computer power to perform the training.
 - more data on users, for example demographic or behavior data.
 - more data on songs, for example the genre or the category of a song.  
-
