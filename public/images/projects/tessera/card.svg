@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title desc">
+  <title id="title">Tessera project card</title>
+  <desc id="desc">Premium project preview for a guarded banking support AI agent.</desc>
+  <defs>
+    <radialGradient id="heroGlow" cx="50%" cy="34%" r="62%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.42"/>
+      <stop offset="46%" stop-color="#312e81" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#020611" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10172a" stop-opacity="0.96"/>
+      <stop offset="100%" stop-color="#050b18" stop-opacity="0.96"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="48%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse">
+      <path d="M42 0H0V42" fill="none" stroke="#ffffff" stroke-opacity="0.045"/>
+    </pattern>
+  </defs>
+
+  <rect width="1000" height="800" fill="#020611"/>
+  <rect width="1000" height="800" fill="url(#grid)"/>
+  <rect width="1000" height="800" fill="url(#heroGlow)"/>
+
+  <circle cx="820" cy="298" r="274" fill="none" stroke="#6366f1" stroke-opacity="0.44" stroke-width="4"/>
+  <circle cx="820" cy="298" r="226" fill="none" stroke="#38bdf8" stroke-opacity="0.14" stroke-width="2"/>
+  <path d="M638 106C748 62 878 82 960 164" fill="none" stroke="#a78bfa" stroke-opacity="0.28" stroke-width="3"/>
+  <path d="M602 534C714 604 873 594 970 502" fill="none" stroke="#6366f1" stroke-opacity="0.24" stroke-width="3"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <g transform="translate(56 48)" font-size="18" font-weight="700" fill="#e5e7eb">
+      <rect x="0" y="0" width="166" height="46" rx="12" fill="#050b18" stroke="#334155"/>
+      <text x="24" y="30">EU BANKING</text>
+      <rect x="188" y="0" width="158" height="46" rx="12" fill="#050b18" stroke="#334155"/>
+      <text x="212" y="30">GUARDED</text>
+      <rect x="368" y="0" width="152" height="46" rx="12" fill="#050b18" stroke="#334155"/>
+      <text x="392" y="30">AUDITABLE</text>
+    </g>
+
+    <text x="58" y="176" fill="#a78bfa" font-size="20" font-weight="800" letter-spacing="0.16em">OPEN-SOURCE REFERENCE</text>
+    <text x="56" y="286" fill="#ffffff" font-size="112" font-weight="800" letter-spacing="-0.01em">Tessera</text>
+    <text x="62" y="342" fill="#dbe4f0" font-size="30" font-weight="650">Guarded agentic AI for</text>
+    <text x="62" y="382" fill="#dbe4f0" font-size="30" font-weight="650">regulated banking support.</text>
+    <text x="62" y="434" fill="#94a3b8" font-size="20">LangGraph, retrieval, guarded tools, audit</text>
+    <text x="62" y="463" fill="#94a3b8" font-size="20">envelopes and multilingual evals.</text>
+
+    <g transform="translate(580 132)">
+      <rect x="0" y="0" width="364" height="392" rx="28" fill="url(#panel)" stroke="#8b5cf6" stroke-opacity="0.72" stroke-width="2"/>
+      <text x="28" y="54" fill="#c084fc" font-size="18" font-weight="800" letter-spacing="0.14em">LIVE GUARD TRACE</text>
+      <circle cx="314" cy="45" r="5" fill="#22c55e"/>
+      <text x="326" y="52" fill="#22c55e" font-size="16" font-weight="800">LIVE</text>
+      <text x="28" y="96" fill="#ffffff" font-size="26" font-weight="760">Fraud turn pre-flight</text>
+      <rect x="24" y="122" width="316" height="238" rx="14" fill="#020611" fill-opacity="0.42" stroke="#334155" stroke-opacity="0.8"/>
+      <g font-size="17" fill="#e5e7eb" font-weight="650">
+        <text x="72" y="171">User message</text>
+        <text x="72" y="222">Intent and policy check</text>
+        <text x="72" y="273">Tool authorization</text>
+        <text x="72" y="324">Escalate to human</text>
+      </g>
+      <g fill="none" stroke-width="3" stroke-linecap="round">
+        <path d="M47 157v180" stroke="#334155"/>
+        <circle cx="47" cy="164" r="14" stroke="#38bdf8"/>
+        <path d="M47 206l14 9v18l-14 9-14-9v-18z" stroke="#22c55e"/>
+        <path d="M35 266h24M43 254l-8 24M55 254l-8 24" stroke="#f59e0b"/>
+        <path d="M47 307l18 10v20l-18 10-18-10v-20z" stroke="#a855f7"/>
+      </g>
+      <rect x="38" y="290" width="286" height="48" rx="12" fill="#450a0a" fill-opacity="0.18" stroke="#ef4444" stroke-width="2"/>
+      <text x="72" y="322" fill="#fecaca" font-size="17" font-weight="760">Decision: blocked</text>
+    </g>
+
+    <g transform="translate(58 568)">
+      <rect x="0" y="0" width="884" height="4" rx="2" fill="url(#accent)" opacity="0.92" filter="url(#softGlow)"/>
+      <g font-size="17" fill="#e5e7eb" font-weight="750">
+        <text x="0" y="62">FR / DE / EN</text>
+        <text x="210" y="62">40 failure cases</text>
+        <text x="450" y="62">EU banking</text>
+        <text x="668" y="62">4 corpora</text>
+      </g>
+      <g font-size="15" fill="#94a3b8">
+        <text x="0" y="89">Languages</text>
+        <text x="210" y="89">Eval set</text>
+        <text x="450" y="89">Domain</text>
+        <text x="668" y="89">Grounding</text>
+      </g>
+    </g>
+  </g>
+</svg>

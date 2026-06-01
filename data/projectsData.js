@@ -15,6 +15,7 @@ export const projectsData = [
 		category: 'Generative AI',
 		secondaryCategory: 'Software Engineering',
 		img: '/images/projects/tessera/cover.svg',
+		cardImg: '/images/projects/tessera/card.svg',
 		heroImg: '/images/projects/tessera/cover.svg',
 		type: 'tessera',
 		tagline:

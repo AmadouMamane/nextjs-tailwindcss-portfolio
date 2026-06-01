@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { FiTag } from 'react-icons/fi';
 
 const ProjectSingle = (props) => {
+	const isTesseraCard = props.type === 'tessera' || props.id === 1;
+	const imageSrc = props.cardImg || props.img;
+
 	return (
 		<motion.div
 			initial={{ opacity: 0 }}
@@ -21,13 +24,13 @@ const ProjectSingle = (props) => {
 				passHref
 			>
 				<div className="group rounded-lg shadow-lg hover:shadow-2xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark overflow-hidden transition-shadow duration-300">
-					<div className="relative w-full h-80 overflow-hidden">
+					<div className={`relative w-full h-80 overflow-hidden ${isTesseraCard ? 'bg-[#020611]' : ''}`}>
 						<Image
-							src={props.img}
+							src={imageSrc}
 							alt={props.title}
 							fill
 							sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-							className="object-cover border-none group-hover:scale-[1.02] transition-transform duration-500"
+							className={`${isTesseraCard ? 'object-contain p-3 sm:p-4' : 'object-cover'} border-none group-hover:scale-[1.02] transition-transform duration-500`}
 						/>
 						{props.id === 1 && (
 							<div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500 text-white shadow-md">
