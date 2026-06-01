@@ -489,8 +489,8 @@ function HeroTrace() {
     <aside className="hidden rounded-[22px] border border-white/[0.08] bg-[#050b18] p-6 shadow-xl shadow-black/20 backdrop-blur-xl lg:block">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-200">Live guard trace</p>
-          <h2 className="mt-3 text-2xl font-semibold leading-tight text-white">Fraud turn pre-flight</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-200">Guarded execution trace</p>
+          <h2 className="mt-3 text-2xl font-semibold leading-tight text-white">Risk blocked · review triggered</h2>
         </div>
         <span className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-sm font-semibold text-emerald-300">
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,0.9)]" />
@@ -908,8 +908,7 @@ function DemoVideoSection({ links = {} }) {
             <span className="h-px w-20 bg-[#6366f9]/50" />
           </div>
           <p className="mt-4 text-base leading-7 text-slate-300">
-            Start with the guided walkthrough, then open the agent interface to inspect live traces, guarded
-            tools and escalation logic.
+            Start with the guided walkthrough, then open the interface to chat, inspect live traces, guarded execution and escalation flows in action.
           </p>
         </div>
 
@@ -1708,7 +1707,7 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                   </div>
 
                   <p className="mt-8 text-sm font-semibold uppercase tracking-[0.24em] text-indigo-200 sm:mt-10">
-                    Open-source reference implementation
+                      Trusted agent platform
                   </p>
                   <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[0.92] text-white sm:text-6xl lg:text-7xl">
                     Tessera
