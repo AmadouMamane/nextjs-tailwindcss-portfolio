@@ -23,6 +23,7 @@ import {
   UserRoundCheck,
   X,
 } from 'lucide-react';
+import BackButton from '../../reusable/BackButton';
 import Container from '../../layout/Container';
 import RelatedProjects from '../RelatedProjects';
 import AppHeader from '../../shared/AppHeader';
@@ -408,10 +409,10 @@ function ProofNavigation({ links = {} }) {
   return (
     <nav
       aria-label="Tessera page shortcuts"
-      className="sticky top-0 z-30 border-y border-white/10 bg-[#020611]/95 shadow-lg shadow-slate-950/20 backdrop-blur"
+      className="sticky top-0 z-30 border-y border-white/[0.06] bg-[#020611]/95 shadow-lg shadow-slate-950/20 backdrop-blur"
     >
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-3 sm:px-10 lg:px-14">
-        <div className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-violet-300 lg:block">
+        <div className="hidden shrink-0 text-xs font-semibold uppercase tracking-[0.18em] text-indigo-200 lg:block">
           Jump to proof
         </div>
         <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1">
@@ -428,7 +429,7 @@ function ProofNavigation({ links = {} }) {
                 {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 className={`group flex min-h-14 min-w-[154px] shrink-0 items-center gap-3 rounded-lg border px-3 text-left transition focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:focus:ring-offset-primary-dark ${
                   isPrimary
-                    ? 'border-violet-400/50 bg-violet-500 text-white shadow-lg shadow-violet-950/30 hover:bg-violet-400'
+                    ? 'border-[#818cf8]/60 bg-[#6366f9] text-white shadow-lg shadow-[rgba(99,102,249,0.28)] hover:bg-[#5558e8]'
                     : 'border-white/10 bg-white/[0.04] text-slate-200 hover:border-sky-300/30 hover:bg-white/[0.08] hover:text-sky-100'
                 }`}
               >
@@ -477,7 +478,7 @@ function heroTraceToneClasses(tone) {
     green: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300',
     amber: 'border-amber-400/30 bg-amber-400/10 text-amber-300',
     rose: 'border-rose-400 bg-rose-500/10 text-rose-300',
-    violet: 'border-violet-400/30 bg-violet-400/10 text-violet-300',
+    violet: 'border-[#818cf8]/40 bg-[#6366f9]/15 text-indigo-200',
   };
 
   return tones[tone] || tones.sky;
@@ -485,10 +486,10 @@ function heroTraceToneClasses(tone) {
 
 function HeroTrace() {
   return (
-    <aside className="hidden rounded-[24px] border border-violet-400/45 bg-[#050b18]/80 p-6 shadow-2xl shadow-violet-950/40 backdrop-blur-xl lg:block">
+    <aside className="hidden rounded-[22px] border border-white/[0.08] bg-[#050b18] p-6 shadow-xl shadow-black/20 backdrop-blur-xl lg:block">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-300">Live guard trace</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-200">Live guard trace</p>
           <h2 className="mt-3 text-2xl font-semibold leading-tight text-white">Fraud turn pre-flight</h2>
         </div>
         <span className="inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-sm font-semibold text-emerald-300">
@@ -548,12 +549,12 @@ function HeroTrace() {
 function EvidenceStrip() {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#040a16] p-5 shadow-2xl shadow-slate-950/20">
-      <div className="absolute left-8 right-8 top-5 hidden h-px bg-[linear-gradient(90deg,#a855f7,#22c55e,#0ea5e9,#f59e0b)] lg:block" />
+      <div className="absolute left-8 right-8 top-5 hidden h-px bg-[linear-gradient(90deg,#6366f9,#22c55e,#0ea5e9,#f59e0b)] lg:block" />
       <div className="grid gap-4 lg:grid-cols-4">
         {EVIDENCE_ITEMS.map((item, index) => {
           const Icon = item.icon;
           const toneClasses = {
-            violet: 'text-violet-300 border-violet-400/30 bg-violet-400/10',
+            violet: 'text-indigo-200 border-[#818cf8]/40 bg-[#6366f9]/15',
             green: 'text-emerald-300 border-emerald-400/30 bg-emerald-400/10',
             sky: 'text-sky-300 border-sky-400/30 bg-sky-400/10',
             amber: 'text-amber-300 border-amber-400/30 bg-amber-400/10',
@@ -575,6 +576,17 @@ function EvidenceStrip() {
             </article>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+function SectionDivider() {
+  return (
+    <div className="bg-[#020611] px-6 sm:px-10 lg:px-14" aria-hidden="true">
+      <div className="mx-auto max-w-7xl">
+        <div className="h-px bg-gradient-to-r from-transparent via-[#6366f9]/20 to-transparent" />
+        <div className="mx-auto h-6 max-w-3xl bg-[radial-gradient(ellipse_at_top,rgba(99,102,249,0.055),transparent_72%)]" />
       </div>
     </div>
   );
@@ -681,7 +693,7 @@ function LanguageCaseCard({ item }) {
 
 function MultilingualSurface() {
   return (
-    <section id="language-routes" className="scroll-mt-24 border-b border-white/10 bg-[#020611]">
+    <section id="language-routes" className="scroll-mt-24 bg-gradient-to-b from-[#020611] via-[#050b18] to-[#020611]">
       <div className="mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-14">
         <div className="mb-8 grid gap-4 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
           <div>
@@ -693,8 +705,8 @@ function MultilingualSurface() {
             </h2>
           </div>
           <p className="text-sm leading-7 text-slate-600 dark:text-slate-300">
-            The page now makes the multilingual promise inspectable: language routing, regulatory grounding,
-            guard decisions, and response boundaries are shown as part of the same operating surface.
+            Each locale carries its own regulator context, routing decision, guard outcome, and bounded
+            customer reply.
           </p>
         </div>
 
@@ -835,14 +847,14 @@ function RouteComparisonCard({ route }) {
 
 function AssuranceBand() {
   return (
-    <section className="border-b border-white/10 bg-[#050b18]">
+    <section className="bg-gradient-to-b from-[#020611] via-[#050b18] to-[#020611]">
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-12 sm:px-10 lg:grid-cols-[0.72fr_1.28fr] lg:px-14">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             Delivery assurance
           </p>
           <h2 className="mt-3 text-3xl font-semibold leading-tight text-slate-950 dark:text-white">
-            The case study now shows how the demo earns trust.
+            Trust comes from the delivery chain, not a single screen.
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-600 dark:text-slate-300">
             The strongest signal is not a single UI screen. It is the chain from local quality gates to
@@ -890,10 +902,10 @@ function DemoVideoSection({ links = {} }) {
     <section id="demo-video" className="scroll-mt-24 bg-[#020611] text-white">
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-14">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="flex items-center justify-center gap-4 text-violet-300">
-            <span className="h-px w-20 bg-violet-400/40" />
-            <p className="text-sm font-semibold uppercase tracking-[0.22em]">Demo & agent UI</p>
-            <span className="h-px w-20 bg-violet-400/40" />
+          <div className="flex items-center justify-center gap-4 text-indigo-200">
+            <span className="h-px w-20 bg-[#6366f9]/50" />
+            <p className="text-sm font-semibold uppercase tracking-[0.22em]">Demo and agent UI</p>
+            <span className="h-px w-20 bg-[#6366f9]/50" />
           </div>
           <p className="mt-4 text-base leading-7 text-slate-300">
             Start with the guided walkthrough, then open the agent interface to inspect live traces, guarded
@@ -905,11 +917,11 @@ function DemoVideoSection({ links = {} }) {
           <a
             href={resolvedVideoHref}
             {...(resolvedVideoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-            className="group relative min-h-[280px] overflow-hidden rounded-2xl border border-violet-400/30 bg-[#080f22] p-6 shadow-2xl shadow-violet-950/30 transition hover:-translate-y-0.5 hover:border-violet-300/60"
+            className="group relative min-h-[280px] overflow-hidden rounded-2xl border border-[#818cf8]/40 bg-[#080f22] p-6 shadow-2xl shadow-[rgba(99,102,249,0.20)] transition hover:-translate-y-0.5 hover:border-[#a5b4fc]/70"
           >
-            <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(124,58,237,0.36),transparent_32%),linear-gradient(135deg,rgba(14,165,233,0.14),transparent_42%)]" />
+            <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(99,102,249,0.38),transparent_32%),linear-gradient(135deg,rgba(14,165,233,0.13),transparent_42%)]" />
             <span className="relative flex h-full min-h-[232px] flex-col justify-end">
-              <span className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-violet-300/50 bg-violet-500 text-white shadow-[0_0_48px_rgba(139,92,246,0.65)] transition group-hover:scale-105">
+              <span className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[#a5b4fc]/60 bg-[#6366f9] text-white shadow-[0_0_48px_rgba(99,102,249,0.62)] transition group-hover:scale-105">
                 <PlayCircle className="h-10 w-10" aria-hidden="true" />
               </span>
               <span className="absolute right-4 top-4 rounded-lg border border-white/15 bg-black/35 px-3 py-1 text-sm font-semibold text-white backdrop-blur">
@@ -919,7 +931,7 @@ function DemoVideoSection({ links = {} }) {
               <span className="mt-2 block max-w-sm text-sm leading-6 text-slate-300">
                 A guided fraud-support scenario showing guard decisions, audit evidence and escalation.
               </span>
-              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-violet-200">
+              <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-indigo-200">
                 Play video
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
               </span>
@@ -938,7 +950,7 @@ function DemoVideoSection({ links = {} }) {
               <a
                 href={demoHref}
                 {...(demoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-emerald-300 transition hover:text-emerald-200"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg text-sm font-semibold text-indigo-200 transition hover:text-white"
               >
                 Open interface
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -957,7 +969,7 @@ function toneDotClass(tone) {
     amber: 'bg-amber-400',
     rose: 'bg-rose-400',
     green: 'bg-emerald-400',
-    violet: 'bg-violet-400',
+    violet: 'bg-[#6366f9]',
   };
 
   return tones[tone] || tones.sky;
@@ -1059,7 +1071,7 @@ function SystemUiCta({ links = {} }) {
   const demoHref = links.demo || links.systemUi;
 
   return (
-    <section id="demo-system-ui" className="scroll-mt-24 border-b border-white/10 bg-[#020611]">
+    <section id="demo-system-ui" className="scroll-mt-24 bg-[#020611]">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 sm:px-10 lg:grid-cols-[0.72fr_1.28fr] lg:px-14">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -1125,7 +1137,7 @@ function SystemUiCta({ links = {} }) {
 
 function ScenarioSpotlight() {
   return (
-    <section id="risk-scenario" className="scroll-mt-24 border-y border-white/10 bg-[#050b18]">
+    <section id="risk-scenario" className="scroll-mt-24 bg-gradient-to-b from-[#020611] via-[#050b18] to-[#020611]">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-14">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -1407,7 +1419,7 @@ function FinalOpenSourceCta({ links = {} }) {
               <TerminalSquare className="h-6 w-6" aria-hidden="true" />
             </span>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-violet-300">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-200">
                 Open-source & transparent
               </p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight">Inspect the assembly, not a black box.</h2>
@@ -1471,11 +1483,11 @@ function ScrollProgressDial() {
   const roundedProgress = Math.round(progress);
 
   return (
-    <div className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
+    <div className="fixed -right-3 top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
       <div
-        className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 p-1 text-xs font-semibold text-white shadow-2xl shadow-violet-950/40 backdrop-blur"
+        className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 p-1 text-xs font-semibold text-white shadow-[0_0_36px_rgba(99,102,249,0.30)] backdrop-blur"
         style={{
-          background: `conic-gradient(from 0deg, #8b5cf6 ${roundedProgress}%, rgba(255,255,255,0.10) ${roundedProgress}%)`,
+          background: `conic-gradient(from 0deg, #6366f9 ${roundedProgress}%, rgba(255,255,255,0.10) ${roundedProgress}%)`,
         }}
         aria-label={`Reading progress ${roundedProgress} percent`}
       >
@@ -1483,31 +1495,6 @@ function ScrollProgressDial() {
           {roundedProgress}%
         </div>
       </div>
-    </div>
-  );
-}
-
-function TesseraHistoryControls() {
-  return (
-    <div className="flex w-fit items-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] p-1 shadow-2xl shadow-slate-950/30 backdrop-blur">
-      <button
-        type="button"
-        onClick={() => window.history.back()}
-        aria-label="Back to previous page"
-        title="Back"
-        className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-white transition hover:border-violet-300/40 hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-violet-300"
-      >
-        <ArrowRight className="h-4 w-4 rotate-180" aria-hidden="true" />
-      </button>
-      <button
-        type="button"
-        onClick={() => window.history.forward()}
-        aria-label="Forward to next page"
-        title="Forward"
-        className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-white transition hover:border-violet-300/40 hover:bg-white/[0.12] focus:outline-none focus:ring-2 focus:ring-violet-300"
-      >
-        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-      </button>
     </div>
   );
 }
@@ -1550,21 +1537,20 @@ function TesseraStory() {
   ];
 
   return (
-    <section className="border-t border-white/10 bg-[#020611]">
+    <section className="bg-gradient-to-b from-[#020611] via-[#050b18] to-[#020611]">
       <div className="mx-auto max-w-7xl px-6 py-16 sm:px-10 lg:px-14">
         <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-end">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-300">
-              Banking engineering story
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-200">
+              Operating model
             </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
-              The page now reads like an operated system, not a visual demo.
+              From customer signal to reviewer-ready evidence.
             </h2>
           </div>
           <p className="text-sm leading-7 text-slate-300">
-            Tessera is a reference implementation for regulated banking support. The important part is not a
-            new framework claim; it is the full chain from language routing to guard checks, replayable failures,
-            audit evidence and human escalation.
+            Tessera treats banking support as a controlled workflow: language, intent, policy, tool permission,
+            audit evidence, and escalation stay visible from the first message to the final handoff.
           </p>
         </div>
 
@@ -1638,7 +1624,7 @@ function TesseraStory() {
 
               return (
                 <article key={card.title} className="rounded-xl border border-white/10 bg-white/[0.035] p-5">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-violet-300/25 bg-violet-300/10 text-violet-200">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#818cf8]/30 bg-[#6366f9]/15 text-indigo-200">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <h4 className="mt-5 text-lg font-semibold text-white">{card.title}</h4>
@@ -1683,6 +1669,7 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
     <>
       <PagesMetaHead />
       <AppHeader />
+      <BackButton />
       <Container fullWidth>
       <div className="dark bg-[#020611] text-slate-300 min-h-screen">
         <ScrollProgressDial />
@@ -1703,14 +1690,12 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
             }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,#020611_0%,rgba(2,6,17,0.98)_42%,rgba(2,6,17,0.76)_72%,rgba(2,6,17,0.96)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_58%_45%,rgba(124,58,237,0.30),transparent_26%),radial-gradient(circle_at_72%_22%,rgba(14,165,233,0.12),transparent_22%),radial-gradient(circle_at_84%_72%,rgba(16,185,129,0.10),transparent_20%)]" />
-          <div className="absolute left-[42%] top-[18%] hidden h-[520px] w-[520px] rounded-full border border-violet-400/25 shadow-[0_0_90px_rgba(124,58,237,0.28)] lg:block" aria-hidden="true" />
-          <div className="absolute left-[48%] top-[23%] hidden h-[420px] w-[420px] rounded-full border border-sky-400/10 lg:block" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_88%_0%,rgba(99,102,249,0.22),transparent_15%),radial-gradient(circle_at_96%_0%,rgba(14,165,233,0.10),transparent_14%),radial-gradient(circle_at_88%_70%,rgba(16,185,129,0.08),transparent_18%)]" />
+          <div className="absolute -right-[10%] -top-[36%] hidden h-[430px] w-[430px] rounded-full border border-[#818cf8]/20 shadow-[0_0_72px_rgba(99,102,249,0.20)] lg:block" aria-hidden="true" />
+          <div className="absolute -right-[6%] -top-[28%] hidden h-[335px] w-[335px] rounded-full border border-sky-400/10 lg:block" aria-hidden="true" />
           <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#020611] to-transparent" />
 
           <div className="relative mx-auto flex min-h-[760px] max-w-7xl flex-col px-6 pb-10 pt-8 sm:px-10 lg:px-14">
-            <TesseraHistoryControls />
-
             <div className="flex flex-1 items-center py-8 sm:py-16">
               <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,0.96fr)_minmax(360px,0.56fr)] lg:items-center">
                 <div className="max-w-4xl">
@@ -1729,40 +1714,40 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                     </span>
                   </div>
 
-                  <p className="mt-7 text-sm font-semibold uppercase tracking-[0.24em] text-violet-300 sm:mt-9">
-                    Flagship open-source AI engineering project
+                  <p className="mt-8 text-sm font-semibold uppercase tracking-[0.24em] text-indigo-200 sm:mt-10">
+                    Open-source reference implementation
                   </p>
-                  <h1 className="mt-4 max-w-3xl text-6xl font-semibold leading-[0.88] text-white sm:text-7xl lg:text-8xl">
+                  <h1 className="mt-6 max-w-3xl text-5xl font-semibold leading-[0.92] text-white sm:text-6xl lg:text-7xl">
                     Tessera
                   </h1>
-                  <p className="mt-5 max-w-2xl text-2xl font-semibold leading-tight text-slate-300 sm:text-3xl">
+                  <p className="mt-8 max-w-2xl text-2xl font-semibold leading-tight text-slate-300 sm:text-3xl">
                     A guarded agentic AI system for regulated banking support.
                   </p>
-                  <p className="mt-5 max-w-3xl text-base leading-8 text-slate-200 sm:text-lg">
+                  <p className="mt-7 max-w-3xl text-base leading-8 text-slate-200 sm:text-lg sm:leading-9">
                     Built with LangGraph, retrieval, guarded tool execution, audit envelopes and a multilingual
                     regression harness across French, German and English.
                   </p>
 
-                  <div className="mt-7 flex flex-wrap gap-4 sm:mt-8">
+                  <div className="mt-9 flex flex-wrap gap-4 sm:mt-10">
                     <a
                       href={videoHref}
                       {...(videoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                      className="group inline-flex min-h-16 items-center gap-3 rounded-xl bg-violet-500 px-5 text-left text-white shadow-2xl shadow-violet-500/30 transition hover:bg-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 focus:ring-offset-[#020611]"
+                      className="group inline-flex min-h-16 items-center gap-3 rounded-xl bg-[#6366f9] px-5 text-left text-white shadow-2xl shadow-[rgba(99,102,249,0.32)] transition hover:bg-[#5558e8] focus:outline-none focus:ring-2 focus:ring-[#a5b4fc] focus:ring-offset-2 focus:ring-offset-[#020611]"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-violet-600 transition group-hover:scale-105">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#6366f9] transition group-hover:scale-105">
                         <PlayCircle className="h-6 w-6" aria-hidden="true" />
                       </span>
                       <span>
                         <span className="block text-lg font-semibold leading-tight">Watch 2-min demo</span>
-                        <span className="mt-0.5 block text-sm text-violet-100">Video walkthrough</span>
+                        <span className="mt-0.5 block text-sm text-indigo-100">Video walkthrough</span>
                       </span>
                     </a>
                     <a
                       href={demoHref}
                       {...(demoHref.startsWith('#') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                      className="group inline-flex min-h-16 items-center gap-3 rounded-xl border border-white/20 bg-white/5 px-5 text-left text-white shadow-xl shadow-black/20 backdrop-blur transition hover:border-emerald-300/40 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-[#020611]"
+                      className="group inline-flex min-h-16 items-center gap-3 rounded-xl border border-[#818cf8]/40 bg-white/5 px-5 text-left text-white shadow-xl shadow-black/20 backdrop-blur transition hover:border-[#a5b4fc]/70 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#a5b4fc] focus:ring-offset-2 focus:ring-offset-[#020611]"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-emerald-300/30 bg-emerald-300/10 text-emerald-300">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#818cf8]/40 bg-[#6366f9]/15 text-indigo-200">
                         <TerminalSquare className="h-6 w-6" aria-hidden="true" />
                       </span>
                       <span>
@@ -1793,11 +1778,14 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                     )}
                   </div>
 
-                  <div className="mt-7 grid max-w-4xl grid-cols-2 gap-x-4 gap-y-2 border-t border-white/10 pt-5 sm:mt-8 sm:grid-cols-2 lg:grid-cols-4">
-                    <HeroMetric icon={Languages} label="Languages" value="FR / DE / EN" />
-                    <HeroMetric icon={ShieldCheck} label="Eval set" value="40 failure cases" />
-                    <HeroMetric icon={Euro} label="Domain" value="EU banking" />
-                    <HeroMetric icon={Database} label="Grounding" value="4 corpora" />
+                  <div className="mt-14 max-w-3xl sm:mt-16">
+                    <div className="h-px w-full max-w-sm bg-gradient-to-r from-white/[0.16] via-white/[0.08] to-transparent" />
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 pt-6 sm:grid-cols-2 lg:grid-cols-4">
+                      <HeroMetric icon={Languages} label="Languages" value="FR / DE / EN" />
+                      <HeroMetric icon={ShieldCheck} label="Eval set" value="40 failure cases" />
+                      <HeroMetric icon={Euro} label="Domain" value="EU banking" />
+                      <HeroMetric icon={Database} label="Grounding" value="4 corpora" />
+                    </div>
                   </div>
                 </div>
                 <HeroTrace />
@@ -1809,6 +1797,8 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
         <ProofNavigation links={links} />
 
         <DemoVideoSection links={links} />
+
+        <SectionDivider />
 
         <section className="mx-auto max-w-7xl px-6 py-10 sm:px-10 lg:px-14">
           <div className="mb-8">
@@ -1843,7 +1833,9 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
           </div>
         </section>
 
-        <section className="border-y border-white/10 bg-[#050b18]">
+        <SectionDivider />
+
+        <section className="bg-gradient-to-b from-[#020611] via-[#050b18] to-[#020611]">
           <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:px-10 lg:grid-cols-[0.9fr_1.1fr] lg:px-14">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
@@ -1883,11 +1875,19 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
           </div>
         </section>
 
+        <SectionDivider />
+
         <MultilingualSurface />
+
+        <SectionDivider />
 
         <RegressionScorecard />
 
+        <SectionDivider />
+
         <ScenarioSpotlight />
+
+        <SectionDivider />
 
         <section id="execution-path" className="scroll-mt-24 bg-[#020611] text-white">
           <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:px-10 lg:grid-cols-[1fr_380px] lg:px-14">
@@ -1900,8 +1900,8 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                   Every useful action leaves a trail.
                 </h2>
                 <p className="text-sm leading-7 text-slate-300">
-                  The page now shows the operating contract, not only the architecture: each turn moves through
-                  routing, retrieval, guard checks, audit emission, and a final response or escalation path.
+                  Each customer turn moves through routing, retrieval, guard checks, audit emission, and a final
+                  response or escalation path.
                 </p>
               </div>
 
@@ -1924,7 +1924,11 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
 
         <AssuranceBand />
 
+        <SectionDivider />
+
         <SystemUiCta links={links} />
+
+        <SectionDivider />
 
         <section id="architecture-diagrams" className="scroll-mt-24 mx-auto max-w-7xl px-6 py-14 sm:px-10 lg:px-14">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -1937,8 +1941,8 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-6 text-slate-600 dark:text-slate-300">
-              The page keeps the project anchored in diagrams and constraints instead of vague AI claims.
-              Click any diagram to inspect it full-screen.
+              The diagrams expose the system boundary: agent orchestration, guarded tools, audit sinks, dual
+              deployment paths, and CI-gated evaluation.
             </p>
           </div>
 
@@ -1961,7 +1965,9 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
           </div>
         </section>
 
-        <section id="stack-snapshot" className="scroll-mt-24 border-y border-white/10 bg-[#050b18]">
+        <SectionDivider />
+
+        <section id="stack-snapshot" className="scroll-mt-24 bg-gradient-to-b from-[#020611] via-[#050b18] to-[#020611]">
           <div className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-14">
             <div className="mb-7 flex items-center gap-3">
               <TerminalSquare className="h-6 w-6 text-sky-600 dark:text-sky-300" aria-hidden="true" />
@@ -1975,7 +1981,11 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
           </div>
         </section>
 
+        <SectionDivider />
+
         <TesseraStory />
+
+        <SectionDivider />
 
         <FinalOpenSourceCta links={links} />
 
