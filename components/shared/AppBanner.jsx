@@ -90,18 +90,28 @@ function AppBanner() {
 	return (
 		<section className="relative mt-10 grid items-center gap-8 md:grid-cols-[0.92fr_1.08fr] lg:gap-12">
 			<HeroAtmosphere />
-			<div className="w-full max-w-[430px] justify-self-center pl-0 text-left md:justify-self-start md:pl-4">
+			<div className="w-full max-w-[450px] justify-self-center pl-0 text-left md:justify-self-start md:pl-4">
 				<h1 className="font-general-semibold text-center text-2xl uppercase text-ternary-dark dark:text-primary-light sm:text-left lg:text-3xl xl:text-4xl">
 					{"Hi, I'm Amadou"}
 				</h1>
-				<p className="font-general-medium mt-4 text-center text-lg leading-normal text-gray-500 dark:text-gray-200 sm:text-left md:text-xl lg:text-2xl xl:text-3xl">
-					A Data Scientist, AI Engineer, Data Engineer & Open Source Enthusiast
+				<p className="font-general-medium mt-4 text-center text-lg leading-normal text-gray-500 dark:text-gray-200 sm:text-left md:text-xl lg:text-2xl xl:text-[1.65rem]">
+					Production-grade AI systems, data platforms and guarded LLM agents
 				</p>
+				<div className="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start">
+					{['Agentic AI', 'Data platforms', 'Applied ML'].map((item) => (
+						<span
+							key={item}
+							className="rounded-full border border-slate-200/80 bg-white/45 px-3 py-1 text-xs font-medium text-slate-600 shadow-sm backdrop-blur-xl dark:border-white/[0.08] dark:bg-white/[0.045] dark:text-slate-300"
+						>
+							{item}
+						</span>
+					))}
+				</div>
 				<div className="flex justify-center sm:block">
 					<a
 						download="CV_Amadou_MAMANE.pdf"
 						href="/files/CV_Amadou_MAMANE.pdf"
-						className="font-general-medium mt-10 mb-6 flex w-36 items-center justify-center rounded-lg border border-slate-200/90 bg-white/70 py-2.5 text-lg text-gray-600 shadow-[0_16px_34px_rgba(15,23,42,0.08)] backdrop-blur-xl duration-500 hover:border-indigo-300 hover:bg-indigo-500 hover:text-white focus:ring-1 focus:ring-indigo-900 dark:border-white/[0.08] dark:bg-white/[0.055] dark:text-gray-200 dark:shadow-[0_18px_44px_rgba(0,0,0,0.22)] sm:mb-0 sm:w-48 sm:py-3"
+						className="font-general-medium mt-9 mb-6 flex w-36 items-center justify-center rounded-lg border border-slate-200/90 bg-white/70 py-2.5 text-lg text-gray-600 shadow-[0_16px_34px_rgba(15,23,42,0.08)] backdrop-blur-xl duration-500 hover:border-indigo-300 hover:bg-indigo-500 hover:text-white focus:ring-1 focus:ring-indigo-900 dark:border-white/[0.08] dark:bg-white/[0.055] dark:text-gray-200 dark:shadow-[0_18px_44px_rgba(0,0,0,0.22)] sm:mb-0 sm:w-48 sm:py-3"
 						aria-label="Download Resume"
 					>
 						<FiArrowDownCircle className="ml-0 mr-2 h-5 w-5 duration-100 sm:ml-1 sm:mr-3 sm:h-6 sm:w-6" />

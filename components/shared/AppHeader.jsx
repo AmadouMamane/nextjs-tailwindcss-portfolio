@@ -103,12 +103,12 @@ function AppHeader() {
 							})}
 						</div>
 
-						<div className="flex items-center gap-2 sm:gap-3">
-							<button
-								onClick={showHireMeModal}
-								className="font-general-medium group hidden h-10 items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white/[0.72] px-4 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-white/60 transition duration-300 hover:-translate-y-0.5 hover:border-indigo-300/70 hover:bg-white hover:text-indigo-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.10] dark:bg-white/[0.055] dark:text-slate-100 dark:ring-white/[0.04] dark:hover:border-indigo-300/45 dark:hover:bg-white/[0.085] dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] sm:inline-flex"
-								aria-label="Work with me button"
-							>
+							<div className="flex items-center gap-2 sm:gap-3">
+								<button
+									onClick={showHireMeModal}
+									className="font-general-medium group hidden h-10 items-center justify-center gap-2 rounded-full border border-slate-200/80 bg-white/[0.72] px-4 text-sm font-semibold text-slate-800 shadow-sm ring-1 ring-white/60 transition duration-300 hover:-translate-y-0.5 hover:border-indigo-300/70 hover:bg-white hover:text-indigo-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.10] dark:bg-white/[0.055] dark:text-slate-100 dark:ring-white/[0.04] dark:hover:border-indigo-300/45 dark:hover:bg-white/[0.085] dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] sm:inline-flex"
+									aria-label="Work with me button"
+								>
 								<span>Work with me</span>
 								<ArrowUpRight
 									className="h-4 w-4 transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -173,11 +173,11 @@ function AppHeader() {
 							);
 						})}
 
-						<button
-							onClick={showHireMeModal}
-							className="font-general-medium mt-1 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-white/[0.74] px-4 text-sm font-semibold text-slate-800 transition hover:border-indigo-300/70 hover:bg-white hover:text-indigo-700 dark:border-white/[0.10] dark:bg-white/[0.06] dark:text-slate-100 dark:hover:border-indigo-300/45 dark:hover:bg-white/[0.09] dark:hover:text-indigo-200"
-							aria-label="Work with me button"
-						>
+							<button
+								onClick={showHireMeModal}
+								className="font-general-medium mt-1 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200/80 bg-white/[0.74] px-4 text-sm font-semibold text-slate-800 transition hover:border-indigo-300/70 hover:bg-white hover:text-indigo-700 dark:border-white/[0.10] dark:bg-white/[0.06] dark:text-slate-100 dark:hover:border-indigo-300/45 dark:hover:bg-white/[0.09] dark:hover:text-indigo-200"
+								aria-label="Work with me button"
+							>
 							<span>Work with me</span>
 							<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
 						</button>

@@ -15,9 +15,9 @@ export default function Home() {
       <ProjectsGrid />
 
       <div className="mt-10 sm:mt-15 flex justify-center">
-        <div className="font-general-medium flex items-center px-6 py-3 rounded-lg shadow-lg hover:shadow-xl bg-indigo-500 hover:bg-indigo-600 focus:ring-1 focus:ring-indigo-900 text-white text-lg sm:text-xl duration-300">
-          <Link href="/projects" aria-label="More Projects" passHref>
-            <Button title="More Projects" />
+        <div className="font-general-medium flex items-center rounded-lg border border-indigo-400/20 bg-indigo-500 px-6 py-3 text-lg text-white shadow-[0_16px_34px_rgba(99,102,241,0.25)] duration-300 hover:bg-indigo-600 hover:shadow-[0_20px_44px_rgba(99,102,241,0.32)] focus:ring-1 focus:ring-indigo-900 sm:text-xl">
+          <Link href="/projects" aria-label="View all work" passHref>
+            <Button title="View all work" />
           </Link>
         </div>
       </div>
