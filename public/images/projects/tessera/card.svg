@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" role="img" aria-labelledby="title desc">
+  <title id="title">Guarded banking agent project card</title>
+  <desc id="desc">A dark premium diagram showing a customer signal passing through a guard, a blocked tool call, audit evidence, and human escalation.</desc>
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="42%" r="66%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.46"/>
+      <stop offset="50%" stop-color="#111827" stop-opacity="0.36"/>
+      <stop offset="100%" stop-color="#020611" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="7%" y1="4%" x2="97%" y2="96%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#030712"/>
+    </linearGradient>
+    <linearGradient id="trace" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="48%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="danger" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#ffffff" stroke-opacity="0.045"/>
+    </pattern>
+  </defs>
+
+  <rect width="1000" height="800" fill="#020611"/>
+  <rect width="1000" height="800" fill="url(#grid)"/>
+  <rect width="1000" height="800" fill="url(#halo)"/>
+  <circle cx="500" cy="384" r="294" fill="none" stroke="#6366f1" stroke-opacity="0.34" stroke-width="4"/>
+  <circle cx="500" cy="384" r="218" fill="none" stroke="#22d3ee" stroke-opacity="0.15" stroke-width="3"/>
+
+  <rect x="90" y="112" width="820" height="520" rx="44" fill="url(#panel)" stroke="#6366f1" stroke-opacity="0.56" stroke-width="3"/>
+  <rect x="130" y="152" width="740" height="440" rx="32" fill="#020611" fill-opacity="0.42" stroke="#ffffff" stroke-opacity="0.08"/>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M274 300H430" stroke="url(#trace)" stroke-width="9" filter="url(#softGlow)"/>
+    <path d="M570 300H726" stroke="url(#trace)" stroke-width="9" filter="url(#softGlow)"/>
+    <path d="M500 392C500 444 442 458 380 474" stroke="#6366f1" stroke-opacity="0.85" stroke-width="8" stroke-dasharray="15 16"/>
+    <path d="M500 392C500 444 564 458 626 474" stroke="url(#danger)" stroke-width="8" stroke-dasharray="15 16"/>
+  </g>
+
+  <g transform="translate(154 204)">
+    <rect width="152" height="192" rx="34" fill="#0f172a" stroke="#38bdf8" stroke-opacity="0.58" stroke-width="3"/>
+    <circle cx="76" cy="70" r="32" fill="#38bdf8" fill-opacity="0.12" stroke="#38bdf8" stroke-width="6"/>
+    <path d="M36 142c10-34 70-34 80 0" fill="none" stroke="#7dd3fc" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="76" cy="66" r="14" fill="#7dd3fc"/>
+  </g>
+
+  <g transform="translate(424 174)">
+    <rect width="152" height="252" rx="38" fill="#0f172a" stroke="#22c55e" stroke-opacity="0.62" stroke-width="3"/>
+    <path d="M76 34l58 32v70c0 56-34 84-58 96-24-12-58-40-58-96V66z" fill="#22c55e" fill-opacity="0.1" stroke="#22c55e" stroke-width="7"/>
+    <path d="M47 129l24 24 44-58" stroke="#86efac" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g transform="translate(694 204)">
+    <rect width="152" height="192" rx="34" fill="#0f172a" stroke="#f97316" stroke-opacity="0.62" stroke-width="3"/>
+    <rect x="36" y="48" width="80" height="98" rx="16" fill="#431407" fill-opacity="0.36" stroke="#fb923c" stroke-width="5"/>
+    <path d="M54 72h44M54 96h44M54 120h24" stroke="#fed7aa" stroke-width="8"/>
+    <circle cx="116" cy="146" r="24" fill="#ef4444"/>
+    <path d="M104 146h24" stroke="#fee2e2" stroke-width="8"/>
+  </g>
+
+  <g transform="translate(234 474)">
+    <rect width="232" height="110" rx="28" fill="#020611" stroke="#ef4444" stroke-opacity="0.75" stroke-width="3"/>
+    <path d="M60 28l42 24v44l-42 24-42-24V52z" fill="#450a0a" fill-opacity="0.26" stroke="#ef4444" stroke-width="5"/>
+    <path d="M45 72h30" stroke="#fecaca" stroke-width="9"/>
+    <circle cx="158" cy="56" r="16" fill="#ef4444"/>
+    <circle cx="190" cy="56" r="16" fill="#ef4444" fill-opacity="0.55"/>
+    <rect x="142" y="82" width="64" height="10" rx="5" fill="#fecaca" fill-opacity="0.65"/>
+  </g>
+
+  <g transform="translate(536 474)">
+    <rect width="232" height="110" rx="28" fill="#020611" stroke="#a78bfa" stroke-opacity="0.72" stroke-width="3"/>
+    <rect x="28" y="28" width="64" height="64" rx="16" fill="#312e81" fill-opacity="0.28" stroke="#a78bfa" stroke-width="5"/>
+    <path d="M44 62h32M60 46v32" stroke="#ddd6fe" stroke-width="9"/>
+    <circle cx="152" cy="50" r="13" fill="#c4b5fd"/>
+    <path d="M124 86c8-28 48-28 56 0" fill="none" stroke="#c4b5fd" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(120 684)">
+    <rect x="0" y="0" width="760" height="6" rx="3" fill="url(#trace)" filter="url(#softGlow)"/>
+    <circle cx="0" cy="3" r="11" fill="#8b5cf6"/>
+    <circle cx="254" cy="3" r="11" fill="#22d3ee"/>
+    <circle cx="506" cy="3" r="11" fill="#22c55e"/>
+    <circle cx="760" cy="3" r="11" fill="#f97316"/>
+  </g>
+</svg>
