@@ -13,7 +13,7 @@ export default function DefaultBlogLayout({ children,  isBlog = true}) {
     
 
         <PagesMetaHead title="Blog" />
-        <BackButton />
+        {isBlog ? <BackButton /> : null}
 
         <Container isBlog={isBlog}>
           <div className="mt-0">{children}</div>
@@ -25,6 +25,5 @@ export default function DefaultBlogLayout({ children,  isBlog = true}) {
 
   );
 }
-
 
 
