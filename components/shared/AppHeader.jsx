@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
-import { FiSun, FiMoon, FiX, FiMenu } from 'react-icons/fi';
+import { ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react';
 import HireMeModal from '../HireMeModal';
 import logoLight from '../../public/images/logo-light.png';
 import logoDark from '../../public/images/logo-dark.png';
@@ -49,6 +49,7 @@ function AppHeader() {
 	const hydratedTheme = hasMounted ? activeTheme : 'dark';
 	const logoSrc = hydratedTheme === 'dark' ? logoDark : logoLight;
 	const canRenderModal = hasMounted && showModal;
+	const ThemeIcon = hydratedTheme === 'dark' ? Moon : Sun;
 
 	return (
 		<>
@@ -56,18 +57,19 @@ function AppHeader() {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				id="nav"
-				className="relative border-b border-slate-900/[0.06] bg-white/90 backdrop-blur-2xl dark:border-white/[0.08] dark:bg-[#020611]/90"
+				className="relative border-b border-slate-900/[0.055] bg-white/[0.85] shadow-[0_1px_0_rgba(15,23,42,0.03)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-[#020611]/[0.86] dark:shadow-[0_1px_0_rgba(255,255,255,0.035)]"
 			>
 				<div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-8 lg:px-10">
 					<div className="flex items-center justify-between gap-4">
 						<Link
 							href="/"
 							aria-label="Amadou Mamane home"
-							className="group flex h-12 shrink-0 items-center"
+							className="group relative flex h-12 shrink-0 items-center rounded-full border border-slate-200/70 bg-white/70 px-3 shadow-sm transition duration-300 hover:border-indigo-200 hover:bg-white hover:shadow-md dark:border-white/[0.08] dark:bg-white/[0.045] dark:hover:border-indigo-300/30 dark:hover:bg-white/[0.07]"
 						>
+							<span className="pointer-events-none absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent dark:via-white/30" />
 							<Image
 								src={logoSrc}
-								className="h-auto w-[132px] cursor-pointer object-contain transition duration-300 group-hover:opacity-90 sm:w-[142px]"
+								className="h-auto w-[122px] cursor-pointer object-contain transition duration-300 group-hover:opacity-90 sm:w-[132px]"
 								alt="Amadou Mamane"
 								width={1500}
 								height={1400}
@@ -75,7 +77,77 @@ function AppHeader() {
 							/>
 						</Link>
 
-					<div className="font-general-medium hidden items-center justify-center rounded-full border border-slate-200/80 bg-slate-50/80 px-1.5 py-1.5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.04] lg:flex">
+						<div className="font-general-medium hidden h-12 items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.68] p-1 shadow-[0_12px_34px_rgba(15,23,42,0.08)] ring-1 ring-white/70 backdrop-blur-xl dark:border-white/[0.08] dark:bg-white/[0.045] dark:shadow-[0_14px_42px_rgba(0,0,0,0.36)] dark:ring-white/[0.04] lg:flex">
+							{navItems.map((item) => {
+								const isActive =
+									router.pathname === item.href ||
+									router.pathname.startsWith(`${item.href}/`);
+
+								return (
+									<Link
+										key={item.href}
+										href={item.href}
+										aria-current={isActive ? 'page' : undefined}
+										className={`relative inline-flex h-10 items-center rounded-full px-4 text-sm font-medium transition duration-300 ${
+											isActive
+												? 'bg-slate-950 text-white shadow-[0_10px_28px_rgba(79,70,229,0.22)] dark:bg-white dark:text-slate-950 dark:shadow-[0_10px_30px_rgba(129,140,248,0.18)]'
+												: 'text-slate-600 hover:bg-slate-950/[0.045] hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.075] dark:hover:text-white'
+										}`}
+									>
+										{isActive ? (
+											<span className="mr-2 h-1.5 w-1.5 rounded-full bg-indigo-400 dark:bg-indigo-500" />
+										) : null}
+										{item.label}
+									</Link>
+								);
+							})}
+						</div>
+
+						<div className="flex items-center gap-2 sm:gap-3">
+							<button
+								onClick={showHireMeModal}
+								className="font-general-medium group hidden h-10 items-center justify-center gap-2 rounded-full bg-slate-950 px-4 text-sm font-semibold text-white shadow-[0_14px_34px_rgba(15,23,42,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-indigo-600 hover:shadow-[0_16px_38px_rgba(99,102,249,0.28)] focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:bg-white dark:text-slate-950 dark:shadow-[0_14px_34px_rgba(0,0,0,0.32)] dark:hover:bg-indigo-100 dark:focus:ring-offset-[#020611] sm:inline-flex"
+								aria-label="Work with me button"
+							>
+								<span>Work with me</span>
+								<ArrowUpRight
+									className="h-4 w-4 transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+									aria-hidden="true"
+								/>
+							</button>
+
+							<button
+								type="button"
+								onClick={() => setTheme(activeTheme)}
+								aria-label="Theme Switcher"
+								className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.78] text-slate-700 shadow-sm ring-1 ring-white/60 transition duration-300 hover:-translate-y-0.5 hover:border-indigo-200 hover:text-indigo-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.09] dark:bg-white/[0.055] dark:text-slate-200 dark:ring-white/[0.04] dark:hover:border-indigo-300/40 dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611]"
+							>
+								<ThemeIcon className="h-[18px] w-[18px]" aria-hidden="true" />
+							</button>
+
+							<button
+								onClick={toggleMenu}
+								type="button"
+								className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white/[0.78] text-slate-800 shadow-sm ring-1 ring-white/60 transition duration-300 hover:border-indigo-200 hover:text-indigo-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.09] dark:bg-white/[0.055] dark:text-slate-100 dark:ring-white/[0.04] dark:hover:border-indigo-300/40 dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] lg:hidden"
+								aria-label="Toggle navigation menu"
+								aria-expanded={showMenu}
+							>
+								{showMenu ? (
+									<X className="h-5 w-5" aria-hidden="true" />
+								) : (
+									<Menu className="h-5 w-5" aria-hidden="true" />
+								)}
+							</button>
+						</div>
+					</div>
+
+					<div
+						className={
+							showMenu
+								? 'mt-4 grid gap-1.5 rounded-2xl border border-slate-200/80 bg-white/[0.96] p-2 shadow-[0_22px_60px_rgba(15,23,42,0.16)] ring-1 ring-white/80 backdrop-blur-2xl dark:border-white/[0.08] dark:bg-[#050b18]/[0.96] dark:ring-white/[0.04] lg:hidden'
+								: 'hidden'
+						}
+					>
 						{navItems.map((item) => {
 							const isActive =
 								router.pathname === item.href ||
@@ -86,93 +158,30 @@ function AppHeader() {
 									key={item.href}
 									href={item.href}
 									aria-current={isActive ? 'page' : undefined}
-									className={`rounded-full px-4 py-2 text-sm font-medium transition duration-300 ${
+									className={`flex min-h-11 items-center justify-between rounded-xl px-4 text-sm font-medium transition ${
 										isActive
-											? 'bg-white text-slate-950 shadow-sm dark:bg-white/[0.10] dark:text-white'
-											: 'text-slate-600 hover:bg-white/75 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/[0.07] dark:hover:text-white'
+											? 'bg-slate-950 text-white dark:bg-white dark:text-slate-950'
+											: 'text-slate-700 hover:bg-slate-950/[0.045] hover:text-slate-950 dark:text-slate-200 dark:hover:bg-white/[0.07] dark:hover:text-white'
 									}`}
+									onClick={() => setShowMenu(false)}
 								>
-									{item.label}
+									<span>{item.label}</span>
+									{isActive ? (
+										<span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
+									) : null}
 								</Link>
 							);
 						})}
-					</div>
 
-					<div className="flex items-center gap-2 sm:gap-3">
 						<button
 							onClick={showHireMeModal}
-							className="font-general-medium hidden min-h-10 items-center justify-center rounded-full bg-slate-950 px-4 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 transition duration-300 hover:-translate-y-0.5 hover:bg-indigo-600 hover:shadow-indigo-500/20 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:bg-white dark:text-slate-950 dark:hover:bg-indigo-100 dark:focus:ring-offset-[#020611] sm:inline-flex"
+							className="font-general-medium mt-1 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-indigo-600 dark:bg-white dark:text-slate-950 dark:hover:bg-indigo-100"
 							aria-label="Work with me button"
 						>
-							Work with me
-						</button>
-
-						<button
-							type="button"
-							onClick={() => setTheme(activeTheme)}
-							aria-label="Theme Switcher"
-							className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-indigo-200 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.09] dark:bg-white/[0.06] dark:text-slate-200 dark:hover:border-indigo-300/40 dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611]"
-						>
-							{hydratedTheme === 'dark' ? (
-								<FiMoon className="text-lg" aria-hidden="true" />
-							) : (
-								<FiSun className="text-lg" aria-hidden="true" />
-							)}
-						</button>
-
-						<button
-							onClick={toggleMenu}
-							type="button"
-							className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-sm transition duration-300 hover:border-indigo-200 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white dark:border-white/[0.09] dark:bg-white/[0.06] dark:text-slate-100 dark:hover:border-indigo-300/40 dark:hover:text-indigo-200 dark:focus:ring-offset-[#020611] lg:hidden"
-							aria-label="Toggle navigation menu"
-							aria-expanded={showMenu}
-						>
-							{showMenu ? (
-								<FiX className="text-xl" aria-hidden="true" />
-							) : (
-								<FiMenu className="text-xl" aria-hidden="true" />
-							)}
+							<span>Work with me</span>
+							<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
 						</button>
 					</div>
-				</div>
-
-				<div
-					className={
-						showMenu
-							? 'mt-4 grid gap-2 rounded-2xl border border-slate-200 bg-white/95 p-2 shadow-xl shadow-slate-900/10 dark:border-white/[0.08] dark:bg-[#050b18]/95 lg:hidden'
-							: 'hidden'
-					}
-				>
-					{navItems.map((item) => {
-						const isActive =
-							router.pathname === item.href ||
-							router.pathname.startsWith(`${item.href}/`);
-
-						return (
-							<Link
-								key={item.href}
-								href={item.href}
-								aria-current={isActive ? 'page' : undefined}
-								className={`rounded-xl px-4 py-3 text-sm font-medium transition ${
-									isActive
-										? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-400/10 dark:text-indigo-200'
-										: 'text-slate-700 hover:bg-slate-50 hover:text-slate-950 dark:text-slate-200 dark:hover:bg-white/[0.06] dark:hover:text-white'
-								}`}
-								onClick={() => setShowMenu(false)}
-							>
-								{item.label}
-							</Link>
-						);
-					})}
-
-					<button
-						onClick={showHireMeModal}
-						className="font-general-medium mt-1 inline-flex min-h-11 items-center justify-center rounded-xl bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-indigo-600 dark:bg-white dark:text-slate-950 dark:hover:bg-indigo-100"
-						aria-label="Work with me button"
-					>
-						Work with me
-					</button>
-				</div>
 				</div>
 			</motion.nav>
 
