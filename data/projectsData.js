@@ -12,14 +12,17 @@ export const projectsData = [
 		id: 1,
 		title: '🏛️ Tessera — EU Banking Support Agent',
 		url: 'tessera',
-		category: 'Generative AI',
-		secondaryCategory: 'Software Engineering',
+		category: 'AI Engineering',
+		secondaryCategory: 'Agent Safety',
+		relatedTags: ['Machine Learning', 'Deep Learning'],
 		img: '/images/projects/tessera/cover.svg',
-		cardImg: '/images/projects/tessera/card.svg',
+		cardImg: '/images/projects/tessera/card.svg?v=5',
 		heroImg: '/images/projects/tessera/cover.svg',
 		type: 'tessera',
-		tagline:
-			'A production-shaped LLM agent for European retail banking — guarded, audited, and validated across 40 documented failure modes in French, German, and English.',
+		cardTitle: 'Tessera',
+		cardSummary: 'AI Engineering support case',
+		cardHighlights: ['AI Engineering', 'LangGraph', 'Guardrails', 'Audit'],
+		tagline: 'Guarded EU banking support agent with policy checks, evals, audit trail and FR / DE / EN grounding.',
 		links: {
 			github: 'https://github.com/AmadouMamane/tessera',
 			design: 'https://github.com/AmadouMamane/tessera/blob/main/docs/design.md',
@@ -53,6 +56,7 @@ export const projectsData = [
 		category: 'Data Science',
 		img: '/images/kaggle-isic-2024.png',
 		type: 'notebook',
+		cardSummary: 'Deep Learning diagnosis case',
 		Notebook: {
 			file: '/notebooks/isic-2024_kaggle.html',
 		},
@@ -139,6 +143,7 @@ export const projectsData = [
 		category: 'Data Science',
 		img: '/images/music-recommendation.webp',
 		type: 'notebook',
+		cardSummary: 'Machine Learning recommender case',
 		ProjectHeader: {
 			title: '🎵 AI-Powered Music Recommendation System',
 			publishDate: 'June 30, 2024',
@@ -220,44 +225,6 @@ We plan to experiment with various recommendation approaches, including:
 				'Scikit-learn',
 				'LightFM',
 			],
-		},
-	},
-	{
-		id: 4,
-		title: '💡 Building Autonomous Agentic AI',
-		url: 'building-agentic-ai',
-		category: 'Generative AI',
-		img: '/images/projects/ai-agents/agentic-ai.jpg',
-		type: 'notebook',
-		Notebook: {
-			file: '',
-		},
-		ProjectHeader: {
-			title: '💡 Building Agentic AI - Towards Autonomous and Goal-Directed Systems',
-			publishDate: 'April 06, 2025',
-			tags: '❗🛠️ Work in Progress,  Deep Learning',
-		},
-		ProjectImages: [
-			{
-				id: uuidv4(),
-				title: 'Building Agentic AI Systems',
-				img: '/images/projects/ai-agents/agentic-ai.jpg',
-			},
-		],
-		ProjectInfo: {
-			Overview: `❗🛠️ 📝  Work in Progress
-
-I'm currently writing up something I think you’ll love. Thanks for your patience — it’ll be live shortly!`,
-			Goal: '',
-
-			'Tools & Technologies': [],
-			ProjectDetails: [
-				{
-					id: uuidv4(),
-					details: 'Lorem ipsum dolor, sit amet conse.',
-				},
-			],
-			SocialSharingHeading: 'Share This',
 		},
 	},
 ];
