@@ -583,9 +583,9 @@ function EvidenceStrip() {
 
 function SectionDivider() {
   return (
-    <div className="bg-[#020611] px-6 sm:px-10 lg:px-14" aria-hidden="true">
-      <div className="mx-auto max-w-7xl">
-        <div className="h-px bg-gradient-to-r from-transparent via-[#6366f9]/20 to-transparent" />
+    <div className="bg-[#020611]" aria-hidden="true">
+      <div className="w-full">
+        <div className="h-px w-full bg-gradient-to-r from-[#6366f9]/10 via-[#6366f9]/20 to-[#6366f9]/10" />
         <div className="mx-auto h-6 max-w-3xl bg-[radial-gradient(ellipse_at_top,rgba(99,102,249,0.055),transparent_72%)]" />
       </div>
     </div>
@@ -1306,7 +1306,7 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
             <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{description}</p>
           </div>
-          <span className="hidden shrink-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600 transition group-hover:border-sky-200 group-hover:text-sky-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:group-hover:border-sky-300/30 dark:group-hover:text-sky-200 sm:inline-flex">
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600 transition group-hover:border-sky-200 group-hover:text-sky-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:group-hover:border-sky-300/30 dark:group-hover:text-sky-200">
             <Maximize2 className="h-4 w-4" aria-hidden="true" />
             Expand
           </span>
@@ -1326,10 +1326,6 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
             className={`mx-auto w-full rounded object-contain ${orientation === 'tall' ? 'max-h-[620px]' : 'max-h-[440px]'}`}
             loading="lazy"
           />
-          <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-lg bg-slate-950/90 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white shadow-lg shadow-black/20 backdrop-blur transition group-hover:bg-sky-600">
-            <Maximize2 className="h-4 w-4" aria-hidden="true" />
-            Click to enlarge
-          </span>
         </button>
       </div>
     </figure>
@@ -1690,7 +1686,7 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
             }}
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,#020611_0%,rgba(2,6,17,0.98)_42%,rgba(2,6,17,0.76)_72%,rgba(2,6,17,0.96)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_88%_0%,rgba(99,102,249,0.22),transparent_15%),radial-gradient(circle_at_96%_0%,rgba(14,165,233,0.10),transparent_14%),radial-gradient(circle_at_88%_70%,rgba(16,185,129,0.08),transparent_18%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_52%_30%,rgba(99,102,249,0.18),transparent_36%),radial-gradient(circle_at_96%_0%,rgba(14,165,233,0.10),transparent_14%),radial-gradient(circle_at_88%_70%,rgba(16,185,129,0.08),transparent_18%)]" />
           <div className="absolute -right-[10%] -top-[36%] hidden h-[430px] w-[430px] rounded-full border border-[#818cf8]/20 shadow-[0_0_72px_rgba(99,102,249,0.20)] lg:block" aria-hidden="true" />
           <div className="absolute -right-[6%] -top-[28%] hidden h-[335px] w-[335px] rounded-full border border-sky-400/10 lg:block" aria-hidden="true" />
           <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#020611] to-transparent" />
@@ -1779,7 +1775,7 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
                   </div>
 
                   <div className="mt-14 max-w-3xl sm:mt-16">
-                    <div className="h-px w-full max-w-sm bg-gradient-to-r from-white/[0.16] via-white/[0.08] to-transparent" />
+                    <div className="h-px w-full bg-gradient-to-r from-white/[0.16] via-white/[0.08] to-white/[0.12]" />
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2 pt-6 sm:grid-cols-2 lg:grid-cols-4">
                       <HeroMetric icon={Languages} label="Languages" value="FR / DE / EN" />
                       <HeroMetric icon={ShieldCheck} label="Eval set" value="40 failure cases" />
@@ -1989,8 +1985,8 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
 
         <FinalOpenSourceCta links={links} />
 
-        <section className="mx-auto max-w-7xl px-6 py-12 sm:px-10 lg:px-14">
-          <RelatedProjects currentProject={project} />
+        <section className="mx-auto max-w-7xl py-12">
+          <RelatedProjects currentProject={project} edgeToEdgeRule />
         </section>
 
         <DiagramLightbox diagram={expandedDiagram} onClose={() => setExpandedDiagram(null)} />
