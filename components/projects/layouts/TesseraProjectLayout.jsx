@@ -1093,7 +1093,7 @@ function SystemUiCta({ links = {} }) {
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:bg-white dark:text-primary-dark dark:hover:bg-slate-200 dark:focus:ring-offset-primary-dark"
               >
                 <TerminalSquare className="h-4 w-4" aria-hidden="true" />
-                Open system UI
+                Open agent UI
               </a>
             ) : (
               <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 dark:border-white/15 dark:bg-white/5 dark:text-slate-200">
