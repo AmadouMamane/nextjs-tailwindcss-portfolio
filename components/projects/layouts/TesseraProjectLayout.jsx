@@ -1223,9 +1223,6 @@ function ScenarioSpotlight() {
                 Same customer message, different operating discipline.
               </h3>
             </div>
-            <p className="max-w-lg text-sm leading-6 text-slate-600 dark:text-slate-300">
-              This makes the hidden product decision visible: answering faster is not always safer.
-            </p>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-stretch">
@@ -1306,19 +1303,19 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
             <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{description}</p>
           </div>
-          <span className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600 transition group-hover:border-sky-200 group-hover:text-sky-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:group-hover:border-sky-300/30 dark:group-hover:text-sky-200">
+          <button
+            type="button"
+            onClick={() => onOpen?.(diagram)}
+            aria-label={`Expand ${title} diagram`}
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-600 transition hover:border-sky-200 hover:text-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-sky-300/30 dark:hover:text-sky-200 dark:focus:ring-offset-primary-dark"
+          >
             <Maximize2 className="h-4 w-4" aria-hidden="true" />
             Expand
-          </span>
+          </button>
         </div>
       </div>
       <div className="bg-slate-50 p-3 dark:bg-primary-dark/50">
-        <button
-          type="button"
-          onClick={() => onOpen?.(diagram)}
-          aria-label={`Expand ${title} diagram`}
-          className="relative block w-full cursor-zoom-in rounded-md border border-slate-200 bg-white p-2 text-left transition focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:border-white/10 dark:bg-white/[0.03] dark:focus:ring-offset-primary-dark"
-        >
+        <div className="rounded-md border border-slate-200 bg-white p-2 dark:border-white/10 dark:bg-white/[0.03]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={img}
@@ -1326,7 +1323,7 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
             className={`mx-auto w-full rounded object-contain ${orientation === 'tall' ? 'max-h-[620px]' : 'max-h-[440px]'}`}
             loading="lazy"
           />
-        </button>
+        </div>
       </div>
     </figure>
   );
@@ -1479,7 +1476,7 @@ function ScrollProgressDial() {
   const roundedProgress = Math.round(progress);
 
   return (
-    <div className="fixed -right-3 top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
+    <div className="fixed right-[35px] top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
       <div
         className="flex h-16 w-16 items-center justify-center rounded-full border border-white/15 p-1 text-xs font-semibold text-white shadow-[0_0_36px_rgba(99,102,249,0.30)] backdrop-blur"
         style={{
