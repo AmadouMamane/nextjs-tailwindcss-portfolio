@@ -28,8 +28,8 @@ const iconStyles = {
 };
 
 const cardFocusClassName = 'border-indigo-400/25 hover:border-indigo-300/45 dark:border-indigo-300/12 dark:hover:border-indigo-300/40';
-const metaChipClassName = 'bg-slate-100 text-slate-700 ring-slate-200 dark:bg-white/[0.075] dark:text-slate-200 dark:ring-white/[0.12]';
-const techChipClassName = 'bg-white text-slate-900 ring-slate-200 dark:bg-white/[0.11] dark:text-white dark:ring-white/[0.14]';
+const iconChipClassName = 'bg-gradient-to-b from-indigo-100 to-sky-100/90 text-indigo-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] ring-indigo-300/80 dark:from-indigo-400/[0.22] dark:to-sky-400/[0.14] dark:text-sky-100 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] dark:ring-sky-300/[0.30]';
+const tagChipClassName = 'bg-slate-100/80 text-slate-600 ring-slate-200 dark:bg-white/[0.075] dark:text-slate-300 dark:ring-white/[0.12]';
 
 const ProjectSingle = (props) => {
 	const isTesseraCard = props.type === 'tessera' || props.id === 1;
@@ -68,7 +68,7 @@ const ProjectSingle = (props) => {
 						/>
 					</div>
 
-					<div className="flex flex-1 flex-col px-4 py-2.5 text-center">
+					<div className="flex flex-1 flex-col px-4 py-2 text-center">
 						<div className="flex h-[3.25rem] items-start justify-center gap-2">
 							{(CardIcon || props.cardLogo) && (
 								<span className={`relative mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl border ${iconTheme.shell}`}>
@@ -82,59 +82,59 @@ const ProjectSingle = (props) => {
 									</span>
 								</span>
 							)}
-							<p className="line-clamp-2 max-w-[15rem] text-left text-[19px] font-medium leading-snug text-slate-900 dark:text-slate-100 md:text-[19px]">
+							<p className="line-clamp-2 max-w-[15rem] text-left text-[19px] font-normal leading-snug text-slate-900 dark:text-slate-100 md:text-[19px]">
 								{cardTitle}
 							</p>
 						</div>
 						{cardSummary && (
-							<p className="mx-auto mt-1.5 min-h-[2.25rem] w-full max-w-[18rem] text-center text-[13px] font-normal leading-[18px] text-slate-500 dark:text-slate-400">
+							<p className="mx-auto mt-1.5 min-h-[2.25rem] w-full max-w-[18rem] text-center text-[13.5px] font-normal leading-[18px] text-slate-700 dark:text-slate-300">
 								<span className="line-clamp-2">{cardSummary}</span>
 							</p>
 						)}
-						<div className={`${props.cardHighlights ? 'mt-1.5 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden' : 'mt-1.5 flex flex-wrap items-center justify-center gap-2'}`}>
+						<div className={`${props.cardHighlights ? 'mt-2.5 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden' : 'mt-2.5 flex flex-wrap items-center justify-center gap-2'}`}>
 							{props.cardHighlights && (
-								<span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${techChipClassName}`}>
-									<Cpu className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+								<span className={`inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full ring-1 ${iconChipClassName}`}>
+									<Cpu className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
 								</span>
 							)}
 							{props.cardHighlights ? (
 								props.cardHighlights.map((highlight) => (
 									<span
 										key={highlight}
-										className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${techChipClassName}`}
+										className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}
 									>
 										{highlight}
 									</span>
 								))
 							) : (
-								<span className={`rounded-full px-2 py-0.5 text-[11px] leading-4 ring-1 ${techChipClassName}`}>
+								<span className={`rounded-full px-2 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
 									{props.ProjectHeader.tags}
 								</span>
 							)}
 						</div>
 						<div className="mt-1 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden">
 							{cardDate && (
-								<span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${metaChipClassName}`}>
-									<CalendarDays className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+								<span className={`inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full ring-1 ${iconChipClassName}`}>
+									<CalendarDays className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
 								</span>
 							)}
 							{cardDate && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
 									<span>{cardDate}</span>
 								</span>
 							)}
 							{props.category && (
-								<span className={`ml-2 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${metaChipClassName}`}>
-									<Tag className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+								<span className={`ml-2 inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full ring-1 ${iconChipClassName}`}>
+									<Tag className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
 								</span>
 							)}
 							{props.category && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
 									{props.category}
 								</span>
 							)}
 							{secondaryMeta && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
 									{secondaryMeta}
 								</span>
 							)}
