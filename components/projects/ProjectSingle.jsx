@@ -28,8 +28,27 @@ const iconStyles = {
 };
 
 const cardFocusClassName = 'border-indigo-400/25 hover:border-indigo-300/45 dark:border-indigo-300/12 dark:hover:border-indigo-300/40';
-const iconChipClassName = 'bg-gradient-to-b from-indigo-100 to-sky-100/90 text-indigo-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] ring-indigo-300/80 dark:from-indigo-400/[0.22] dark:to-sky-400/[0.14] dark:text-sky-100 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] dark:ring-sky-300/[0.30]';
-const tagChipClassName = 'bg-slate-100/80 text-slate-600 ring-slate-200 dark:bg-white/[0.075] dark:text-slate-300 dark:ring-white/[0.12]';
+const iconChipStyles = {
+	tech: 'bg-gradient-to-b from-violet-50/80 to-slate-50/80 text-violet-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] ring-violet-200/60 dark:from-violet-400/[0.09] dark:to-slate-400/[0.045] dark:text-violet-200/85 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] dark:ring-violet-300/[0.18]',
+	date: 'bg-gradient-to-b from-amber-50/80 to-slate-50/80 text-amber-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] ring-amber-200/60 dark:from-amber-400/[0.085] dark:to-slate-400/[0.045] dark:text-amber-200/85 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] dark:ring-amber-300/[0.18]',
+	domain: 'bg-gradient-to-b from-emerald-50/80 to-slate-50/80 text-emerald-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.82)] ring-emerald-200/60 dark:from-emerald-400/[0.085] dark:to-slate-400/[0.045] dark:text-emerald-200/85 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.10)] dark:ring-emerald-300/[0.18]',
+};
+const iconChipLineStyles = {
+	tech: 'via-violet-300/55 dark:via-violet-200/38',
+	date: 'via-amber-300/55 dark:via-amber-200/38',
+	domain: 'via-emerald-300/55 dark:via-emerald-200/38',
+};
+const tagChipClassName = 'bg-slate-100/65 text-slate-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.68)] ring-slate-200/80 dark:bg-white/[0.052] dark:text-slate-300 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] dark:ring-white/[0.10]';
+
+function IconChip({ tone, className = '', children }) {
+	return (
+		<span className={`relative inline-flex h-[21px] w-[21px] shrink-0 items-center justify-center overflow-hidden rounded-md ring-1 ${iconChipStyles[tone]} ${className}`}>
+			<span className={`pointer-events-none absolute inset-x-1 top-0 h-px bg-gradient-to-r from-transparent ${iconChipLineStyles[tone]} to-transparent`} />
+			<span className={`pointer-events-none absolute inset-y-1 left-0 w-px bg-gradient-to-b from-transparent ${iconChipLineStyles[tone]} to-transparent`} />
+			{children}
+		</span>
+	);
+}
 
 const ProjectSingle = (props) => {
 	const isTesseraCard = props.type === 'tessera' || props.id === 1;
@@ -91,52 +110,56 @@ const ProjectSingle = (props) => {
 								<span className="line-clamp-2">{cardSummary}</span>
 							</p>
 						)}
-						<div className={`${props.cardHighlights ? 'mt-2.5 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden' : 'mt-2.5 flex flex-wrap items-center justify-center gap-2'}`}>
+						<div className={`${props.cardHighlights ? 'mt-2.5 flex flex-nowrap items-center justify-center gap-2.5 overflow-hidden' : 'mt-2.5 flex flex-wrap items-center justify-center gap-2'}`}>
 							{props.cardHighlights && (
-								<span className={`inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full ring-1 ${iconChipClassName}`}>
-									<Cpu className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-								</span>
+								<IconChip tone="tech">
+									<Cpu className="h-3.5 w-3.5" strokeWidth={2.1} aria-hidden="true" />
+								</IconChip>
 							)}
 							{props.cardHighlights ? (
-								props.cardHighlights.map((highlight) => (
-									<span
-										key={highlight}
-										className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}
-									>
-										{highlight}
-									</span>
-								))
+								<div className="flex min-w-0 flex-nowrap items-center justify-center gap-1 overflow-hidden">
+									{props.cardHighlights.map((highlight) => (
+										<span
+											key={highlight}
+											className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}
+										>
+											{highlight}
+										</span>
+									))}
+								</div>
 							) : (
 								<span className={`rounded-full px-2 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
 									{props.ProjectHeader.tags}
 								</span>
 							)}
 						</div>
-						<div className="mt-1 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden">
+						<div className="mt-1 flex flex-nowrap items-center justify-center gap-3 overflow-hidden">
 							{cardDate && (
-								<span className={`inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full ring-1 ${iconChipClassName}`}>
-									<CalendarDays className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-								</span>
-							)}
-							{cardDate && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
-									<span>{cardDate}</span>
-								</span>
+								<div className="flex min-w-0 shrink-0 items-center gap-2">
+									<IconChip tone="date">
+										<CalendarDays className="h-3.5 w-3.5" strokeWidth={2.1} aria-hidden="true" />
+									</IconChip>
+									<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
+										<span>{cardDate}</span>
+									</span>
+								</div>
 							)}
 							{props.category && (
-								<span className={`ml-2 inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full ring-1 ${iconChipClassName}`}>
-									<Tag className="h-3.5 w-3.5" strokeWidth={2} aria-hidden="true" />
-								</span>
-							)}
-							{props.category && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
-									{props.category}
-								</span>
-							)}
-							{secondaryMeta && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
-									{secondaryMeta}
-								</span>
+								<div className="flex min-w-0 items-center gap-2 overflow-hidden">
+									<IconChip tone="domain">
+										<Tag className="h-3.5 w-3.5" strokeWidth={2.1} aria-hidden="true" />
+									</IconChip>
+									<div className="flex min-w-0 flex-nowrap items-center gap-1 overflow-hidden">
+										<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
+											{props.category}
+										</span>
+										{secondaryMeta && (
+											<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] font-medium leading-4 tracking-[0.01em] ring-1 ${tagChipClassName}`}>
+												{secondaryMeta}
+											</span>
+										)}
+									</div>
+								</div>
 							)}
 						</div>
 					</div>
