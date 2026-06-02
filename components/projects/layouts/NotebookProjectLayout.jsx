@@ -11,7 +11,19 @@ import AppHeader from '../../shared/AppHeader';
 export default function NotebookProjectLayout({ project, isBlog=false}) {
   return (
     <>
-        <PagesMetaHead />
+        <PagesMetaHead
+          title={project.ProjectHeader?.title || project.cardTitle || project.title}
+          description={project.tagline || project.cardSummary}
+          image={project.img}
+          url={`/projects/${project.url || project.id}`}
+          type="article"
+          keywords={[
+            project.category,
+            project.secondaryCategory,
+            project.ProjectHeader?.tags,
+            ...(project.cardHighlights || []),
+          ].filter(Boolean).join(', ')}
+        />
                 
         <AppHeader />
         <BackButton />
@@ -29,7 +41,6 @@ export default function NotebookProjectLayout({ project, isBlog=false}) {
 
   );
 }
-
 
 
 

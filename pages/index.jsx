@@ -8,7 +8,11 @@ import Container from '../components/layout/Container';
 export default function Home() {
   return (
     <Container isBlog={false}>
-      <PagesMetaHead title="Home" />
+      <PagesMetaHead
+        title="AI & Data Engineering Portfolio"
+        description="Applied AI, data engineering and machine learning portfolio by Amadou Mamane, featuring shipped systems, notebooks and open-source case studies."
+        url="/"
+      />
 
       <AppBanner />
 

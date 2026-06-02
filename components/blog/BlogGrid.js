@@ -25,35 +25,39 @@ function BlogGrid({ blogs, isBlog = true }) {
   });
 
   return (
-    <section className="py-5 sm:py-10 mt-5 sm:mt-6">
-      <div className="text-center">
-        <p className="font-general-medium text-2xl sm:text-4xl mb-1 text-ternary-dark dark:text-ternary-light">
-          Blog Articles
-        </p>
-      </div>
+    <section className="mt-8 py-5 sm:py-10">
+      <div className="border-y border-slate-200/55 py-6 dark:border-white/[0.065]">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-xl text-left">
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-300">
+              Notes and essays
+            </p>
+            <h1 className="font-general-medium text-2xl text-ternary-dark dark:text-ternary-light sm:text-3xl">
+              Blog
+            </h1>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-secondary-dark dark:text-gray-400 sm:text-base">
+              Writing on AI, data systems, engineering practice and the occasional field note
+            </p>
+          </div>
 
-      <div className="mt-12">
-        <h3 className="font-general-regular text-center text-secondary-dark dark:text-ternary-light text-md sm:text-xl mb-6 mt-10">
-          Search articles by title or filter by category
-        </h3>
-
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 border-b border-primary-light dark:border-secondary-dark pb-4">
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center lg:min-w-[34rem] lg:justify-end">
           <SearchInput
             value={searchBlog}
             onChange={setSearchBlog}
-            placeholder="Search Articles"
+            placeholder="Search articles"
           />
-          <div className="w-60">
+          <div className="w-full sm:w-60">
             <FilterDropdown
               value={selectCategory}
               onChange={setSelectCategory}
               options={selectOptions}
             />
           </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-6 sm:gap-5">
+      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {filteredBlogs.map((blog, index) => (
           <BlogSingle key={index} {...blog} />
         ))}

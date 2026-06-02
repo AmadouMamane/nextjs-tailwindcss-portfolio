@@ -71,7 +71,10 @@ export async function getStaticProps({ params }) {
 
   const getPostMeta = (slug) => {
     if (!slug) return null;
-    const fullPath = path.join(blogDirectory, `${slug}.mdx`);
+    const mdxPath = path.join(blogDirectory, `${slug}.mdx`);
+    const qmdPath = path.join(blogDirectory, `${slug}.qmd`);
+    const fullPath = fs.existsSync(mdxPath) ? mdxPath : qmdPath;
+    if (!fs.existsSync(fullPath)) return null;
     const fileContent = fs.readFileSync(fullPath, "utf8");
     const { data } = matter(fileContent);
     return { slug, title: data.title || slug };
@@ -92,6 +95,7 @@ export async function getStaticProps({ params }) {
     props: {
       frontMatter: {
         ...data,
+        slug: params.id,
         readingTime: readStats.text,
         wordCount: readStats.words,
       },
@@ -114,7 +118,7 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const height = document.body.scrollHeight - window.innerHeight;
-      setScrollProgress((scrollTop / height) * 100);
+      setScrollProgress(height > 0 ? (scrollTop / height) * 100 : 0);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -137,26 +141,18 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
         description={frontMatter.description}
         image={frontMatter.image}
         keywords={frontMatter.tags?.join(", ")}
+        url={`/blog/${frontMatter.slug}`}
+        type="article"
       />
 
       <TableOfContents />
 
       <div
-        className="fixed top-10 right-10 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
+        className="fixed right-8 top-5 z-[9999] flex h-10 w-10 items-center justify-center rounded-full text-[10px] font-medium text-white shadow-sm ring-1 ring-white/20"
         style={{
-          background: `conic-gradient(from 0deg, #6366f1 ${scrollProgress}%, #f3f4f6 ${scrollProgress}%)`,
+          background: `conic-gradient(from 0deg, #6366f1 ${scrollProgress}%, rgba(148,163,184,0.22) ${scrollProgress}%)`,
         }}
-      >
-        {Math.round(scrollProgress)}%
-      </div>
-
-
-      {/* Scroll Indicator */}
-      <div
-        className="fixed top-10 right-10 w-12 h-12 rounded-full z-[9999] flex items-center justify-center text-white text-sm font-bold shadow-lg"
-        style={{
-          background: `conic-gradient(from 0deg, #6366f1 ${scrollProgress}%, #f3f4f6 ${scrollProgress}%)`,
-        }}
+        aria-label={`Reading progress ${Math.round(scrollProgress)} percent`}
       >
         {Math.round(scrollProgress)}%
       </div>
@@ -164,28 +160,32 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
       <div className="max-w-9xl mx-auto mt-28">
         <div className="prose lg:prose-xl mx-auto dark:prose-invert">
 
-        <h1 className="text-[2.25rem] sm:text-[3rem] lg:text-[3.75rem] leading-tight font-extrabold tracking-normal text-center 
-    bg-gradient-to-r from-gray-900 via-black to-gray-700 dark:from-gray-100 dark:via-gray-200 dark:to-gray-300 
-    bg-clip-text text-transparent mt-1 mb-5 transition-all duration-700 ease-out">
-  {frontMatter.title}
-</h1>
+        <h1 className="mx-auto mt-1 mb-6 text-center text-[2.1rem] font-semibold leading-tight tracking-normal text-slate-950 transition-all duration-700 ease-out dark:text-gray-100 sm:text-[2.8rem] lg:text-[3.35rem]">
+          {frontMatter.title}
+        </h1>
 
 
 
           {/* Meta Info */}
-          <div className="flex flex-wrap justify-center gap-10 text-sm sm:text-base text-primary-dark dark:text-primary-light">
-            <div className="flex items-center"><FiClock className="mr-2" />{frontMatter.date}</div>
+          <div className="flex flex-wrap justify-center gap-2 text-sm text-primary-dark dark:text-primary-light sm:text-base">
+            <div className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.055]">
+              <FiClock className="mr-2" />{frontMatter.date}
+            </div>
             {frontMatter.readingTime && (
-              <div className="flex items-center gap-1">🕒 <span>{frontMatter.readingTime}</span></div>
+              <div className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.055]">
+                {frontMatter.readingTime}
+              </div>
             )}
             {frontMatter.wordCount && (
-              <div className="flex items-center gap-1">✍️ <span>{frontMatter.wordCount} words</span></div>
+              <div className="inline-flex items-center rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 shadow-sm dark:border-white/[0.08] dark:bg-white/[0.055]">
+                {frontMatter.wordCount} words
+              </div>
             )}
             {frontMatter.tags?.length > 0 && (
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <FiTag />
                 {frontMatter.tags.map((tag) => (
-                  <span key={tag} className="text-xs px-2 py-1 bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-ternary-light rounded-full">
+                  <span key={tag} className="rounded-full border border-slate-200/80 bg-primary-light px-2.5 py-1 text-xs text-primary-dark dark:border-white/[0.08] dark:bg-white/[0.055] dark:text-ternary-light">
                     {tag}
                   </span>
                 ))}
@@ -197,7 +197,7 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
 
         {/* Actual content */}
         <motion.article
-          className="prose sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert"
+          className="prose sm:prose-base md:prose-lg lg:prose-xl dark:prose-invert prose-p:leading-8 prose-li:leading-8 prose-headings:scroll-mt-24"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -223,13 +223,24 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
                   {...props}
                 />
               ),
-              img: (props) => (
-                <img
-                  {...props}
-                  className="rounded-lg shadow-md cursor-pointer hover:scale-105 transition-transform duration-300"
-                  onClick={() => handleLightbox(props.src)}
-                />
-              ),
+              img: ({ src, alt, width, height, ...props }) => {
+                if (!src) return null;
+                const imageWidth = Number(width) || 1200;
+                const imageHeight = Number(height) || 720;
+
+                return (
+                  <Image
+                    {...props}
+                    src={src}
+                    alt={alt || ''}
+                    width={imageWidth}
+                    height={imageHeight}
+                    unoptimized={String(src).startsWith('http')}
+                    className="cursor-pointer rounded-lg shadow-md transition-transform duration-300 hover:scale-[1.015]"
+                    onClick={() => handleLightbox(src)}
+                  />
+                );
+              },
               Image,
               motion,
               AnimatedSection,

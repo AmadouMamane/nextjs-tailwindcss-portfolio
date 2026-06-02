@@ -88,20 +88,23 @@ function PremiumSystemVisual() {
 
 function AppBanner() {
 	return (
-		<section className="relative mt-10 grid items-center gap-8 md:grid-cols-[0.92fr_1.08fr] lg:gap-12">
+		<section className="relative mt-10 grid items-center gap-8 md:grid-cols-[0.94fr_1.06fr] lg:gap-12">
 			<HeroAtmosphere />
-			<div className="w-full max-w-[450px] justify-self-center pl-0 text-left md:justify-self-start md:pl-4">
-				<h1 className="font-general-semibold text-center text-2xl uppercase text-ternary-dark dark:text-primary-light sm:text-left lg:text-3xl xl:text-4xl">
+			<div className="w-full max-w-[500px] justify-self-center pl-0 text-left md:justify-self-start md:pl-4">
+				<p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-indigo-600 dark:text-indigo-300 sm:text-left">
+					Applied AI and data systems
+				</p>
+				<h1 className="font-general-semibold text-center text-[2rem] leading-[1.05] text-ternary-dark dark:text-primary-light sm:text-left sm:text-[2.4rem] lg:text-[3rem] xl:text-[3.35rem]">
 					{"Hi, I'm Amadou"}
 				</h1>
-				<p className="font-general-medium mt-4 text-center text-lg leading-normal text-gray-500 dark:text-gray-200 sm:text-left md:text-xl lg:text-2xl xl:text-[1.65rem]">
-					Production-grade AI systems, data platforms and guarded LLM agents
+				<p className="mt-5 text-center text-base leading-7 text-slate-600 dark:text-slate-300 sm:text-left md:text-lg lg:text-xl lg:leading-8">
+					I design and ship AI systems where data, models and product constraints meet: guarded LLM agents, data platforms and applied machine learning built for real delivery.
 				</p>
-				<div className="mt-6 flex flex-wrap justify-center gap-2 sm:justify-start">
-					{['Agentic AI', 'Data platforms', 'Applied ML'].map((item) => (
+				<div className="mt-6 flex flex-wrap justify-center gap-2.5 sm:justify-start">
+					{['Agentic AI', 'Data platforms', 'Applied ML', 'Open source'].map((item) => (
 						<span
 							key={item}
-							className="rounded-full border border-slate-200/80 bg-white/45 px-3 py-1 text-xs font-medium text-slate-600 shadow-sm backdrop-blur-xl dark:border-white/[0.08] dark:bg-white/[0.045] dark:text-slate-300"
+							className="rounded-full border border-slate-200/80 bg-white/50 px-3 py-1 text-xs font-medium text-slate-600 shadow-sm backdrop-blur-xl dark:border-white/[0.08] dark:bg-white/[0.045] dark:text-slate-300"
 						>
 							{item}
 						</span>

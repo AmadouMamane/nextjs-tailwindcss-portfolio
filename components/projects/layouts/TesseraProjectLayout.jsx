@@ -1664,7 +1664,19 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
 
   return (
     <>
-      <PagesMetaHead />
+      <PagesMetaHead
+        title={project.ProjectHeader?.title || project.cardTitle || project.title}
+        description={project.tagline || project.cardSummary}
+        image={project.cardImg || project.heroImg || project.img}
+        url={`/projects/${project.url || project.id}`}
+        type="article"
+        keywords={[
+          project.category,
+          project.secondaryCategory,
+          project.ProjectHeader?.tags,
+          ...(project.cardHighlights || []),
+        ].filter(Boolean).join(', ')}
+      />
       <AppHeader />
       <BackButton />
       <Container fullWidth>

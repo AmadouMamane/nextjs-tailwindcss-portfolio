@@ -6,7 +6,11 @@ import PagesMetaHead from '../components/PagesMetaHead';
 function contact() {
 	return (
 		<div>
-			<PagesMetaHead title="Contact" />
+			<PagesMetaHead
+				title="Contact"
+				description="Contact Amadou Mamane for AI engineering, data science, data engineering and machine learning projects."
+				url="/contact"
+			/>
 
 			<motion.div
 				initial={{ opacity: 0 }}

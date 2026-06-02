@@ -68,8 +68,8 @@ const ProjectSingle = (props) => {
 						/>
 					</div>
 
-					<div className="flex flex-1 flex-col px-4 py-2 text-center">
-						<div className="flex h-[3.25rem] items-start justify-center gap-2">
+					<div className="flex flex-1 flex-col px-4 pb-3 pt-1.5 text-center">
+						<div className="flex h-[3.125rem] items-start justify-center gap-2">
 							{(CardIcon || props.cardLogo) && (
 								<span className={`relative mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl border ${iconTheme.shell}`}>
 									<span className={`pointer-events-none absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent ${iconTheme.line} to-transparent`} />

@@ -1,27 +1,21 @@
 function AppFooterCopyright() {
 	return (
 		<div className="font-general-regular flex flex-col justify-center items-center text-center">
-			<div className="text-lg text-ternary-dark dark:text-ternary-light">
+			<div className="text-sm text-ternary-dark dark:text-ternary-light sm:text-base">
 				&copy; {new Date().getFullYear()}
 				<a
-					href="https://github.com/AmadouMamane/nextjs-tailwindcss-portfolio"
-					target="__blank"
-					className="hover:underline hover:text-indigo-600 dark:hover:text-indigo-300 ml-1 duration-500"
+					href="https://github.com/AmadouMamane"
+					target="_blank"
+					rel="noreferrer"
+					className="ml-1 font-medium hover:text-indigo-600 dark:hover:text-indigo-300 duration-500"
 				>
-					Next.js & Tailwind CSS Portfolio
+					Amadou Mamane
 				</a>
-				.{' '}
-				<a
-					href=""
-					target="__blank"
-					className="text-ternary-dark dark:text-ternary-light font-medium uppercase hover:underline hover:text-indigo-600 dark:hover:text-indigo-300 ml-1 duration-500"
-				>
-					AMADOU
-				</a>
+				. Built with Next.js and Tailwind CSS.
 			</div>
 		
-			<p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-				This site uses Google Analytics to anonymously track visits to enhance your experience. By continuing to browse, you accept this usage.
+			<p className="mt-3 max-w-xl text-xs leading-5 text-gray-500 dark:text-gray-400 sm:text-sm">
+				Privacy-friendly analytics may be used to understand aggregate visits and improve the site experience.
 			</p>
 
 		</div>

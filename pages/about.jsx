@@ -10,7 +10,11 @@ import Container from '../components/layout/Container';
 function About() {
   return (
     <div>
-      <PagesMetaHead title="About Me" />
+      <PagesMetaHead
+        title="About Me"
+        description="About Amadou Mamane, data scientist and AI engineer building applied AI systems, data platforms and machine learning products."
+        url="/about"
+      />
 
       {/* Bio section in container */}
       <Container>

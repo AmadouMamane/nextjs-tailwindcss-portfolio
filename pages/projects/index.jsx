@@ -8,7 +8,11 @@ import DefaultLayout from '../../components/layout/DefaultLayout';
 function ProjectsIndex() {
   return (
     <Container>
-      <PagesMetaHead title="Projects" />
+      <PagesMetaHead
+        title="Projects"
+        description="Selected AI engineering, data science and machine learning projects by Amadou Mamane."
+        url="/projects"
+      />
       <ProjectsGrid />
     </Container>
   );

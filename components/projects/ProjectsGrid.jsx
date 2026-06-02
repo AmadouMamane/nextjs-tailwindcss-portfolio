@@ -40,14 +40,17 @@ function ProjectsGrid() {
 
   return (
     <section className="relative mt-14">
-      <div className="mb-10 border-y border-slate-200/60 py-5 dark:border-white/[0.07]">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <div className="mb-10 border-y border-slate-200/55 py-6 dark:border-white/[0.065]">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl text-left">
+            <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.18em] text-indigo-600 dark:text-indigo-300">
+              Case studies
+            </p>
             <h2 className="font-general-medium text-2xl text-ternary-dark dark:text-ternary-light sm:text-3xl">
               Selected work
             </h2>
-            <p className="mt-2 text-sm leading-6 text-secondary-dark dark:text-gray-400 sm:text-base">
-              Focused AI, data and ML projects, presented through the constraints that shaped them
+            <p className="mt-2 max-w-lg text-sm leading-6 text-secondary-dark dark:text-gray-400 sm:text-base">
+              Applied AI, data and machine learning systems, presented as delivery case studies instead of isolated demos
             </p>
           </div>
 

@@ -2,7 +2,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const markdownComponents = {
-  p: ({ children }) => <p className="mb-4 leading-relaxed">{children}</p>,
+  p: ({ children }) => <p className="mb-4 leading-7 text-slate-700 dark:text-slate-300">{children}</p>,
   h1: ({ children }) => (
     <h1 className="text-xl sm:text-2xl font-bold my-4 text-secondary-dark dark:text-gray-100">
       {children}
@@ -19,7 +19,7 @@ const markdownComponents = {
     </h3>
   ),
   ul: ({ children }) => (
-    <ul className="list-disc ml-4 sm:ml-6 lg:ml-8 space-y-3 text-base sm:text-lg mb-4">
+    <ul className="mb-4 ml-0 space-y-3 text-base sm:text-lg">
       {children}
     </ul>
   ),
@@ -27,7 +27,7 @@ const markdownComponents = {
     <ol className="list-decimal pl-8 sm:pl-12 space-y-2 mb-4">{children}</ol>
   ),
   li: ({ children }) => (
-    <li className="leading-relaxed text-gray-800 dark:text-gray-200">{children}</li>
+    <li className="relative pl-5 leading-7 text-gray-800 before:absolute before:left-0 before:top-[0.75em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-indigo-500 dark:text-gray-200">{children}</li>
   ),
   a: ({ href, children }) => (
     <a
@@ -47,16 +47,16 @@ const markdownComponents = {
   ),
   code: ({ inline, children }) =>
     inline ? (
-      <code className="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-ternary-dark text-sm font-mono text-indigo-700 dark:text-indigo-300">
+      <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-sm text-indigo-700 dark:bg-white/[0.075] dark:text-indigo-300">
         {children}
       </code>
     ) : (
-      <code className="block p-4 rounded-lg bg-gray-900 dark:bg-primary-dark text-sm font-mono text-gray-100 overflow-x-auto my-4">
+      <code className="my-4 block overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-sm text-gray-100 dark:bg-black/40">
         {children}
       </code>
     ),
   pre: ({ children }) => (
-    <pre className="rounded-lg overflow-hidden my-4 border border-gray-200 dark:border-ternary-dark">
+    <pre className="my-4 overflow-hidden rounded-lg border border-gray-200 dark:border-white/[0.08]">
       {children}
     </pre>
   ),

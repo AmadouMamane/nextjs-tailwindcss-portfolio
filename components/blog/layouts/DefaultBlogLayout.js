@@ -8,11 +8,16 @@ export default function DefaultBlogLayout({ children,  isBlog = true}) {
   return (
 
     <>
-            <PagesMetaHead />
             <AppHeader />
     
 
-        <PagesMetaHead title="Blog" />
+        {!isBlog ? (
+          <PagesMetaHead
+            title="Blog"
+            description="Writing by Amadou Mamane on AI, data systems, engineering, travel and learning."
+            url="/blog"
+          />
+        ) : null}
         {isBlog ? <BackButton /> : null}
 
         <Container isBlog={isBlog}>
@@ -25,5 +30,4 @@ export default function DefaultBlogLayout({ children,  isBlog = true}) {
 
   );
 }
-
 

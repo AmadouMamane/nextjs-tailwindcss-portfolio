@@ -63,6 +63,7 @@ export const projectsData = [
 		cardIcon: 'dna',
 		cardAccent: 'rose',
 		cardSummary: 'Detects skin cancer from 3D total-body images with a high-sensitivity model',
+		tagline: 'High-sensitivity medical imaging case study for skin cancer triage using realistic 3D total-body photography',
 		cardHighlights: ['TensorFlow', 'CNN', 'pAUC', 'Medical AI'],
 		Notebook: {
 			file: '/notebooks/isic-2024_kaggle.html',
@@ -95,29 +96,29 @@ export const projectsData = [
 			'Challenge Highlights': [
 				{
 					id: uuidv4(),
-					title: '📅 Duration',
+					title: 'Duration',
 					details: 'Jun 27 – Sep 7, 2024',
 				},
 				{
 					id: uuidv4(),
-					title: '🌍 Dataset',
+					title: 'Dataset',
 					details:
 						'3D total body photos from thousands of patients across 3 continents',
 				},
 				{
 					id: uuidv4(),
-					title: '🧠 Task',
+					title: 'Task',
 					details: 'Binary classification of malignant vs. benign skin lesions',
 				},
 				{
 					id: uuidv4(),
-					title: '🛠️ Images',
+					title: 'Images',
 					details:
 						'Resemble close-up smartphone photos, simulating telehealth scenarios',
 				},
 				{
 					id: uuidv4(),
-					title: '📈 Metric',
+					title: 'Metric',
 					details:
 						'Partial AUC (pAUC) above 80% TPR, prioritizing high-sensitivity performance for early diagnosis',
 				},
@@ -154,6 +155,7 @@ export const projectsData = [
 		cardIcon: 'music',
 		cardAccent: 'blue',
 		cardSummary: 'Ranks songs from listening behavior to generate personalized recommendations',
+		tagline: 'Recommendation system case study for ranking songs from listening behavior and collaborative signals',
 		cardHighlights: ['Surprise', 'Scikit-learn', 'LightFM', 'Ranking'],
 		ProjectHeader: {
 			title: '🎵 AI-Powered Music Recommendation System',
@@ -185,25 +187,18 @@ export const projectsData = [
 			'Implementation',
 		],
 		ProjectInfo: {
-			Context: `Nowadays, we are overwhelmed by information, making it increasingly challenging to select high-quality content from vast amounts of available data. 
-Companies recognize this issue and have developed sophisticated techniques to assist users in finding the most relevant content, thereby enhancing user experience on their platforms.
+			Context: `Music platforms win when discovery feels personal without becoming repetitive. This case study uses listening behaviour from the Million Song Dataset to build recommendation models that rank songs for each user.
 
+The work compares collaborative filtering, matrix factorization and ranking-oriented baselines so the final recommendations can be judged by retrieval quality, coverage and practical usability.`,
 
-Spotify is an excellent example; it has become a leader in the music streaming industry, largely thanks to its advanced recommendation systems, enabling users to discover content tailored to their preferences. Therefore, recommendation systems are critical not only for enhancing user satisfaction but also for increasing user engagement and driving business success.
+			Goal: `Build a recommender that returns a ranked top-10 list of songs for each user, then compare modelling approaches on accuracy, stability and recommendation diversity.`,
 
-This AI-powered music recommendation system leverages collaborative filtering and machine learning to suggest personalized playlists based on user behavior.`,
+			'Key Questions': `The project focuses on the decisions that matter in a production recommendation workflow:
 
-			Goal: `The objective of this project is to develop a recommendation system capable of suggesting the top 10 songs most likely to be enjoyed by each user. 
-				    This system will dynamically learn and adapt to user preferences, continuously refining its recommendations. 
-					Ultimately, this approach aims to enhance user engagement on music platforms by providing personalized, high-quality, and AI-powered song recommendations.`,
-
-			'Key Questions': `Throughout this project, we will explore and resolve the following essential questions:  
-- What specific methodologies and modeling techniques are most effective for building this recommendation system?  
-- Do we possess adequate data to develop a robust recommendation solution?  
-- Is the dataset sufficiently comprehensive to yield accurate and meaningful recommendations?  
-- What metrics should guide the evaluation of our recommendation system? Metrics such as precision, recall, F1-score, interpretability, responsiveness, and ethical considerations are particularly important.  
-- How reliable and stable will our recommendation models be when deployed in real-world, production environments?  
-- What additional refinements or future strategies should be implemented to further enhance the recommendation system?`,
+- Which modelling family gives the strongest ranking quality for the available user-item data?
+- Is the interaction data dense enough to support collaborative filtering?
+- How should recommendation quality be measured beyond a single accuracy score?
+- What trade-offs appear between personalization, coverage and model complexity?`,
 
 			'Data Dictionary': `Our primary dataset is the Taste Profile Subset, released by Echo Nest as part of the Million Song Dataset. It consists of two files:
 - Songs data:
