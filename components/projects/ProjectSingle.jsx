@@ -1,26 +1,45 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FiMusic, FiShield, FiTag } from 'react-icons/fi';
+import { CalendarDays, Cpu, Dna, Music, ShieldCheck } from 'lucide-react';
 
 const cardIcons = {
-	music: FiMusic,
-	shield: FiShield,
+	dna: Dna,
+	music: Music,
+	shield: ShieldCheck,
 };
 
 const iconStyles = {
-	blue: 'bg-gradient-to-br from-sky-400 via-cyan-500 to-emerald-400 text-white shadow-md shadow-cyan-500/25 ring-1 ring-white/25',
-	indigo: 'bg-gradient-to-br from-indigo-500 via-violet-500 to-sky-400 text-white shadow-md shadow-indigo-500/30 ring-1 ring-white/25',
-	rose: 'bg-gradient-to-br from-rose-500 via-fuchsia-500 to-amber-300 text-white shadow-md shadow-rose-500/25 ring-1 ring-white/25',
+	blue: {
+		shell: 'border-cyan-200/45 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.88),rgba(56,189,248,0.26)_25%,rgba(8,47,73,0.94)_72%)] text-cyan-50 dark:border-cyan-300/25',
+		inner: 'bg-cyan-300/10 ring-cyan-100/20',
+		line: 'via-cyan-100/80',
+	},
+	indigo: {
+		shell: 'border-indigo-200/45 bg-[radial-gradient(circle_at_28%_18%,rgba(255,255,255,0.9),rgba(129,140,248,0.28)_24%,rgba(24,24,66,0.95)_72%)] text-indigo-50 dark:border-indigo-300/25',
+		inner: 'bg-indigo-300/10 ring-indigo-100/20',
+		line: 'via-indigo-100/80',
+	},
+	rose: {
+		shell: 'border-rose-200/50 bg-[radial-gradient(circle_at_28%_18%,rgba(255,255,255,0.92),rgba(251,113,133,0.28)_25%,rgba(76,5,25,0.94)_74%)] text-rose-50 dark:border-rose-300/25',
+		inner: 'bg-rose-300/10 ring-rose-100/20',
+		line: 'via-rose-100/80',
+	},
 };
+
+const cardFocusClassName = 'border-indigo-400/25 hover:border-indigo-300/45 dark:border-indigo-300/12 dark:hover:border-indigo-300/40';
+const metaChipClassName = 'bg-slate-100/90 text-slate-600 ring-slate-200/80 dark:bg-white/[0.055] dark:text-slate-300 dark:ring-white/[0.08]';
+const techChipClassName = 'bg-white text-slate-800 ring-slate-200 dark:bg-white/[0.07] dark:text-slate-100 dark:ring-white/[0.09]';
 
 const ProjectSingle = (props) => {
 	const isTesseraCard = props.type === 'tessera' || props.id === 1;
 	const imageSrc = props.cardImg || props.img;
 	const cardTitle = props.cardTitle || props.title;
 	const cardSummary = props.cardSummary || props.tagline;
-	const CardIcon = cardIcons[props.cardIcon] || (isTesseraCard ? FiShield : null);
-	const iconClassName = iconStyles[props.cardAccent] || iconStyles.indigo;
+	const cardDate = props.cardDate || props.ProjectHeader?.publishDate;
+	const secondaryMeta = props.secondaryCategory || props.ProjectHeader?.tags;
+	const CardIcon = cardIcons[props.cardIcon] || (isTesseraCard ? ShieldCheck : null);
+	const iconTheme = iconStyles[props.cardAccent] || iconStyles.indigo;
 
 	return (
 		<motion.div
@@ -38,57 +57,76 @@ const ProjectSingle = (props) => {
 				aria-label={`View project: ${props.title}`}
 				passHref
 			>
-				<div className={`group mb-10 flex h-[488px] cursor-pointer flex-col overflow-hidden rounded-lg border bg-secondary-light shadow-lg transition duration-300 hover:shadow-2xl dark:bg-ternary-dark sm:mb-0 ${isTesseraCard ? 'border-indigo-400/25 hover:-translate-y-1 hover:border-indigo-300/45' : 'border-transparent'}`}>
+				<div className={`group mb-10 flex h-[488px] cursor-pointer flex-col overflow-hidden rounded-lg border bg-secondary-light shadow-lg transition duration-300 hover:shadow-2xl dark:bg-ternary-dark sm:mb-0 ${cardFocusClassName}`}>
 					<div className={`relative h-80 w-full shrink-0 overflow-hidden ${isTesseraCard ? 'bg-[#020611]' : ''}`}>
 						<Image
 							src={imageSrc}
 							alt={props.title}
 							fill
 							sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-							className={`${isTesseraCard ? 'object-contain p-3 sm:p-4' : 'object-cover'} border-none group-hover:scale-[1.02] transition-transform duration-500`}
+							className={`${isTesseraCard ? 'object-contain p-3 sm:p-4' : 'object-cover'} border-none`}
 						/>
 					</div>
 
-					<div className="flex flex-1 flex-col px-4 py-3 text-center">
-						<div className="flex h-14 items-start justify-center gap-2">
+					<div className="flex flex-1 flex-col px-4 py-2.5 text-center">
+						<div className="flex h-[3.25rem] items-start justify-center gap-2">
 							{(CardIcon || props.cardLogo) && (
-								<span className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iconClassName}`}>
-									{props.cardLogo ? (
-										<span className="text-base leading-none" aria-hidden="true">{props.cardLogo}</span>
-									) : (
-										<CardIcon className="h-4 w-4" aria-hidden="true" />
-									)}
+								<span className={`relative mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-2xl border ${iconTheme.shell}`}>
+									<span className={`pointer-events-none absolute inset-x-2 top-0 h-px bg-gradient-to-r from-transparent ${iconTheme.line} to-transparent`} />
+									<span className={`relative inline-flex h-7 w-7 items-center justify-center rounded-xl ring-1 backdrop-blur ${iconTheme.inner}`}>
+										{props.cardLogo ? (
+											<span className="text-base leading-none" aria-hidden="true">{props.cardLogo}</span>
+										) : (
+											<CardIcon className="h-[17px] w-[17px]" strokeWidth={1.9} aria-hidden="true" />
+										)}
+									</span>
 								</span>
 							)}
-							<p className="line-clamp-2 max-w-[15rem] text-left text-xl font-medium leading-snug text-ternary-dark dark:text-ternary-light md:text-xl">
+							<p className="line-clamp-2 max-w-[15rem] text-left text-[19px] font-medium leading-snug text-slate-900 dark:text-slate-100 md:text-[19px]">
 								{cardTitle}
 							</p>
 						</div>
 						{cardSummary && (
-							<p className="mx-auto mt-2 flex min-h-[2.5rem] w-full max-w-[18rem] items-start justify-start gap-2 text-left text-sm leading-5 text-gray-600 dark:text-gray-400">
-								<span className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400 dark:bg-gray-500" aria-hidden="true" />
+							<p className="mx-auto mt-1.5 min-h-[2.25rem] w-full max-w-[18rem] text-left text-[13px] leading-[18px] text-slate-500 dark:text-slate-400">
 								<span className="line-clamp-2">{cardSummary}</span>
 							</p>
 						)}
-						<div className={`${props.cardHighlights ? 'mt-3 flex flex-nowrap items-center justify-center gap-1 overflow-hidden' : 'mt-3 flex flex-wrap items-center justify-center gap-2'}`}>
-							<FiTag className="shrink-0 text-ternary-dark dark:text-ternary-light" aria-hidden="true" />
+						<div className="mt-1.5 flex flex-nowrap items-center justify-center gap-1 overflow-hidden">
+							{cardDate && (
+								<span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+									<CalendarDays className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+									<span>{cardDate}</span>
+								</span>
+							)}
+							{props.category && (
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+									{props.category}
+								</span>
+							)}
+							{secondaryMeta && (
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+									{secondaryMeta}
+								</span>
+							)}
+						</div>
+						<div className={`${props.cardHighlights ? 'mt-1 flex flex-nowrap items-center justify-center gap-1 overflow-hidden' : 'mt-1 flex flex-wrap items-center justify-center gap-2'}`}>
+							{props.cardHighlights && (
+								<span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${techChipClassName}`}>
+									<Cpu className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+								</span>
+							)}
 							{props.cardHighlights ? (
 								props.cardHighlights.map((highlight) => (
 									<span
 										key={highlight}
-										className="shrink-0 rounded-full bg-primary-light px-1.5 py-1 text-[11px] text-primary-dark dark:bg-primary-dark dark:text-ternary-light"
+										className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${techChipClassName}`}
 									>
 										{highlight}
 									</span>
 								))
 							) : (
-								<span className="text-xs px-2 py-1 bg-primary-light dark:bg-primary-dark text-primary-dark dark:text-ternary-light rounded-full">
+								<span className={`rounded-full px-2 py-0.5 text-[11px] leading-4 ring-1 ${techChipClassName}`}>
 									{props.ProjectHeader.tags}
-								</span>
-							)}
-							{props.secondaryCategory && !isTesseraCard && (
-								<span className={`${isTesseraCard ? 'rounded-full border border-indigo-300/20 bg-indigo-400/10 px-2.5 py-1 text-xs font-medium text-indigo-100' : 'text-xs px-2 py-1 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 rounded-full border border-indigo-100 dark:border-indigo-900'}`}>
-									{props.secondaryCategory}
 								</span>
 							)}
 						</div>

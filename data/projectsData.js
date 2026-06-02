@@ -23,7 +23,7 @@ export const projectsData = [
 		cardIcon: 'shield',
 		cardAccent: 'indigo',
 		cardSummary: 'A guarded agentic AI system for regulated banking support',
-		cardHighlights: ['AI Engineering', 'LangGraph', 'Guardrails', 'Audit'],
+		cardHighlights: ['LangGraph', 'Guardrails', 'Audit', 'FR/DE/EN'],
 		tagline: 'Guarded EU banking support agent with policy checks, evals, audit trail and FR / DE / EN grounding',
 		links: {
 			github: 'https://github.com/AmadouMamane/tessera',
@@ -35,7 +35,7 @@ export const projectsData = [
 		},
 		ProjectHeader: {
 			title: '🏛️ Tessera — Multilingual EU Banking Support Agent',
-			publishDate: 'May 2026',
+			publishDate: '30 mai 2026',
 			tags: 'Work in Progress · LangGraph · Agent Safety',
 		},
 		ProjectImages: [
@@ -60,7 +60,7 @@ export const projectsData = [
 		img: '/images/kaggle-isic-2024.png',
 		type: 'notebook',
 		cardTitle: 'AI Skin Cancer Detection Challenge',
-		cardLogo: '🧬',
+		cardIcon: 'dna',
 		cardAccent: 'rose',
 		cardSummary: 'Detects skin cancer from 3D total-body images with a high-sensitivity model',
 		cardHighlights: ['TensorFlow', 'CNN', 'pAUC', 'Medical AI'],
