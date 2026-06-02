@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CalendarDays, Cpu, Dna, Music, ShieldCheck } from 'lucide-react';
+import { CalendarDays, Cpu, Dna, Music, ShieldCheck, Tag } from 'lucide-react';
 
 const cardIcons = {
 	dna: Dna,
@@ -28,8 +28,8 @@ const iconStyles = {
 };
 
 const cardFocusClassName = 'border-indigo-400/25 hover:border-indigo-300/45 dark:border-indigo-300/12 dark:hover:border-indigo-300/40';
-const metaChipClassName = 'bg-slate-100/90 text-slate-600 ring-slate-200/80 dark:bg-white/[0.055] dark:text-slate-300 dark:ring-white/[0.08]';
-const techChipClassName = 'bg-white text-slate-800 ring-slate-200 dark:bg-white/[0.07] dark:text-slate-100 dark:ring-white/[0.09]';
+const metaChipClassName = 'bg-slate-100 text-slate-700 ring-slate-200 dark:bg-white/[0.075] dark:text-slate-200 dark:ring-white/[0.12]';
+const techChipClassName = 'bg-white text-slate-900 ring-slate-200 dark:bg-white/[0.11] dark:text-white dark:ring-white/[0.14]';
 
 const ProjectSingle = (props) => {
 	const isTesseraCard = props.type === 'tessera' || props.id === 1;
@@ -87,29 +87,11 @@ const ProjectSingle = (props) => {
 							</p>
 						</div>
 						{cardSummary && (
-							<p className="mx-auto mt-1.5 min-h-[2.25rem] w-full max-w-[18rem] text-left text-[13px] leading-[18px] text-slate-500 dark:text-slate-400">
+							<p className="mx-auto mt-1.5 min-h-[2.25rem] w-full max-w-[18rem] text-center text-[13px] font-normal leading-[18px] text-slate-500 dark:text-slate-400">
 								<span className="line-clamp-2">{cardSummary}</span>
 							</p>
 						)}
-						<div className="mt-1.5 flex flex-nowrap items-center justify-center gap-1 overflow-hidden">
-							{cardDate && (
-								<span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
-									<CalendarDays className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
-									<span>{cardDate}</span>
-								</span>
-							)}
-							{props.category && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
-									{props.category}
-								</span>
-							)}
-							{secondaryMeta && (
-								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
-									{secondaryMeta}
-								</span>
-							)}
-						</div>
-						<div className={`${props.cardHighlights ? 'mt-1 flex flex-nowrap items-center justify-center gap-1 overflow-hidden' : 'mt-1 flex flex-wrap items-center justify-center gap-2'}`}>
+						<div className={`${props.cardHighlights ? 'mt-1.5 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden' : 'mt-1.5 flex flex-wrap items-center justify-center gap-2'}`}>
 							{props.cardHighlights && (
 								<span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${techChipClassName}`}>
 									<Cpu className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
@@ -127,6 +109,33 @@ const ProjectSingle = (props) => {
 							) : (
 								<span className={`rounded-full px-2 py-0.5 text-[11px] leading-4 ring-1 ${techChipClassName}`}>
 									{props.ProjectHeader.tags}
+								</span>
+							)}
+						</div>
+						<div className="mt-1 flex flex-nowrap items-center justify-center gap-1.5 overflow-hidden">
+							{cardDate && (
+								<span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${metaChipClassName}`}>
+									<CalendarDays className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+								</span>
+							)}
+							{cardDate && (
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+									<span>{cardDate}</span>
+								</span>
+							)}
+							{props.category && (
+								<span className={`ml-2 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ring-1 ${metaChipClassName}`}>
+									<Tag className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+								</span>
+							)}
+							{props.category && (
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+									{props.category}
+								</span>
+							)}
+							{secondaryMeta && (
+								<span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[11px] leading-4 ring-1 ${metaChipClassName}`}>
+									{secondaryMeta}
 								</span>
 							)}
 						</div>

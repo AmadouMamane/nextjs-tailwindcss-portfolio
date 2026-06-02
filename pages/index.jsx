@@ -15,7 +15,7 @@ export default function Home() {
       <ProjectsGrid />
 
       <div className="mt-10 sm:mt-15 flex justify-center">
-        <div className="font-general-medium flex items-center rounded-lg border border-indigo-400/20 bg-indigo-500 px-6 py-3 text-lg text-white shadow-[0_16px_34px_rgba(99,102,241,0.25)] duration-300 hover:bg-indigo-600 hover:shadow-[0_20px_44px_rgba(99,102,241,0.32)] focus:ring-1 focus:ring-indigo-900 sm:text-xl">
+        <div className="font-general-medium flex items-center rounded-full border border-slate-950/10 bg-slate-950 px-6 py-3 text-sm font-medium text-white shadow-none duration-300 hover:bg-slate-800 focus:ring-1 focus:ring-indigo-900 dark:border-white/[0.12] dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200 sm:text-base">
           <Link href="/projects" aria-label="View all work" passHref>
             <Button title="View all work" />
           </Link>
