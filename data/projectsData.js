@@ -29,8 +29,8 @@ export const projectsData = [
 			github: 'https://github.com/AmadouMamane/tessera',
 			design: 'https://github.com/AmadouMamane/tessera/blob/main/docs/design.md',
 			safety: 'https://github.com/AmadouMamane/tessera/blob/main/docs/safety.md',
-			demo: 'https://shared-ide-named-flower.trycloudflare.com',
-			systemUi: 'https://shared-ide-named-flower.trycloudflare.com',
+			demo: 'https://tessera.amadoumamane.fr',
+			systemUi: 'https://tessera.amadoumamane.fr',
 			video: '',
 		},
 		ProjectHeader: {
