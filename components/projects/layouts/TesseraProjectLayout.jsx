@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import {
   AlertTriangle,
   ArrowRight,
@@ -1683,12 +1684,12 @@ export default function TesseraProjectLayout({ project, isBlog=false }) {
       <div className="dark bg-[#020611] text-slate-300 min-h-screen">
         <ScrollProgressDial />
         <section className="relative overflow-hidden bg-[#020611] text-white">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={project.heroImg || project.img}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover opacity-25"
-            loading="eager"
+            fill
+            priority
+            className="object-cover opacity-25"
             aria-hidden="true"
             style={{
               objectPosition: '78% center',

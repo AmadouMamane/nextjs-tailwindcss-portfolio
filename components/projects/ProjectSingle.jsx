@@ -76,7 +76,7 @@ const ProjectSingle = (props) => {
 				aria-label={`View project: ${props.title}`}
 				passHref
 			>
-				<div className={`group mb-10 flex h-[488px] cursor-pointer flex-col overflow-hidden rounded-lg border bg-secondary-light shadow-lg transition duration-300 hover:shadow-2xl dark:bg-ternary-dark sm:mb-0 ${cardFocusClassName}`}>
+				<div className={`group mb-10 flex h-[488px] cursor-pointer flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white/70 shadow-[0_8px_30px_rgba(15,23,42,0.04)] transition-all duration-300 hover:shadow-[0_20px_40px_rgba(99,102,241,0.08)] hover:-translate-y-1 dark:border-white/[0.06] dark:bg-white/[0.03] dark:shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:hover:bg-white/[0.06] dark:hover:shadow-[0_15px_40px_rgba(99,102,241,0.15)] backdrop-blur-xl sm:mb-0 ${cardFocusClassName}`}>
 					<div className={`relative h-80 w-full shrink-0 overflow-hidden ${isTesseraCard ? 'bg-[#020611]' : ''}`}>
 						<Image
 							src={imageSrc}

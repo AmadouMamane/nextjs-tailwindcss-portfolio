@@ -94,7 +94,7 @@ function AppBanner() {
 				<p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-indigo-600 dark:text-indigo-300 sm:text-left">
 					Applied AI and data systems
 				</p>
-				<h1 className="font-general-semibold text-center text-[2rem] leading-[1.05] text-ternary-dark dark:text-primary-light sm:text-left sm:text-[2.4rem] lg:text-[3rem] xl:text-[3.35rem]">
+				<h1 className="font-general-semibold text-center text-[2rem] leading-[1.05] text-transparent bg-clip-text bg-gradient-to-br from-indigo-800 via-indigo-900 to-slate-900 dark:bg-gradient-to-r dark:from-white dark:via-indigo-100 dark:to-indigo-300 sm:text-left sm:text-[2.4rem] lg:text-[3rem] xl:text-[3.35rem] drop-shadow-sm">
 					{"Hi, I'm Amadou"}
 				</h1>
 				<p className="mt-5 text-center text-base leading-7 text-slate-600 dark:text-slate-300 sm:text-left md:text-lg lg:text-xl lg:leading-8">

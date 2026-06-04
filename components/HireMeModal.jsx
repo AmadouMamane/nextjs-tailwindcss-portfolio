@@ -24,8 +24,8 @@ function HireMeModal({ onClose, onRequest }) {
 			{/* Modal Content */}
 			<main className="flex flex-col items-center justify-center h-full w-full">
 				<div className="modal-wrapper flex items-center z-30">
-					<div className="modal max-w-md mx-5 xl:max-w-xl lg:max-w-xl md:max-w-xl bg-secondary-light dark:bg-primary-dark max-h-screen shadow-lg flex-row rounded-lg relative">
-						<div className="modal-header flex justify-between gap-10 p-5 border-b border-ternary-light dark:border-ternary-dark">
+					<div className="modal max-w-md mx-5 xl:max-w-xl lg:max-w-xl md:max-w-xl bg-white/80 border border-slate-200/80 ring-1 ring-white dark:bg-[#050b18]/[0.96] dark:border-white/[0.08] dark:ring-white/[0.04] backdrop-blur-2xl max-h-screen shadow-[0_22px_60px_rgba(15,23,42,0.16)] flex-row rounded-2xl relative overflow-hidden">
+						<div className="modal-header flex justify-between gap-10 p-5 border-b border-slate-200/80 dark:border-white/[0.08]">
 							<h5 className=" text-primary-dark dark:text-gray-300 text-xl">
 								What project are you looking for?
 							</h5>
@@ -44,7 +44,7 @@ function HireMeModal({ onClose, onRequest }) {
 								>
 								<div className="">
 									<input
-										className="w-full px-5 py-2 border dark:border-secondary-dark rounded-md text-md bg-secondary-light dark:bg-ternary-dark text-primary-dark dark:text-ternary-light"
+										className="w-full px-5 py-2.5 border border-slate-200/80 dark:border-white/[0.1] rounded-xl text-md bg-white/50 dark:bg-white/[0.04] text-primary-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm backdrop-blur-sm transition-all"
 										id="name"
 										name="name"
 										type="text"
@@ -55,7 +55,7 @@ function HireMeModal({ onClose, onRequest }) {
 								</div>
 								<div className="mt-6">
 									<input
-										className="w-full px-5 py-2 border dark:border-secondary-dark rounded-md text-md bg-secondary-light dark:bg-ternary-dark text-primary-dark dark:text-ternary-light"
+										className="w-full px-5 py-2.5 border border-slate-200/80 dark:border-white/[0.1] rounded-xl text-md bg-white/50 dark:bg-white/[0.04] text-primary-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm backdrop-blur-sm transition-all"
 										id="email"
 										name="email"
 										type="text"
@@ -66,7 +66,7 @@ function HireMeModal({ onClose, onRequest }) {
 								</div>
 								<div className="mt-6">
 									<select
-										className="w-full px-5 py-2 border dark:border-secondary-dark rounded-md text-md bg-secondary-light dark:bg-ternary-dark text-primary-dark dark:text-ternary-light"
+										className="w-full px-5 py-2.5 border border-slate-200/80 dark:border-white/[0.1] rounded-xl text-md bg-white/50 dark:bg-white/[0.04] text-primary-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm backdrop-blur-sm transition-all"
 										id="subject"
 										name="subject"
 										type="text"
@@ -86,7 +86,7 @@ function HireMeModal({ onClose, onRequest }) {
 
 								<div className="mt-6">
 									<textarea
-										className="w-full px-5 py-2 border dark:border-secondary-dark rounded-md text-md bg-secondary-light dark:bg-ternary-dark text-primary-dark dark:text-ternary-light"
+										className="w-full px-5 py-2.5 border border-slate-200/80 dark:border-white/[0.1] rounded-xl text-md bg-white/50 dark:bg-white/[0.04] text-primary-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm backdrop-blur-sm transition-all"
 										id="message"
 										name="message"
 										cols="14"

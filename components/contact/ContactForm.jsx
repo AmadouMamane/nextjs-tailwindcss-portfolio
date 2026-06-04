@@ -8,7 +8,7 @@ function ContactForm() {
 				<form
 					action="https://formspree.io/f/mldjbkwy" 
 					method="POST"
-					className="max-w-xl m-4 p-6 sm:p-10 bg-secondary-light dark:bg-secondary-dark rounded-xl shadow-xl text-left"
+					className="max-w-xl m-4 p-6 sm:p-10 bg-white/80 border border-slate-200/80 ring-1 ring-white dark:bg-[#050b18]/[0.96] dark:border-white/[0.08] dark:ring-white/[0.04] backdrop-blur-2xl rounded-2xl shadow-[0_22px_60px_rgba(15,23,42,0.16)] text-left relative overflow-hidden"
 				>
 
 					<p className="font-general-medium text-primary-dark dark:text-primary-light text-2xl mb-8">
@@ -51,7 +51,7 @@ function ContactForm() {
 							Message
 						</label>
 						<textarea
-							className="w-full px-5 py-2 border border-gray-300 dark:border-primary-dark border-opacity-50 text-primary-dark dark:text-secondary-light bg-ternary-light dark:bg-ternary-dark rounded-md shadow-sm text-md"
+							className="w-full px-5 py-2.5 border border-slate-200/80 dark:border-white/[0.1] rounded-xl text-md bg-white/50 dark:bg-white/[0.04] text-primary-dark dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm backdrop-blur-sm transition-all"
 							id="message"
 							name="message"
 							cols="14"
