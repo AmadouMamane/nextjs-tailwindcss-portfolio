@@ -3,7 +3,7 @@ import 'basiclightbox/dist/basicLightbox.min.css';
 import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import '../styles/globals.css';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import DefaultLayout from '../components/layout/DefaultLayout';
 import UseScrollToTop from '../hooks/useScrollToTop';
 import { ThemeProvider } from 'next-themes';
@@ -27,7 +27,7 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-      <div className={`${playfair.variable} bg-secondary-light dark:bg-primary-dark transition duration-300 font-sans`}>
+      <div className={`${playfair.variable} bg-secondary-light dark:bg-primary-dark font-sans`}>
         {getLayout(<Component {...pageProps} />)}
         <UseScrollToTop />
       </div>

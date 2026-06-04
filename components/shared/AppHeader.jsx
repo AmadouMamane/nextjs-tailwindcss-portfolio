@@ -57,7 +57,7 @@ function AppHeader() {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				id="nav"
-				className="relative border-b border-slate-900/[0.055] bg-white/[0.85] shadow-[0_1px_0_rgba(15,23,42,0.03)] backdrop-blur-2xl dark:border-white/[0.07] dark:bg-[#020611]/[0.86] dark:shadow-[0_1px_0_rgba(255,255,255,0.035)]"
+				className="sticky top-0 z-50 border-b border-slate-900/[0.055] bg-white/70 shadow-[0_1px_0_rgba(15,23,42,0.03)] backdrop-blur-xl dark:border-white/[0.07] dark:bg-[#020611]/60 dark:shadow-[0_1px_0_rgba(255,255,255,0.035)]"
 			>
 				<div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-8 lg:px-10">
 					<div className="flex items-center justify-between gap-4">

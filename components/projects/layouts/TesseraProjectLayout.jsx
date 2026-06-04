@@ -1321,13 +1321,15 @@ function DiagramPanel({ title, description, img, alt, orientation = 'wide', onOp
           aria-label={`Expand ${title} diagram`}
           className="block w-full cursor-zoom-in rounded-md border border-slate-200 bg-white p-2 text-left transition hover:border-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 dark:border-white/10 dark:bg-white/[0.03] dark:hover:border-sky-300/30 dark:focus:ring-offset-primary-dark"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={img}
-            alt={alt}
-            className={`mx-auto w-full rounded object-contain ${orientation === 'tall' ? 'max-h-[620px]' : 'max-h-[440px]'}`}
-            loading="lazy"
-          />
+          <div className={`relative mx-auto w-full rounded ${orientation === 'tall' ? 'h-[620px]' : 'h-[440px]'}`}>
+            <Image
+              src={img}
+              alt={alt}
+              fill
+              className="object-contain"
+              loading="lazy"
+            />
+          </div>
         </button>
       </div>
     </figure>
@@ -1392,8 +1394,9 @@ function DiagramLightbox({ diagram, onClose }) {
         </div>
         <div className="min-h-0 flex-1 p-3 sm:p-5">
           <div className="flex h-full min-h-[320px] items-center justify-center rounded-lg bg-white p-3 dark:bg-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={diagram.img} alt={diagram.alt} className="h-full max-h-full w-full object-contain" />
+            <div className="relative h-full min-h-[320px] w-full">
+              <Image src={diagram.img} alt={diagram.alt} fill className="object-contain" />
+            </div>
           </div>
         </div>
       </div>

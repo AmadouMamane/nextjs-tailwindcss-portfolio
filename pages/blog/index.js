@@ -38,10 +38,6 @@ function BlogPage({ blogs }) {
   return <BlogGrid blogs={blogs} />
 }
 
-BlogPage.getLayout = (page) => (
-  <DefaultBlogLayout  isBlog={false}>
-    {page}
-    </DefaultBlogLayout>
-);
+
 
 export default BlogPage;

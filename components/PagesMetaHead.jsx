@@ -41,8 +41,16 @@ function PagesMetaHead({
 			<meta property="og:title" content={pageTitle} />
 			<meta property="og:description" content={description} />
 			{canonicalUrl ? <meta property="og:url" content={canonicalUrl} /> : null}
-			{imageUrl ? <meta property="og:image" content={imageUrl} /> : null}
+			{imageUrl ? (
+				<>
+					<meta property="og:image" content={imageUrl} />
+					<meta property="og:image:alt" content={pageTitle} />
+					<meta property="og:image:width" content="1200" />
+					<meta property="og:image:height" content="630" />
+				</>
+			) : null}
 			<meta name="twitter:card" content="summary_large_image" />
+			<meta name="twitter:creator" content="@amadoumamane" />
 			<meta name="twitter:title" content={pageTitle} />
 			<meta name="twitter:description" content={description} />
 			{imageUrl ? <meta name="twitter:image" content={imageUrl} /> : null}

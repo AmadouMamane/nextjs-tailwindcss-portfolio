@@ -28,8 +28,8 @@ export async function getServerSideProps({ query }) {
   return { props: { project: project || null, isBlog: false } };
 }
 
-ProjectSingle.getLayout = function getLayout(page) {
-  const project = page.props?.project;
+ProjectSingle.getLayout = function getLayout(page, pageProps) {
+  const project = pageProps?.project || page.props?.project;
 
   if (!project) {
     return <div className="max-w-7xl mx-auto py-10">Project not found.</div>;

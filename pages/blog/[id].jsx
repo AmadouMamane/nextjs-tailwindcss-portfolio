@@ -273,9 +273,6 @@ function BlogSingle({ frontMatter, mdxSource, prevPost, nextPost }) {
 }
 
 
-BlogSingle.getLayout = (page) => (
-  <DefaultBlogLayout>{page}</DefaultBlogLayout>
-  
-);
+
 
 export default BlogSingle;
